@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33213.308
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "THFHA V1.0", "..\THFHA V1.0\THFHA V1.0.csproj", "{F17F9C28-B141-4AC8-A731-496976A117BC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F17F9C28-B141-4AC8-A731-496976A117BC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F17F9C28-B141-4AC8-A731-496976A117BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F17F9C28-B141-4AC8-A731-496976A117BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F17F9C28-B141-4AC8-A731-496976A117BC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B849983A-1649-4073-A3D3-793CEE2A344F}
+	EndGlobalSection
+EndGlobal
