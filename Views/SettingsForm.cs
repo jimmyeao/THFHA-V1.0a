@@ -18,7 +18,8 @@ namespace THFHA_V1._0.Views
             cb_useha.Checked = settings.UseHA;
             cb_usemqtt.Checked = settings.UseMQTT;
             cb_usewled.Checked = settings.UseWLED;
-            if(settings.Haurl == "" || settings.Hatoken == "") { 
+            if (settings.Haurl == "" || settings.Hatoken == "")
+            {
                 cb_useha.Checked = false;
                 cb_useha.Enabled = false;
             }
@@ -44,7 +45,7 @@ namespace THFHA_V1._0.Views
             }
             else
             {
-                
+
                 cb_useha.Enabled = true;
             }
         }

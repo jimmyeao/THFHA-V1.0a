@@ -35,17 +35,17 @@ namespace THFHA_V1._0
                 lbx_modules.Items.Add(module.Name);
             }
         }
-        private void StartLogWatcher(string filePath)
+        private async Task StartLogWatcher(string filePath)
         {
             logWatcher = new LogWatcher(filePath, new State());
 
-            logWatcher.Start();
+            await logWatcher.Start();
         }
 
 
-        private void StopLogWatcher()
+        private async Task StopLogWatcher()
         {
-            logWatcher.Stop();
+            await logWatcher.Stop();
 
         }
 

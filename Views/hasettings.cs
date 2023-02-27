@@ -82,8 +82,9 @@ namespace THFHA_V1._0.Views
                     // Rethrow any other exception.
                     else
                     {
-                        throw ex;
+                        
                         httpClient.Dispose();
+                        throw ex;
                     }
                 Log.Error("Error checking HA connectivity {ae}", ae);
                 message = "Homeassistant connection Failed " + ae.ToString;

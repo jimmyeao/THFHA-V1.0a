@@ -1,9 +1,37 @@
 ﻿using Newtonsoft.Json;
+using Q42.HueApi;
 using Serilog;
 using System.ComponentModel;
 
 namespace THFHA_V1._0.Model
 {
+    public class CustomLight
+    {
+        public string Id { get; set; }
+        public string Name { get; set; }
+        // Other properties
+
+        public CustomLight(Light light)
+        {
+            if (light != null)
+            {
+                this.Id = light.Id;
+                this.Name = light.Name;
+                // Other properties
+            }
+        }
+
+
+        public Light ToLight()
+        {
+            return new Light()
+            {
+                Id = this.Id,
+                Name = this.Name,
+                // Other properties
+            };
+        }
+    }
     public class Settings : INotifyPropertyChanged
     {
         private static readonly Settings instance = new Settings();
@@ -79,6 +107,31 @@ namespace THFHA_V1._0.Model
             get { return _useHue; }
             set { _useHue = value; OnPropertyChanged(nameof(UseHue)); }
         }
+        private string _hueip;
+        public string Hueip
+        {
+            get { return _hueip; }
+            set { _hueip = value; OnPropertyChanged(nameof(Hueip)); }
+        }
+        private string _hueusername;
+        public string Hueusername
+        {
+            get { return _hueusername; }
+            set { _hueusername = value; OnPropertyChanged(nameof(Hueusername)); }
+        }
+        private List<CustomLight> _HueLight = new List<CustomLight>();
+        public List<CustomLight> HueLight
+        {
+            get { return _HueLight; }
+            set { _HueLight = value; OnPropertyChanged(nameof(HueLight)); }
+        }
+        private string _selectedLightId;
+        public string SelectedLightId
+        {
+            get { return _selectedLightId; }
+            set { _selectedLightId = value; OnPropertyChanged(nameof(SelectedLightId)); }
+        }
+
 
 
         // WLED
