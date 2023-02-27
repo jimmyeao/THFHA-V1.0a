@@ -2,6 +2,7 @@
 using Q42.HueApi;
 using Serilog;
 using System.ComponentModel;
+using System.Web;
 
 namespace THFHA_V1._0.Model
 {
@@ -34,15 +35,28 @@ namespace THFHA_V1._0.Model
     }
     public class Settings : INotifyPropertyChanged
     {
+        #region setup
         private static readonly Settings instance = new Settings();
-
         public event EventHandler<EventArgs> SettingsUpdated;
 
         private Settings()
         {
             Load();
         }
+        public static Settings Instance
+        {
+            get { return instance; }
+        }
 
+        protected void OnPropertyChanged(string propertyName)
+        {
+            var handler = PropertyChanged;
+            if (handler != null)
+            {
+                handler(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+        #endregion
         private bool _runLogWatcherAtStart;
         public bool RunLogWatcherAtStart
         {
@@ -57,20 +71,8 @@ namespace THFHA_V1._0.Model
             set { _autorun = value; OnPropertyChanged(nameof(Autorun)); }
         }
 
-        public static Settings Instance
-        {
-            get { return instance; }
-        }
 
-        protected void OnPropertyChanged(string propertyName)
-        {
-            var handler = PropertyChanged;
-            if (handler != null)
-            {
-                handler(this, new PropertyChangedEventArgs(propertyName));
-            }
-        }
-
+        #region Homeassistant
         // Home assistant
         private bool _useHA;
         public bool UseHA
@@ -91,7 +93,8 @@ namespace THFHA_V1._0.Model
             get { return _haurl; }
             set { _haurl = value; OnPropertyChanged(nameof(Haurl)); }
         }
-
+        #endregion
+        #region mqtt
         // MQTT
         private bool _useMQTT;
         public bool UseMQTT
@@ -99,7 +102,34 @@ namespace THFHA_V1._0.Model
             get { return _useMQTT; }
             set { _useMQTT = value; OnPropertyChanged(nameof(UseMQTT)); }
         }
+        private string _mqttip;
+        public string Mqttip
+        {
+            get { return _mqttip; }
+            set { _mqttip = value; OnPropertyChanged(nameof(Mqttip)); }
+        }
+        private string _mqttusername;
+        public string Mqttusername
+        {
+            get { return _mqttusername; }
+            set { _mqttusername = value; OnPropertyChanged(nameof(Mqttusername)); }
+        }
+        private string _mqttpassword;
+        public string Mqttpassword
+        {
+            get { return _mqttpassword; }
+            set { _mqttpassword = value; OnPropertyChanged(nameof(Mqttpassword)); }
+        }
+        private string _mqtttopic;
+        public string Mqtttopic
+        {
+            get { return _mqtttopic; }
+            set { _mqtttopic = value; OnPropertyChanged(nameof(Mqtttopic)); }
+        }
 
+
+        #endregion
+        #region Hue
         //Phillips Hue
         private bool _useHue;
         public bool UseHue
@@ -131,8 +161,8 @@ namespace THFHA_V1._0.Model
             get { return _selectedLightId; }
             set { _selectedLightId = value; OnPropertyChanged(nameof(SelectedLightId)); }
         }
-
-
+        #endregion
+        #region WLED
 
         // WLED
         private bool _useWLED;
@@ -141,7 +171,8 @@ namespace THFHA_V1._0.Model
             get { return _useWLED; }
             set { _useWLED = value; OnPropertyChanged(nameof(UseWLED)); }
         }
-
+        #endregion
+        #region operations
         public event PropertyChangedEventHandler PropertyChanged;
 
         public void Save()
@@ -171,5 +202,6 @@ namespace THFHA_V1._0.Model
                 }
             }
         }
+        #endregion
     }
 }
