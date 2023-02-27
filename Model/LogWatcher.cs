@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-
-namespace THFHA_V1._0.Model
+﻿namespace THFHA_V1._0.Model
 {
     public class LogWatcher
     {

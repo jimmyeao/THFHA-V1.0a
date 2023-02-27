@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Serilog;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.IO;
 
 namespace THFHA_V1._0.Model
 {
@@ -48,6 +42,8 @@ namespace THFHA_V1._0.Model
                 handler(this, new PropertyChangedEventArgs(propertyName));
             }
         }
+
+        // Home assistant
         private bool _useHA;
         public bool UseHA
         {
@@ -55,6 +51,20 @@ namespace THFHA_V1._0.Model
             set { _useHA = value; OnPropertyChanged(nameof(UseHA)); }
         }
 
+        private string _hatoken;
+        public string Hatoken
+        {
+            get { return _hatoken; }
+            set { _hatoken = value; OnPropertyChanged(nameof(Hatoken)); }
+        }
+        private string _haurl;
+        public string Haurl
+        {
+            get { return _haurl; }
+            set { _haurl = value; OnPropertyChanged(nameof(Haurl)); }
+        }
+
+        // MQTT
         private bool _useMQTT;
         public bool UseMQTT
         {
@@ -62,6 +72,7 @@ namespace THFHA_V1._0.Model
             set { _useMQTT = value; OnPropertyChanged(nameof(UseMQTT)); }
         }
 
+        //Phillips Hue
         private bool _useHue;
         public bool UseHue
         {
@@ -69,6 +80,8 @@ namespace THFHA_V1._0.Model
             set { _useHue = value; OnPropertyChanged(nameof(UseHue)); }
         }
 
+
+        // WLED
         private bool _useWLED;
         public bool UseWLED
         {

@@ -1,13 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using THFHA_V1._0.Model;
+﻿using THFHA_V1._0.Model;
 
 namespace THFHA_V1._0.Views
 {
@@ -17,12 +8,12 @@ namespace THFHA_V1._0.Views
         private Settings settings;
         public SettingsForm(List<IModule> modules)
         {
-           
+
 
             InitializeComponent();
             this.settings = Settings.Instance;
             this.modules = modules;
-            cb_runLogWatcherAtStart.Checked =  settings.RunLogWatcherAtStart;
+            cb_runLogWatcherAtStart.Checked = settings.RunLogWatcherAtStart;
             cb_usehue.Checked = settings.UseHue;
             cb_useha.Checked = settings.UseHA;
             cb_usemqtt.Checked = settings.UseMQTT;
@@ -62,7 +53,7 @@ namespace THFHA_V1._0.Views
             // Show the SettingsForm
             wledsettings.ShowDialog();
         }
-    
+
 
         private void cb_useha_CheckedChanged(object sender, EventArgs e)
         {

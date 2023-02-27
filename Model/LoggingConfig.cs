@@ -1,10 +1,6 @@
 ﻿using Serilog;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Serilog.Sinks.File;
-using System.Threading.Tasks;
+using System.Text;
 
 namespace THFHA_V1._0.Model
 {

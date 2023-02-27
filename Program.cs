@@ -1,6 +1,6 @@
+using Serilog;
 using THFHA_V1._0.Model;
 using THFHA_V1._0.Views;
-using Serilog;
 namespace THFHA_V1._0
 {
     public static class Program

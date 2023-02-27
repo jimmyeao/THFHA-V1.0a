@@ -1,13 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using THFHA_V1._0.Model;
+﻿using THFHA_V1._0.Model;
 using THFHA_V1._0.Views;
 
 
@@ -47,7 +38,7 @@ namespace THFHA_V1._0
         private void StartLogWatcher(string filePath)
         {
             logWatcher = new LogWatcher(filePath, new State());
-            
+
             logWatcher.Start();
         }
 
@@ -55,7 +46,7 @@ namespace THFHA_V1._0
         private void StopLogWatcher()
         {
             logWatcher.Stop();
-            
+
         }
 
 

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Reflection;
 
 namespace THFHA_V1._0.Model
 {
@@ -53,7 +48,7 @@ namespace THFHA_V1._0.Model
         bool IsEnabled { get; set; }
         string State { get; }
 
-     }
+    }
 
 
 
