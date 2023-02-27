@@ -18,6 +18,15 @@ namespace THFHA_V1._0.Views
             cb_useha.Checked = settings.UseHA;
             cb_usemqtt.Checked = settings.UseMQTT;
             cb_usewled.Checked = settings.UseWLED;
+            if(settings.Haurl == "" || settings.Hatoken == "") { 
+                cb_useha.Checked = false;
+                cb_useha.Enabled = false;
+            }
+            else
+            {
+
+                cb_useha.Enabled = true;
+            }
 
             // Add code to initialize the settings form with the list of modules
         }
@@ -28,6 +37,16 @@ namespace THFHA_V1._0.Views
 
             // Show the SettingsForm
             hasettings.ShowDialog();
+            if (settings.Haurl == "" || settings.Hatoken == "")
+            {
+                cb_useha.Checked = false;
+                cb_useha.Enabled = false;
+            }
+            else
+            {
+                
+                cb_useha.Enabled = true;
+            }
         }
 
         private void bt_huesettings_Click(object sender, EventArgs e)
