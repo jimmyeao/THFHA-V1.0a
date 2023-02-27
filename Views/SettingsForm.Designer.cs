@@ -101,7 +101,7 @@
             this.button1.TabIndex = 4;
             this.button1.Text = "Settings";
             this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.bt_usehueClick);
+            this.button1.Click += new System.EventHandler(this.bt_huesettings_Click);
             // 
             // button2
             // 
@@ -111,7 +111,7 @@
             this.button2.TabIndex = 4;
             this.button2.Text = "Settings";
             this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.bt_usemqtt_Click);
+            this.button2.Click += new System.EventHandler(this.bt_mqttsettings_Click);
             // 
             // button3
             // 

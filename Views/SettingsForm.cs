@@ -33,23 +33,36 @@ namespace THFHA_V1._0.Views
 
         private void bt_hasettings_Click(object sender, EventArgs e)
         {
+            hasettings hasettings = new hasettings();
 
+            // Show the SettingsForm
+            hasettings.ShowDialog();
         }
 
-        private void bt_usehueClick(object sender, EventArgs e)
+        private void bt_huesettings_Click(object sender, EventArgs e)
         {
+            huesettings huesettings = new huesettings();
 
+            // Show the SettingsForm
+            huesettings.ShowDialog();
         }
 
-        private void bt_usemqtt_Click(object sender, EventArgs e)
+        private void bt_mqttsettings_Click(object sender, EventArgs e)
         {
+            mqttsettings mqttsettings = new mqttsettings();
 
+            // Show the SettingsForm
+            mqttsettings.ShowDialog();
         }
 
         private void bt_usewled_Click(object sender, EventArgs e)
         {
-           
+            wledsettings wledsettings = new wledsettings();
+
+            // Show the SettingsForm
+            wledsettings.ShowDialog();
         }
+    
 
         private void cb_useha_CheckedChanged(object sender, EventArgs e)
         {
