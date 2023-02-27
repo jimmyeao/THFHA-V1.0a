@@ -124,6 +124,9 @@ namespace THFHA_V1._0.Views
                         }
                     }
                 }
+                settings.WledDevices = WledLights;
+                settings.Save();
+
             }
             catch (Exception ex)
             {
