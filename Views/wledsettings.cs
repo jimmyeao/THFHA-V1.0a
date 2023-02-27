@@ -49,7 +49,7 @@ namespace THFHA_V1._0.Views
         private async void btn_discover_Click(object sender, EventArgs e)
         {
             Log.Information("Starting Discovery of WLED lights");
-
+            toolStripStatusLabel1.Text = "Discovering Lights";
             // Clear the existing list of WLED lights.
             _wledLights.Clear();
 
@@ -134,7 +134,10 @@ namespace THFHA_V1._0.Views
             }
         }
 
-
-
+        private void listbox_wledlights_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            settings.WledDevices = WledLights;
+            settings.Save();
+        }
     }
 }
