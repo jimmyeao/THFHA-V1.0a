@@ -1,8 +1,10 @@
 ﻿using Newtonsoft.Json;
 using Q42.HueApi;
+using Kevsoft.WLED;
 using Serilog;
 using System.ComponentModel;
 using System.Web;
+using THFHA_V1._0.Views;
 
 namespace THFHA_V1._0.Model
 {
@@ -171,6 +173,28 @@ namespace THFHA_V1._0.Model
             get { return _useWLED; }
             set { _useWLED = value; OnPropertyChanged(nameof(UseWLED)); }
         }
+        public WLED SelectedWled { get; set; } // Add this property to store the selected WLED light.
+        private List<WLED> _wledDevices = new List<WLED>();
+        public List<WLED> WledDevices
+        {
+            get { return _wledDevices; }
+            set { _wledDevices = value; OnPropertyChanged(nameof(WledDevices)); }
+        }
+
+
+        private string _WledDev = "";
+        public string WledDev
+        {
+            get { return _WledDev; }
+            set { _WledDev = value; OnPropertyChanged(nameof(WledDev)); }
+        }
+        private string _wledip = "";
+        public string WLEDIP
+        {
+            get { return _wledip; }
+            set { _wledip = value; OnPropertyChanged(nameof(WLEDIP)); }
+        }
+      
         #endregion
         #region operations
         public event PropertyChangedEventHandler PropertyChanged;
@@ -204,4 +228,5 @@ namespace THFHA_V1._0.Model
         }
         #endregion
     }
+
 }
