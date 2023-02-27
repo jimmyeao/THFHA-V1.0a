@@ -1,6 +1,8 @@
 ﻿using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using THFHA_V1._0.Model;
+using MQTTnet;
+using MQTTnet.Client;
 
 namespace THFHA_V1._0.Views
 {
@@ -17,21 +19,50 @@ namespace THFHA_V1._0.Views
             tb_mqtttopic.Text = settings.Mqtttopic;
         }
 
-        private void buttontest_Click(object sender, EventArgs e)
+        private async void buttontest_Click(object sender, EventArgs e)
         {
-            // lets validate its at least a valid IP...
-            if (Regex.IsMatch(tb_mqttip.Text, @"^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$"))
-            {
-                //valid ip continue
-                
-            }
-            else
+            // Let's validate its at least a valid IP.
+            if (!Regex.IsMatch(tb_mqttip.Text, @"^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$"))
             {
                 var title = "IP Error";
-                var message = "Please Enter a valid ip address";
+                var message = "Please enter a valid IP address.";
+                MessageBox.Show(message, title);
+                return;
+            }
+
+            // Create a new MQTT client instance.
+            var factory = new MqttFactory();
+            var client = factory.CreateMqttClient();
+
+            // Set up the client options.
+            var options = new MqttClientOptionsBuilder()
+                .WithTcpServer(tb_mqttip.Text)
+                .WithCredentials(tb_mqttuser.Text, tb_mqttpass.Text)
+                .WithClientId("test-client")
+                .Build();
+
+            try
+            {
+                // Try to connect to the MQTT server.
+                await client.ConnectAsync(options);
+
+                // Connection successful.
+                var title = "Connection Successful";
+                var message = "Successfully connected to the MQTT server.";
+                MessageBox.Show(message, title);
+
+                // Disconnect from the MQTT server.
+                await client.DisconnectAsync();
+            }
+            catch (Exception ex)
+            {
+                // Connection failed.
+                var title = "Connection Error";
+                var message = $"Failed to connect to the MQTT server. Error: {ex.Message}";
                 MessageBox.Show(message, title);
             }
         }
+
 
         private void mqttip_TextChanged(object sender, EventArgs e)
         {
