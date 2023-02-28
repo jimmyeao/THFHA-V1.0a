@@ -5,9 +5,6 @@ using System.IO;
 using Serilog;
 using System;
 
-
-
-
 namespace THFHA_V1._0
 {
     public partial class THFHA : Form
@@ -53,6 +50,8 @@ namespace THFHA_V1._0
 
             PopulateModulesList();
             Settings.SettingChanged += Settings_SettingChanged; // Subscribe to the SettingChanged event
+         
+
         }
         
         private void OnStateChanged(object sender, EventArgs e)
@@ -63,13 +62,7 @@ namespace THFHA_V1._0
             UpdateLabel(lbl_activity, state.Activity);
             UpdateLabel(lbl_camera, state.Camera);
             UpdateLabel(lbl_mute, state.Microphone);
-            string status = state.Status;
-            string activity = state.Activity;
-            string camera = state.Camera;
-            string microphone = state.Microphone;
 
-            // Update your module based on the state changes
-            // ...
         }
         private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -127,10 +120,17 @@ namespace THFHA_V1._0
 
             await logWatcher.Start();
             statuslabel.Text = "Monitoring Started";
+            UpdateLabel(lbl_status, state.Status);
+            UpdateLabel(lbl_activity, state.Activity);
+            UpdateLabel(lbl_camera, state.Camera);
+            UpdateLabel(lbl_mute, state.Microphone);
         }
         private async Task StopLogWatcher()
         {
-            await logWatcher.Stop();
+            if (logWatcher != null)
+            {
+                await logWatcher.Stop();
+            }
             statuslabel.Text = "Monitoring Stopped";
         }
         private void lbx_modules_DoubleClick(object sender, EventArgs e)

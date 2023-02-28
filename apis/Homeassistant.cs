@@ -7,7 +7,8 @@ namespace THFHA_V1._0.apis
     {
         private string name = "Homeassistant";
         private bool isEnabled = false;
-        private string state = "Disconnected";
+        private State stateInstance;
+        public event EventHandler? StateChanged;
 
         public string Name
         {
@@ -22,8 +23,8 @@ namespace THFHA_V1._0.apis
 
         public string State
         {
-            get { return state; }
-            set { state = value; }
+            get { return stateInstance.ToString(); }
+            set { /* You can leave this empty since the State property is read-only */ }
         }
         public Form GetSettingsForm()
         {
@@ -33,8 +34,24 @@ namespace THFHA_V1._0.apis
         {
             IsEnabled = isEnabled;
         }
+        private void OnStateChanged(object sender, EventArgs e)
+        {
+            // handle state changed event here
+            stateInstance = (State)sender;
+
+            // raise the StateChanged event
+            StateChanged?.Invoke(this, EventArgs.Empty);
+        }
+   
         public HomeassistantModule()
         {
+            // This is the parameterless constructor that will be used by the ModuleManager class
+        }
+
+        public HomeassistantModule(State state) : this()
+        {
+            stateInstance = state;
+            stateInstance.StateChanged += OnStateChanged;
             // Initialize your module here
         }
     }

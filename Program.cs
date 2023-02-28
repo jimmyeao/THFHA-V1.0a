@@ -9,13 +9,14 @@ namespace THFHA_V1._0
         static void Main()
         {
             Application.EnableVisualStyles();
-            var state = new State(); // create a new instance of State
+            
             Application.SetCompatibleTextRenderingDefault(false);
             LoggingConfig.Configure();
-            ModuleManager<IModule> moduleManager = new ModuleManager<IModule>();
+            var state = new State(); // create a new instance of State
+            ModuleManager<IModule> moduleManager = new ModuleManager<IModule>(state);
             List<IModule> modules = moduleManager.Modules;
 
-           
+
             SettingsForm settingsForm = new SettingsForm(modules);
 
             // create the LogWatcher and pass the state to it
