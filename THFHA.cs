@@ -159,18 +159,23 @@ namespace THFHA_V1._0
                 {
                     case "hue":
                         Settings.Instance.UseHue = selectedModule.IsEnabled;
+                        statuslabel.Text= selectedModule.Name+" Enabled";
                         break;
                     case "homeassistant":
                         Settings.Instance.UseHA = selectedModule.IsEnabled;
+                        statuslabel.Text = selectedModule.Name + " Enabled";
                         break;
                     case "mqtt":
                         Settings.Instance.UseMQTT = selectedModule.IsEnabled;
+                        statuslabel.Text = selectedModule.Name + " Enabled";
                         break;
                     case "wled":
                         Settings.Instance.UseWLED = selectedModule.IsEnabled;
+                        statuslabel.Text = selectedModule.Name + " Enabled";
                         break;
                     case "hatcher":
                         Settings.Instance.UseHatcher = selectedModule.IsEnabled;
+                        statuslabel.Text = selectedModule.Name + " Enabled";
                         break;
                 }
                 PopulateModulesList(); // Refresh the list to update the module status
@@ -188,18 +193,23 @@ namespace THFHA_V1._0
                 {
                     case "hue":
                         Settings.Instance.UseHue = selectedModule.IsEnabled;
+                        statuslabel.Text = selectedModule.Name + " Disabled";
                         break;
                     case "homeassistant":
                         Settings.Instance.UseHA = selectedModule.IsEnabled;
+                        statuslabel.Text = selectedModule.Name + " Disabled";
                         break;
                     case "mqtt":
                         Settings.Instance.UseMQTT = selectedModule.IsEnabled;
+                        statuslabel.Text = selectedModule.Name + " Disabled";
                         break;
                     case "wled":
                         Settings.Instance.UseWLED = selectedModule.IsEnabled;
+                        statuslabel.Text = selectedModule.Name + " Disabled";
                         break;
                     case "hatcher":
                         Settings.Instance.UseHatcher = selectedModule.IsEnabled;
+                        statuslabel.Text = selectedModule.Name + " Disabled";
                         break;
                 }
                 PopulateModulesList(); // Refresh the list to update the module status
