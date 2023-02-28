@@ -35,7 +35,7 @@ namespace THFHA_V1._0
             lbx_modules.Items.Clear();
             foreach (IModule module in modules)
             {
-                lbx_modules.Items.Add(module.Name);
+                lbx_modules.Items.Add(module.Name + " [" + (module.IsEnabled ? "Enabled" : "Disabled") + "]");
             }
         }
         private async Task StartLogWatcher(string filePath)

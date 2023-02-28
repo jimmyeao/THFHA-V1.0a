@@ -13,14 +13,14 @@ namespace THFHA_V1._0.Views
 {
     public partial class hatcheersettings : Form
     {
-        private Settings settings;
-        private static HttpClient? httpClient;
+        private Settings settings;                  //set up our settings
+        private static HttpClient? httpClient;      //set up for a http client
 
         public hatcheersettings()
         {
             InitializeComponent();
-            this.settings = Settings.Instance;
-            textBox1.Text = settings.Hatcherip;
+            this.settings = Settings.Instance;      //instantiate our settings
+            textBox1.Text = settings.Hatcherip;     //load the settings into the form
         }
 
         private void textBox1_TextChanged(object sender, EventArgs e)
