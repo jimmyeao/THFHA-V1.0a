@@ -57,6 +57,7 @@ namespace THFHA_V1._0.Model
         Form GetSettingsForm();
 
         void UpdateSettings(bool isEnabled);
+        void OnFormClosing();
     }
 
 

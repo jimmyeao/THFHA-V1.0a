@@ -1,6 +1,6 @@
 ﻿using THFHA_V1._0.Model;
 using THFHA_V1._0.Views;
-
+using Serilog;
 namespace THFHA_V1._0.apis
 {
     public class WledModule : IModule
@@ -48,6 +48,12 @@ namespace THFHA_V1._0.apis
             stateInstance = state;
             stateInstance.StateChanged += OnStateChanged;
             // Initialize your module here
+        }
+        public void OnFormClosing()
+        {
+            // Handle the form closing event here
+            var isMonitoring = false;
+            Log.Debug("Stop monitoring requested");
         }
         private void OnStateChanged(object sender, EventArgs e)
         {

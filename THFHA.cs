@@ -12,6 +12,9 @@ namespace THFHA_V1._0
         private List<IModule> modules;
         private LogWatcher logWatcher;
         private State state;
+        public event EventHandler? StopMonitoringRequested;
+        public event EventHandler? ApplicationClosing;
+
         public THFHA(List<IModule> modules, State state)
         {
             InitializeComponent();
@@ -271,6 +274,15 @@ namespace THFHA_V1._0
             {
                 label.Text = text;
             }
+        }
+
+        private void THFHA_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            foreach (IModule module in modules)
+            {
+                module.OnFormClosing();
+            }
+            ApplicationClosing?.Invoke(this, EventArgs.Empty);
         }
     }
 }

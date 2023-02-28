@@ -1,6 +1,6 @@
 ﻿using THFHA_V1._0.Model;
 using THFHA_V1._0.Views;
-
+using Serilog;
 namespace THFHA_V1._0.apis
 {
     public class HomeassistantModule : IModule
@@ -46,6 +46,12 @@ namespace THFHA_V1._0.apis
         public HomeassistantModule()
         {
             // This is the parameterless constructor that will be used by the ModuleManager class
+        }
+        public void OnFormClosing()
+        {
+            // Handle the form closing event here
+            var isMonitoring = false;
+            Log.Debug("Stop monitoring requested");
         }
 
         public HomeassistantModule(State state) : this()

@@ -48,9 +48,53 @@ namespace THFHA_V1._0.apis
             {
                 stateInstance = (State)sender;
                 StateChanged?.Invoke(this, EventArgs.Empty);
-                ShowImage(stateInstance);
+                _ = ShowImage(stateInstance);
 
             }
+        }
+        private void OnApplicationClosing(object sender, EventArgs e)
+        {
+            // Handle the application closing event here
+            var isMonitoring = false;
+            Log.Debug("Stop monitoring requested");
+        }
+        private void OnStopMonitoringRequested(object sender, EventArgs e)
+        {
+            // Stop monitoring here
+            var isMonitoring = false;
+            Log.Debug("Stop monitoring requested");
+            
+                var uri = new Uri("http://" + settings.Hatcherip + ":5000/showimage");
+                var keyValues = new List<KeyValuePair<string, string>>
+        {
+            new("image_type", "offline"),
+            new("text1", "Offline")
+        };
+                var content = new FormUrlEncodedContent(keyValues);
+                using (var client = new HttpClient())
+                {
+                    try
+                    {
+                        var cts = new CancellationTokenSource(TimeSpan.FromSeconds(10)); // Timeout after 10 seconds
+                                                                                         //var response = await client.PostAsync(uri, content, cts.Token);
+                        Task.WaitAll(new Task[] { client.PostAsync(uri, content, cts.Token) });
+                        Log.Information("Hatcher state set to offline");
+
+                    }
+                    catch (OperationCanceledException)
+                    {
+                        Log.Error("Error Setting hatcher state: request timed out");
+                        new Thread(() => System.Windows.Forms.MessageBox.Show("Hatcher request timed out.")).Start();
+
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Error("Error Setting hatcher state" + ex);
+                        new Thread(() => System.Windows.Forms.MessageBox.Show("Hatcher failed." + Environment.NewLine + "Has the IP changed?")).Start();
+
+                    }
+                }
+            
         }
 
         public HatcherModule()
@@ -63,9 +107,23 @@ namespace THFHA_V1._0.apis
         {
             stateInstance = state;
             stateInstance.StateChanged += OnStateChanged;
-            
+
+           
+
             // Initialize your module here
         }
+
+        public void OnFormClosing()
+        {
+            // Handle the form closing event here
+            var isMonitoring = false;
+            Log.Debug("Stop monitoring requested");
+        }
+
+
+        // Initialize your module here
+
+
         // fuinctionality here
         public async Task ShowImage(State state)
         {
