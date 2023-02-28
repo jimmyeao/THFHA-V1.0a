@@ -2,6 +2,7 @@
 using THFHA_V1._0.Model;
 using THFHA_V1._0.Views;
 using System.IO;
+using Serilog;
 
 
 
@@ -38,6 +39,10 @@ namespace THFHA_V1._0
                 lbx_modules.Items.Add(module.Name + " [" + (module.IsEnabled ? "Enabled" : "Disabled") + "]");
             }
         }
+
+
+
+
         private async Task StartLogWatcher(string filePath)
         {
             logWatcher = new LogWatcher(filePath, new State());
@@ -62,6 +67,59 @@ namespace THFHA_V1._0
 
             // Show the settings form
             settingsForm.ShowDialog();
+        }
+
+        private void THFHA_MouseDown(object sender, MouseEventArgs e)
+
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                // Get the index of the item that was clicked
+                int index = lbx_modules.IndexFromPoint(e.Location);
+
+                if (index >= 0 && index < lbx_modules.Items.Count)
+                {
+                    // Select the item that was clicked
+                    lbx_modules.SelectedIndex = index;
+
+                    // Show the context menu at the mouse position
+                    contextMenuStrip1.Show(lbx_modules, e.Location);
+                }
+            }
+        }
+
+        private void enableModuleToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (lbx_modules.SelectedIndex >= 0)
+            {
+                IModule selectedModule = modules[lbx_modules.SelectedIndex];
+                selectedModule.IsEnabled = true;
+                PopulateModulesList(); // Refresh the list to update the module status
+            }
+        }
+
+
+        private void disableModuleToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (lbx_modules.SelectedIndex >= 0)
+            {
+                IModule selectedModule = modules[lbx_modules.SelectedIndex];
+                selectedModule.IsEnabled = false;
+                PopulateModulesList(); // Refresh the list to update the module status
+            }
+        }
+
+        private void lbx_modules_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                int index = lbx_modules.IndexFromPoint(e.Location);
+                if (index != ListBox.NoMatches)
+                {
+                    lbx_modules.SelectedIndex = index;
+                    contextMenuStrip1.Show(lbx_modules, e.Location);
+                }
+            }
         }
     }
 }
