@@ -47,6 +47,8 @@ namespace THFHA_V1._0.Model
         string Name { get; }
         bool IsEnabled { get; set; }
         string State { get; }
+        
+        Form GetSettingsForm();
 
     }
 

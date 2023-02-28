@@ -1,5 +1,8 @@
-﻿using THFHA_V1._0.Model;
+﻿using System.Diagnostics;
+using THFHA_V1._0.Model;
 using THFHA_V1._0.Views;
+using System.IO;
+
 
 
 namespace THFHA_V1._0
@@ -49,6 +52,16 @@ namespace THFHA_V1._0
 
         }
 
+        private void lbx_modules_DoubleClick(object sender, EventArgs e)
+        {
+            // Get the selected module
+            IModule selectedModule = modules[lbx_modules.SelectedIndex];
 
+            // Get the module's settings form
+            Form settingsForm = selectedModule.GetSettingsForm();
+
+            // Show the settings form
+            settingsForm.ShowDialog();
+        }
     }
 }

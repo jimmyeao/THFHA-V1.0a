@@ -34,7 +34,7 @@ namespace THFHA_V1._0.Model
                 // Other properties
             };
         }
-    }
+    } //custom light class used for Hue lights
     public class Settings : INotifyPropertyChanged
     {
         #region setup
@@ -58,7 +58,7 @@ namespace THFHA_V1._0.Model
                 handler(this, new PropertyChangedEventArgs(propertyName));
             }
         }
-        #endregion
+
         private bool _runLogWatcherAtStart;
         public bool RunLogWatcherAtStart
         {
@@ -72,8 +72,7 @@ namespace THFHA_V1._0.Model
             get { return _autorun; }
             set { _autorun = value; OnPropertyChanged(nameof(Autorun)); }
         }
-
-
+        #endregion
         #region Homeassistant
         // Home assistant
         private bool _useHA;
@@ -194,7 +193,21 @@ namespace THFHA_V1._0.Model
             get { return _wledip; }
             set { _wledip = value; OnPropertyChanged(nameof(WLEDIP)); }
         }
-      
+
+        #endregion
+        #region Hatcher
+        private bool _usehatcher;
+        public bool UseHatcher
+        {
+            get { return _usehatcher; }
+            set { _usehatcher = value; OnPropertyChanged(nameof(UseHatcher)); }
+        }
+        private string _hatcherip;
+        public string Hatcherip
+        {
+            get { return _hatcherip; }
+            set { _hatcherip = value; OnPropertyChanged(nameof(Hatcherip)); }
+        }
         #endregion
         #region operations
         public event PropertyChangedEventHandler PropertyChanged;

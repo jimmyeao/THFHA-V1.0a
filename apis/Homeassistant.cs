@@ -1,4 +1,5 @@
 ﻿using THFHA_V1._0.Model;
+using THFHA_V1._0.Views;
 
 namespace THFHA_V1._0.apis
 {
@@ -24,7 +25,10 @@ namespace THFHA_V1._0.apis
             get { return state; }
             set { state = value; }
         }
-
+        public Form GetSettingsForm()
+        {
+            return new hasettings(); // Replace with your module's settings form
+        }
         public HomeassistantModule()
         {
             // Initialize your module here

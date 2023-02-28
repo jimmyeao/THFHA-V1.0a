@@ -61,7 +61,7 @@
             // settingsToolStripMenuItem
             // 
             this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
-            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(145, 26);
             this.settingsToolStripMenuItem.Text = "Settings";
             this.settingsToolStripMenuItem.Click += new System.EventHandler(this.settingsToolStripMenuItem_Click);
             // 
@@ -87,6 +87,7 @@
             this.lbx_modules.Name = "lbx_modules";
             this.lbx_modules.Size = new System.Drawing.Size(165, 204);
             this.lbx_modules.TabIndex = 1;
+            this.lbx_modules.DoubleClick += new System.EventHandler(this.lbx_modules_DoubleClick);
             // 
             // label1
             // 

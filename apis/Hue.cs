@@ -1,4 +1,5 @@
 ﻿using THFHA_V1._0.Model;
+using THFHA_V1._0.Views;
 
 namespace THFHA_V1._0.apis
 {
@@ -7,7 +8,6 @@ namespace THFHA_V1._0.apis
         private string name = "Hue";
         private bool isEnabled = false;
         private string state = "Disconnected";
-
         public string Name
         {
             get { return name; }
@@ -24,7 +24,10 @@ namespace THFHA_V1._0.apis
             get { return state; }
             set { state = value; }
         }
-
+        public Form GetSettingsForm()
+        {
+            return new huesettings(); // Replace with your module's settings form
+        }
         public HueModule()
         {
             // Initialize your module here

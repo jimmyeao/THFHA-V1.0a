@@ -1,4 +1,5 @@
 ﻿using THFHA_V1._0.Model;
+using THFHA_V1._0.Views;
 
 namespace THFHA_V1._0.apis
 {
@@ -25,10 +26,13 @@ namespace THFHA_V1._0.apis
             set { state = value; }
         }
 
+        public Form GetSettingsForm()
+        {
+            return new hatcheersettings(); // Replace with your module's settings form
+        }
         public hatchermodule()
         {
             // Initialize your module here
         }
     }
-
 }
