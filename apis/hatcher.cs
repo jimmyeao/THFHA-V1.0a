@@ -52,13 +52,8 @@ namespace THFHA_V1._0.apis
 
             }
         }
-        private void OnApplicationClosing(object sender, EventArgs e)
-        {
-            // Handle the application closing event here
-            var isMonitoring = false;
-            Log.Debug("Stop monitoring requested");
-        }
-        private void OnStopMonitoringRequested(object sender, EventArgs e)
+
+        private void OnStopMonitoringRequested()
         {
             // Stop monitoring here
             var isMonitoring = false;
@@ -118,6 +113,7 @@ namespace THFHA_V1._0.apis
             // Handle the form closing event here
             var isMonitoring = false;
             Log.Debug("Stop monitoring requested");
+            OnStopMonitoringRequested();
         }
 
 
