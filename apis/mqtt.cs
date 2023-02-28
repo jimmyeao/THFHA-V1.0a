@@ -35,11 +35,11 @@ namespace THFHA_V1._0.apis
         }
         private void OnStateChanged(object sender, EventArgs e)
         {
-            // handle state changed event here
-            stateInstance = (State)sender;
-
-            // raise the StateChanged event
-            StateChanged?.Invoke(this, EventArgs.Empty);
+            if (IsEnabled)
+            {
+                stateInstance = (State)sender;
+                StateChanged?.Invoke(this, EventArgs.Empty);
+            }
         }
         public MqttModule()
         {

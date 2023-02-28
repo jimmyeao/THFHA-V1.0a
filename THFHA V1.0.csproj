@@ -7,8 +7,8 @@
     <Nullable>enable</Nullable>
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
-    <AssemblyVersion>1.0.0.167</AssemblyVersion>
-    <FileVersion>1.0.0.167</FileVersion>
+    <AssemblyVersion>1.0.0.169</AssemblyVersion>
+    <FileVersion>1.0.0.169</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
