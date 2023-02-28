@@ -1,11 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Q42.HueApi;
-using Kevsoft.WLED;
 using Serilog;
 using System.ComponentModel;
-using System.Web;
-using THFHA_V1._0.Views;
-using Microsoft.VisualBasic.ApplicationServices;
 
 namespace THFHA_V1._0.Model
 {
@@ -108,8 +104,10 @@ namespace THFHA_V1._0.Model
         public string Hatoken
         {
             get { return _hatoken; }
-            set { _hatoken = value; OnPropertyChanged(nameof(Hatoken));
-                
+            set
+            {
+                _hatoken = value; OnPropertyChanged(nameof(Hatoken));
+
             }
         }
         private string _haurl;
@@ -254,7 +252,7 @@ namespace THFHA_V1._0.Model
         }
         #endregion
         #region operations
-       // public event PropertyChangedEventHandler PropertyChanged;
+        // public event PropertyChangedEventHandler PropertyChanged;
 
         public void Save()
         {

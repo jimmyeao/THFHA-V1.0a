@@ -183,7 +183,7 @@
             // lbl_status
             // 
             this.lbl_status.AutoSize = true;
-            this.lbl_status.Location = new System.Drawing.Point(34, 79);
+            this.lbl_status.Location = new System.Drawing.Point(40, 79);
             this.lbl_status.Name = "lbl_status";
             this.lbl_status.Size = new System.Drawing.Size(50, 20);
             this.lbl_status.TabIndex = 6;
@@ -192,7 +192,7 @@
             // lbl_activity
             // 
             this.lbl_activity.AutoSize = true;
-            this.lbl_activity.Location = new System.Drawing.Point(37, 115);
+            this.lbl_activity.Location = new System.Drawing.Point(40, 116);
             this.lbl_activity.Name = "lbl_activity";
             this.lbl_activity.Size = new System.Drawing.Size(50, 20);
             this.lbl_activity.TabIndex = 7;
@@ -201,7 +201,7 @@
             // lbl_mute
             // 
             this.lbl_mute.AutoSize = true;
-            this.lbl_mute.Location = new System.Drawing.Point(35, 153);
+            this.lbl_mute.Location = new System.Drawing.Point(40, 153);
             this.lbl_mute.Name = "lbl_mute";
             this.lbl_mute.Size = new System.Drawing.Size(50, 20);
             this.lbl_mute.TabIndex = 8;
@@ -210,7 +210,7 @@
             // lbl_camera
             // 
             this.lbl_camera.AutoSize = true;
-            this.lbl_camera.Location = new System.Drawing.Point(40, 192);
+            this.lbl_camera.Location = new System.Drawing.Point(40, 190);
             this.lbl_camera.Name = "lbl_camera";
             this.lbl_camera.Size = new System.Drawing.Size(50, 20);
             this.lbl_camera.TabIndex = 9;

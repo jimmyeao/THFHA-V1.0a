@@ -1,10 +1,6 @@
 ﻿using Microsoft.Win32;
-using System.Diagnostics;
-using System.IO;
-using System.Text;
 using Serilog;
-using System.Threading;
-using Accessibility;
+using System.Text;
 
 namespace THFHA_V1._0.Model
 {
@@ -109,7 +105,7 @@ namespace THFHA_V1._0.Model
                     state.Status = _status;
                     StateChanged?.Invoke(this, EventArgs.Empty);
                 }
-                if (state.Microphone != _mute) { state.Microphone = _mute;}
+                if (state.Microphone != _mute) { state.Microphone = _mute; }
                 await Task.Delay(1000, cancellationToken); // Example delay
             }
         }
@@ -168,15 +164,15 @@ namespace THFHA_V1._0.Model
 
         public async Task Start()
         {
-           Task.Run(() => ReadLogFileAsync(_cts.Token), _cts.Token);
-            
+            Task.Run(() => ReadLogFileAsync(_cts.Token), _cts.Token);
+
         }
         public void OnLogFileChanged(object sender, FileSystemEventArgs e)
         {
             // Handle the file change event here
         }
     }
-      
+
 
 
 }

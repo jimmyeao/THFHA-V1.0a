@@ -9,7 +9,7 @@ namespace THFHA_V1._0.Views
     public partial class huesettings : Form
     {
         private Settings settings;
-        
+
         public huesettings()
         {
 
@@ -79,8 +79,8 @@ namespace THFHA_V1._0.Views
                                 Log.Information("Added a Hue light called {light}", light.Name);
                             }
                         }
-                        MessageBox.Show("Hub Linked", "Success!",MessageBoxButtons.OK);
-                       
+                        MessageBox.Show("Hub Linked", "Success!", MessageBoxButtons.OK);
+
                         settings.Save();
                     }
                     catch (Exception ex)

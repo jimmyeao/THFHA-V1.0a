@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(wledsettings));
             this.listbox_wledlights = new System.Windows.Forms.ComboBox();
             this.btn_discover = new System.Windows.Forms.Button();
             this.btn_stop = new System.Windows.Forms.Button();
@@ -90,6 +91,7 @@
             this.Controls.Add(this.btn_stop);
             this.Controls.Add(this.btn_discover);
             this.Controls.Add(this.listbox_wledlights);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "wledsettings";
             this.Text = "wledsettings";
             this.statusStrip1.ResumeLayout(false);

@@ -1,12 +1,6 @@
-﻿using Newtonsoft.Json;
-using Serilog;
-using System.Net.Http.Headers;
+﻿using Serilog;
 using System.Net.Sockets;
-using System.Net.WebSockets;
-using Serilog;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Windows.Forms;
 using THFHA_V1._0.Model;
 
 namespace THFHA_V1._0.Views
@@ -49,18 +43,18 @@ namespace THFHA_V1._0.Views
                 await Task.Run(() =>
                 {
                     try
-                        {
-                    using (TcpClient client = new TcpClient(ipAddress, port))
                     {
-                        // If the connection is successful, the server is running and listening
-                        
+                        using (TcpClient client = new TcpClient(ipAddress, port))
+                        {
+                            // If the connection is successful, the server is running and listening
+
                             Log.Information("The server is running and listening on {0}:{1}", ipAddress, port);
                             var title = "Connection Success";
                             var message = "The server is running and listening on "+ ipAddress+", " + port;
                             MessageBox.Show(message, title);
                             toolStripStatusLabel1.Text= message;
                         }
-                        
+
                     }
                     catch (Exception ex)
                     {
@@ -77,7 +71,7 @@ namespace THFHA_V1._0.Views
 
                 // Close the connection
                 Log.Information("Connection closed.");
-                
+
             }
             catch (Exception ex)
             {

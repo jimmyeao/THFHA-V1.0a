@@ -1,9 +1,6 @@
-﻿using System.Diagnostics;
+﻿using Serilog;
 using THFHA_V1._0.Model;
 using THFHA_V1._0.Views;
-using System.IO;
-using Serilog;
-using System;
 
 namespace THFHA_V1._0
 {

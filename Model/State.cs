@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Serilog;
+﻿using Serilog;
 namespace THFHA_V1._0.Model
 {
     public class State
@@ -20,7 +15,7 @@ namespace THFHA_V1._0.Model
         private string _camera;
         private string _microphone;
         private string _message;
-    
+
         public string Status
         {
             get => _status;
@@ -29,7 +24,7 @@ namespace THFHA_V1._0.Model
                 if (_status != value)
                 {
                     _status = value;
-                     Log.Debug("State.Status changed to: " + value);
+                    Log.Debug("State.Status changed to: " + value);
                     StateChanged?.Invoke(this, EventArgs.Empty);
                 }
             }

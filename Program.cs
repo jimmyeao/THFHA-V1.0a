@@ -9,7 +9,7 @@ namespace THFHA_V1._0
         static void Main()
         {
             Application.EnableVisualStyles();
-            
+
             Application.SetCompatibleTextRenderingDefault(false);
             LoggingConfig.Configure();
             var state = new State(); // create a new instance of State

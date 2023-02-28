@@ -82,7 +82,7 @@ namespace THFHA_V1._0.Views
                     // Rethrow any other exception.
                     else
                     {
-                        
+
                         httpClient.Dispose();
                         throw ex;
                     }

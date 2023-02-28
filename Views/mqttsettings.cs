@@ -1,8 +1,7 @@
-﻿using System.Text.RegularExpressions;
-using System.Windows.Forms;
-using THFHA_V1._0.Model;
-using MQTTnet;
+﻿using MQTTnet;
 using MQTTnet.Client;
+using System.Text.RegularExpressions;
+using THFHA_V1._0.Model;
 
 namespace THFHA_V1._0.Views
 {

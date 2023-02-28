@@ -1,11 +1,9 @@
 ﻿using Kevsoft.WLED;
 using Newtonsoft.Json;
+using Serilog;
 using System.ComponentModel;
 using THFHA_V1._0.Model;
 using Zeroconf;
-using Serilog;
-using System.Windows.Forms;
-using THFHA_V1._0.Model;
 
 namespace THFHA_V1._0.Views
 {

@@ -1,6 +1,6 @@
-﻿using THFHA_V1._0.Model;
+﻿using Serilog;
+using THFHA_V1._0.Model;
 using THFHA_V1._0.Views;
-using Serilog;
 namespace THFHA_V1._0.apis
 {
     public class WledModule : IModule
@@ -64,7 +64,7 @@ namespace THFHA_V1._0.apis
             }
         }
 
- 
+
     }
 
 }
