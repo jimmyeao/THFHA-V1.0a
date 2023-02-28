@@ -14,7 +14,7 @@ namespace THFHA_V1._0.apis
         private State stateInstance;
         private Settings settings;
         public event EventHandler? StateChanged;
-
+ 
         public string Name
         {
             get { return name; }
@@ -102,9 +102,7 @@ namespace THFHA_V1._0.apis
         {
             stateInstance = state;
             stateInstance.StateChanged += OnStateChanged;
-
            
-
             // Initialize your module here
         }
 
@@ -113,7 +111,10 @@ namespace THFHA_V1._0.apis
             // Handle the form closing event here
             var isMonitoring = false;
             Log.Debug("Stop monitoring requested");
-            OnStopMonitoringRequested();
+            if (IsEnabled)
+            {
+                OnStopMonitoringRequested();
+            }
         }
 
 
@@ -123,9 +124,9 @@ namespace THFHA_V1._0.apis
         // fuinctionality here
         public async Task ShowImage(State state)
         {
-
+            await Task.Delay(500);
             //_state.PropertyChanged += State_PropertyChanged;
-            
+
             var uri = new Uri("http://" + settings.Hatcherip + ":5000/showimage");
             
                 Log.Information("Changing Hatcher state to {state} ", state.Status);
