@@ -87,10 +87,6 @@ namespace THFHA_V1._0
                 thfha.PopulateModulesList();
             }
         }
-
-
-
-
         public void PopulateModulesList()
         {
             lbx_modules.Items.Clear();
@@ -99,24 +95,16 @@ namespace THFHA_V1._0
                 lbx_modules.Items.Add(module.Name + " [" + (module.IsEnabled ? "Enabled" : "Disabled") + "]");
             }
         }
-
-
-
-
         private async Task StartLogWatcher(string filePath)
         {
             logWatcher = new LogWatcher(filePath, new State());
 
             await logWatcher.Start();
         }
-
-
         private async Task StopLogWatcher()
         {
             await logWatcher.Stop();
-
         }
-
         private void lbx_modules_DoubleClick(object sender, EventArgs e)
         {
             // Get the selected module
@@ -128,7 +116,6 @@ namespace THFHA_V1._0
             // Show the settings form
             settingsForm.ShowDialog();
         }
-
         private void THFHA_MouseDown(object sender, MouseEventArgs e)
 
         {
@@ -147,7 +134,6 @@ namespace THFHA_V1._0
                 }
             }
         }
-
         private void enableModuleToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (lbx_modules.SelectedIndex >= 0)
@@ -181,7 +167,6 @@ namespace THFHA_V1._0
                 PopulateModulesList(); // Refresh the list to update the module status
             }
         }
-
         private void disableModuleToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (lbx_modules.SelectedIndex >= 0)
@@ -215,10 +200,6 @@ namespace THFHA_V1._0
                 PopulateModulesList(); // Refresh the list to update the module status
             }
         }
-
-
-
-
         private void lbx_modules_MouseDown(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Right)
@@ -231,10 +212,17 @@ namespace THFHA_V1._0
                 }
             }
         }
-
         private void label1_Click(object sender, EventArgs e)
         {
 
+        }
+        private void btn_start_Click(object sender, EventArgs e)
+        {
+            _ = StartLogWatcher("file");
+        }
+        private void btn_stop_Click(object sender, EventArgs e)
+        {
+            _ = StopLogWatcher();
         }
     }
 }

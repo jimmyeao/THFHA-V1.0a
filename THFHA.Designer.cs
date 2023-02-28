@@ -42,6 +42,8 @@
             this.label1 = new System.Windows.Forms.Label();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.statuslabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.btn_start = new System.Windows.Forms.Button();
+            this.btn_stop = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
@@ -152,11 +154,33 @@
             this.statuslabel.Size = new System.Drawing.Size(50, 20);
             this.statuslabel.Text = "Ready";
             // 
+            // btn_start
+            // 
+            this.btn_start.Location = new System.Drawing.Point(34, 225);
+            this.btn_start.Name = "btn_start";
+            this.btn_start.Size = new System.Drawing.Size(94, 29);
+            this.btn_start.TabIndex = 4;
+            this.btn_start.Text = "Start";
+            this.btn_start.UseVisualStyleBackColor = true;
+            this.btn_start.Click += new System.EventHandler(this.btn_start_Click);
+            // 
+            // btn_stop
+            // 
+            this.btn_stop.Location = new System.Drawing.Point(156, 225);
+            this.btn_stop.Name = "btn_stop";
+            this.btn_stop.Size = new System.Drawing.Size(94, 29);
+            this.btn_stop.TabIndex = 5;
+            this.btn_stop.Text = "Stop";
+            this.btn_stop.UseVisualStyleBackColor = true;
+            this.btn_stop.Click += new System.EventHandler(this.btn_stop_Click);
+            // 
             // THFHA
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(459, 292);
+            this.Controls.Add(this.btn_stop);
+            this.Controls.Add(this.btn_start);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.lbx_modules);
@@ -189,5 +213,7 @@
         private ToolStripMenuItem disableToolStripMenuItem;
         private StatusStrip statusStrip1;
         private ToolStripStatusLabel statuslabel;
+        private Button btn_start;
+        private Button btn_stop;
     }
 }
