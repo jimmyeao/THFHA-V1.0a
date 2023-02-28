@@ -3,6 +3,8 @@ using THFHA_V1._0.Model;
 using THFHA_V1._0.Views;
 using System.IO;
 using Serilog;
+using System;
+
 
 
 
@@ -12,12 +14,13 @@ namespace THFHA_V1._0
     {
         private List<IModule> modules;
         private LogWatcher logWatcher;
-        public THFHA(List<IModule> modules)
+        private State state;
+        public THFHA(List<IModule> modules, State state)
         {
             InitializeComponent();
 
             this.modules = modules;
-
+            this.state = state; // set the state
             // Initialize the IsEnabled property of each module based on the value stored in the Settings singleton
             foreach (IModule module in this.modules)
             {
@@ -40,11 +43,34 @@ namespace THFHA_V1._0
                         break;
                 }
             }
+            
+            string _appDir = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            string _logPath = _appDir + @"\Microsoft\Teams\";
+            string _logFile = _logPath + "logs.txt";
+           
+            state.StateChanged += OnStateChanged;
+            Log.Debug("State.StateChanged event subscribed");
 
             PopulateModulesList();
             Settings.SettingChanged += Settings_SettingChanged; // Subscribe to the SettingChanged event
         }
+        
+        private void OnStateChanged(object sender, EventArgs e)
+        {
+            // Get the updated state values
+            Log.Debug("OnStateChange Trigerred!!!!!!!!!!!");
+            UpdateLabel(lbl_status, state.Status);
+            UpdateLabel(lbl_activity, state.Activity);
+            UpdateLabel(lbl_camera, state.Camera);
+            UpdateLabel(lbl_mute, state.Microphone);
+            string status = state.Status;
+            string activity = state.Activity;
+            string camera = state.Camera;
+            string microphone = state.Microphone;
 
+            // Update your module based on the state changes
+            // ...
+        }
         private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             // open the settings form
@@ -95,15 +121,17 @@ namespace THFHA_V1._0
                 lbx_modules.Items.Add(module.Name + " [" + (module.IsEnabled ? "Enabled" : "Disabled") + "]");
             }
         }
-        private async Task StartLogWatcher(string filePath)
+        private async Task StartLogWatcher()
         {
-            logWatcher = new LogWatcher(filePath, new State());
+            logWatcher = new LogWatcher(new State());
 
             await logWatcher.Start();
+            statuslabel.Text = "Monitoring Started";
         }
         private async Task StopLogWatcher()
         {
             await logWatcher.Stop();
+            statuslabel.Text = "Monitoring Stopped";
         }
         private void lbx_modules_DoubleClick(object sender, EventArgs e)
         {
@@ -218,11 +246,31 @@ namespace THFHA_V1._0
         }
         private void btn_start_Click(object sender, EventArgs e)
         {
-            _ = StartLogWatcher("file");
+            string _appDir = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            string _logPath = _appDir + @"\Microsoft\Teams\";
+            string _logFile = _logPath + "logs.txt";
+            _ = StartLogWatcher();
         }
         private void btn_stop_Click(object sender, EventArgs e)
         {
             _ = StopLogWatcher();
+        }
+        private void UpdateLabel(Label label, string text)
+        {
+            if (!label.IsHandleCreated || label.Disposing || label.IsDisposed)
+            {
+                // The label is not yet created or is disposed, so we can't update it.
+                return;
+            }
+
+            if (label.InvokeRequired)
+            {
+                label.Invoke((MethodInvoker)delegate { UpdateLabel(label, text); });
+            }
+            else
+            {
+                label.Text = text;
+            }
         }
     }
 }

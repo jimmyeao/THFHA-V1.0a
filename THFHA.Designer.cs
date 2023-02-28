@@ -44,9 +44,15 @@
             this.statuslabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.btn_start = new System.Windows.Forms.Button();
             this.btn_stop = new System.Windows.Forms.Button();
+            this.lbl_status = new System.Windows.Forms.Label();
+            this.lbl_activity = new System.Windows.Forms.Label();
+            this.lbl_mute = new System.Windows.Forms.Label();
+            this.lbl_camera = new System.Windows.Forms.Label();
+            this.stateBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.menuStrip1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.stateBindingSource)).BeginInit();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -174,11 +180,55 @@
             this.btn_stop.UseVisualStyleBackColor = true;
             this.btn_stop.Click += new System.EventHandler(this.btn_stop_Click);
             // 
+            // lbl_status
+            // 
+            this.lbl_status.AutoSize = true;
+            this.lbl_status.Location = new System.Drawing.Point(34, 79);
+            this.lbl_status.Name = "lbl_status";
+            this.lbl_status.Size = new System.Drawing.Size(50, 20);
+            this.lbl_status.TabIndex = 6;
+            this.lbl_status.Text = "label2";
+            // 
+            // lbl_activity
+            // 
+            this.lbl_activity.AutoSize = true;
+            this.lbl_activity.Location = new System.Drawing.Point(37, 115);
+            this.lbl_activity.Name = "lbl_activity";
+            this.lbl_activity.Size = new System.Drawing.Size(50, 20);
+            this.lbl_activity.TabIndex = 7;
+            this.lbl_activity.Text = "label3";
+            // 
+            // lbl_mute
+            // 
+            this.lbl_mute.AutoSize = true;
+            this.lbl_mute.Location = new System.Drawing.Point(35, 153);
+            this.lbl_mute.Name = "lbl_mute";
+            this.lbl_mute.Size = new System.Drawing.Size(50, 20);
+            this.lbl_mute.TabIndex = 8;
+            this.lbl_mute.Text = "label4";
+            // 
+            // lbl_camera
+            // 
+            this.lbl_camera.AutoSize = true;
+            this.lbl_camera.Location = new System.Drawing.Point(40, 192);
+            this.lbl_camera.Name = "lbl_camera";
+            this.lbl_camera.Size = new System.Drawing.Size(50, 20);
+            this.lbl_camera.TabIndex = 9;
+            this.lbl_camera.Text = "label5";
+            // 
+            // stateBindingSource
+            // 
+            this.stateBindingSource.DataSource = typeof(THFHA_V1._0.Model.State);
+            // 
             // THFHA
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(459, 292);
+            this.Controls.Add(this.lbl_camera);
+            this.Controls.Add(this.lbl_mute);
+            this.Controls.Add(this.lbl_activity);
+            this.Controls.Add(this.lbl_status);
             this.Controls.Add(this.btn_stop);
             this.Controls.Add(this.btn_start);
             this.Controls.Add(this.statusStrip1);
@@ -194,6 +244,7 @@
             this.contextMenuStrip1.ResumeLayout(false);
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.stateBindingSource)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -215,5 +266,10 @@
         private ToolStripStatusLabel statuslabel;
         private Button btn_start;
         private Button btn_stop;
+        private Label lbl_status;
+        private Label lbl_activity;
+        private Label lbl_mute;
+        private Label lbl_camera;
+        private BindingSource stateBindingSource;
     }
 }
