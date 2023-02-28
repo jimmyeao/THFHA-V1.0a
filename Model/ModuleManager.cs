@@ -40,6 +40,12 @@ namespace THFHA_V1._0.Model
 
             return (T)Activator.CreateInstance(type);
         }
+        public void UpdateSettings()
+        {
+            
+            Settings.Instance.Save();
+        }
+
     }
 
     public interface IModule
@@ -50,6 +56,7 @@ namespace THFHA_V1._0.Model
         
         Form GetSettingsForm();
 
+        void UpdateSettings(bool isEnabled);
     }
 
 

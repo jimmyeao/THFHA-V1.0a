@@ -11,12 +11,12 @@ using THFHA_V1._0.Model;
 
 namespace THFHA_V1._0.Views
 {
-    public partial class hatcheersettings : Form
+    public partial class hatchersettings : Form
     {
         private Settings settings;                  //set up our settings
         private static HttpClient? httpClient;      //set up for a http client
 
-        public hatcheersettings()
+        public hatchersettings()
         {
             InitializeComponent();
             this.settings = Settings.Instance;      //instantiate our settings

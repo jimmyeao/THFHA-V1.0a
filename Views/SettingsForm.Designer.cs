@@ -37,6 +37,8 @@
             this.button2 = new System.Windows.Forms.Button();
             this.button3 = new System.Windows.Forms.Button();
             this.cb_runLogWatcherAtStart = new System.Windows.Forms.CheckBox();
+            this.btn_hatchersettings = new System.Windows.Forms.Button();
+            this.cb_hatchersettings = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // cb_useha
@@ -126,7 +128,7 @@
             // cb_runLogWatcherAtStart
             // 
             this.cb_runLogWatcherAtStart.AutoSize = true;
-            this.cb_runLogWatcherAtStart.Location = new System.Drawing.Point(39, 160);
+            this.cb_runLogWatcherAtStart.Location = new System.Drawing.Point(40, 195);
             this.cb_runLogWatcherAtStart.Name = "cb_runLogWatcherAtStart";
             this.cb_runLogWatcherAtStart.Size = new System.Drawing.Size(136, 24);
             this.cb_runLogWatcherAtStart.TabIndex = 3;
@@ -134,11 +136,34 @@
             this.cb_runLogWatcherAtStart.UseVisualStyleBackColor = true;
             this.cb_runLogWatcherAtStart.CheckedChanged += new System.EventHandler(this.cb_runLogWatcherAtStart_CheckedChanged);
             // 
+            // btn_hatchersettings
+            // 
+            this.btn_hatchersettings.Location = new System.Drawing.Point(215, 160);
+            this.btn_hatchersettings.Name = "btn_hatchersettings";
+            this.btn_hatchersettings.Size = new System.Drawing.Size(102, 29);
+            this.btn_hatchersettings.TabIndex = 5;
+            this.btn_hatchersettings.Text = "Settings";
+            this.btn_hatchersettings.UseVisualStyleBackColor = true;
+            this.btn_hatchersettings.Click += new System.EventHandler(this.btn_hatchersettings_Click);
+            // 
+            // cb_hatchersettings
+            // 
+            this.cb_hatchersettings.AutoSize = true;
+            this.cb_hatchersettings.Location = new System.Drawing.Point(40, 160);
+            this.cb_hatchersettings.Name = "cb_hatchersettings";
+            this.cb_hatchersettings.Size = new System.Drawing.Size(118, 24);
+            this.cb_hatchersettings.TabIndex = 6;
+            this.cb_hatchersettings.Text = "Use Hatcher?";
+            this.cb_hatchersettings.UseVisualStyleBackColor = true;
+            this.cb_hatchersettings.CheckedChanged += new System.EventHandler(this.cb_hatchersettings_CheckedChanged);
+            // 
             // SettingsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(392, 213);
+            this.ClientSize = new System.Drawing.Size(392, 251);
+            this.Controls.Add(this.cb_hatchersettings);
+            this.Controls.Add(this.btn_hatchersettings);
             this.Controls.Add(this.button3);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.button1);
@@ -166,5 +191,7 @@
         private Button button2;
         private Button button3;
         private CheckBox cb_runLogWatcherAtStart;
+        private Button btn_hatchersettings;
+        private CheckBox cb_hatchersettings;
     }
 }

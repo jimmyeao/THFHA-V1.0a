@@ -28,6 +28,10 @@ namespace THFHA_V1._0.apis
         {
             return new mqttsettings(); // Replace with your module's settings form
         }
+        public void UpdateSettings(bool isEnabled)
+        {
+            IsEnabled = isEnabled;
+        }
         public MqttModule()
         {
             // Initialize your module here

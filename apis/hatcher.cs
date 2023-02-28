@@ -3,7 +3,7 @@ using THFHA_V1._0.Views;
 
 namespace THFHA_V1._0.apis
 {
-    public class hatchermodule : IModule
+    public class HatcherModule : IModule
     {
         private string name = "Hatcher";
         private bool isEnabled = false;
@@ -28,9 +28,13 @@ namespace THFHA_V1._0.apis
 
         public Form GetSettingsForm()
         {
-            return new hatcheersettings(); // Replace with your module's settings form
+            return new hatchersettings(); // Replace with your module's settings form
         }
-        public hatchermodule()
+        public void UpdateSettings(bool isEnabled)
+        {
+            IsEnabled = isEnabled;
+        }
+        public HatcherModule()
         {
             // Initialize your module here
         }

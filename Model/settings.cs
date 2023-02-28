@@ -5,6 +5,7 @@ using Serilog;
 using System.ComponentModel;
 using System.Web;
 using THFHA_V1._0.Views;
+using Microsoft.VisualBasic.ApplicationServices;
 
 namespace THFHA_V1._0.Model
 {
@@ -39,7 +40,12 @@ namespace THFHA_V1._0.Model
     {
         #region setup
         private static readonly Settings instance = new Settings();
+        public event PropertyChangedEventHandler PropertyChanged;
         public event EventHandler<EventArgs> SettingsUpdated;
+        public delegate void SettingChangedEventHandler(object sender, SettingChangedEventArgs e);
+
+        public static event SettingChangedEventHandler SettingChanged;
+
 
         private Settings()
         {
@@ -49,6 +55,17 @@ namespace THFHA_V1._0.Model
         {
             get { return instance; }
         }
+        public class SettingChangedEventArgs : EventArgs
+        {
+            public string SettingName { get; set; }
+
+            public SettingChangedEventArgs(string settingName)
+            {
+                SettingName = settingName;
+            }
+        }
+
+
 
         protected void OnPropertyChanged(string propertyName)
         {
@@ -79,14 +96,21 @@ namespace THFHA_V1._0.Model
         public bool UseHA
         {
             get { return _useHA; }
-            set { _useHA = value; OnPropertyChanged(nameof(UseHA)); }
+            set
+            {
+                _useHA = value;
+                OnPropertyChanged(nameof(UseHA));
+                SettingChanged?.Invoke(this, new SettingChangedEventArgs(nameof(UseHA)));
+            }
         }
 
         private string _hatoken;
         public string Hatoken
         {
             get { return _hatoken; }
-            set { _hatoken = value; OnPropertyChanged(nameof(Hatoken)); }
+            set { _hatoken = value; OnPropertyChanged(nameof(Hatoken));
+                
+            }
         }
         private string _haurl;
         public string Haurl
@@ -101,7 +125,12 @@ namespace THFHA_V1._0.Model
         public bool UseMQTT
         {
             get { return _useMQTT; }
-            set { _useMQTT = value; OnPropertyChanged(nameof(UseMQTT)); }
+            set
+            {
+                _useMQTT = value;
+                OnPropertyChanged(nameof(UseMQTT));
+                SettingChanged?.Invoke(this, new SettingChangedEventArgs(nameof(UseMQTT))); // pass the EventArgs parameter
+            }
         }
         private string _mqttip;
         public string Mqttip
@@ -136,7 +165,12 @@ namespace THFHA_V1._0.Model
         public bool UseHue
         {
             get { return _useHue; }
-            set { _useHue = value; OnPropertyChanged(nameof(UseHue)); }
+            set
+            {
+                _useHue = value;
+                OnPropertyChanged(nameof(UseHue));
+                SettingChanged?.Invoke(this, new SettingChangedEventArgs(nameof(UseHue))); // pass the EventArgs parameter
+            }
         }
         private string _hueip;
         public string Hueip
@@ -170,7 +204,12 @@ namespace THFHA_V1._0.Model
         public bool UseWLED
         {
             get { return _useWLED; }
-            set { _useWLED = value; OnPropertyChanged(nameof(UseWLED)); }
+            set
+            {
+                _useWLED = value;
+                OnPropertyChanged(nameof(UseWLED));
+                SettingChanged?.Invoke(this, new SettingChangedEventArgs(nameof(UseWLED))); // pass the EventArgs parameter
+            }
         }
         public WLED SelectedWled { get; set; } // Add this property to store the selected WLED light.
         private List<WLED> _wledDevices = new List<WLED>();
@@ -200,7 +239,12 @@ namespace THFHA_V1._0.Model
         public bool UseHatcher
         {
             get { return _usehatcher; }
-            set { _usehatcher = value; OnPropertyChanged(nameof(UseHatcher)); }
+            set
+            {
+                _usehatcher = value;
+                OnPropertyChanged(nameof(UseHatcher));
+                SettingChanged?.Invoke(this, new SettingChangedEventArgs(nameof(UseHatcher))); // pass the EventArgs parameter
+            }
         }
         private string _hatcherip;
         public string Hatcherip
@@ -210,7 +254,7 @@ namespace THFHA_V1._0.Model
         }
         #endregion
         #region operations
-        public event PropertyChangedEventHandler PropertyChanged;
+       // public event PropertyChangedEventHandler PropertyChanged;
 
         public void Save()
         {

@@ -1,6 +1,6 @@
 ﻿namespace THFHA_V1._0.Views
 {
-    partial class hatcheersettings
+    partial class hatchersettings
     {
         /// <summary>
         /// Required designer variable.
@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(hatcheersettings));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(hatchersettings));
             this.label1 = new System.Windows.Forms.Label();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.btn_test = new System.Windows.Forms.Button();
