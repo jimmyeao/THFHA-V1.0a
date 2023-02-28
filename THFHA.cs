@@ -12,13 +12,14 @@ namespace THFHA_V1._0
         private List<IModule> modules;
         private LogWatcher logWatcher;
         private State state;
+        private Settings settings;
         public event EventHandler? StopMonitoringRequested;
         public event EventHandler? ApplicationClosing;
 
         public THFHA(List<IModule> modules, State state)
         {
             InitializeComponent();
-
+            this.settings = Settings.Instance;
             this.modules = modules;
             this.state = state; // set the state
             // Initialize the IsEnabled property of each module based on the value stored in the Settings singleton
@@ -43,20 +44,28 @@ namespace THFHA_V1._0
                         break;
                 }
             }
-            
+
             string _appDir = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
             string _logPath = _appDir + @"\Microsoft\Teams\";
             string _logFile = _logPath + "logs.txt";
-           
+
             state.StateChanged += OnStateChanged;
             Log.Debug("State.StateChanged event subscribed");
 
             PopulateModulesList();
             Settings.SettingChanged += Settings_SettingChanged; // Subscribe to the SettingChanged event
-         
+            if (settings.RunLogWatcherAtStart)
+            {
+                StartLogWatcher();
+                btn_start.Enabled = false; btn_stop.Enabled = true;
+            }
+            else
+            {
+                btn_start.Enabled = true; btn_stop.Enabled = false;
+            }
 
         }
-        
+
         private void OnStateChanged(object sender, EventArgs e)
         {
             // Get the updated state values
@@ -249,13 +258,13 @@ namespace THFHA_V1._0
         }
         private void btn_start_Click(object sender, EventArgs e)
         {
-            string _appDir = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-            string _logPath = _appDir + @"\Microsoft\Teams\";
-            string _logFile = _logPath + "logs.txt";
+            btn_start.Enabled = false; btn_stop.Enabled = true;
+
             _ = StartLogWatcher();
         }
         private void btn_stop_Click(object sender, EventArgs e)
         {
+            btn_start.Enabled = true; btn_stop.Enabled = false;
             _ = StopLogWatcher();
         }
         private void UpdateLabel(Label label, string text)
