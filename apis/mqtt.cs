@@ -110,6 +110,58 @@ namespace THFHA_V1._0.apis
             //_state.PropertyChanged += PublishMqttUpdateEvent;
 
         }
+        public enum StatusIcon
+        {
+            Busy,
+            OnThePhone,
+            DoNotDisturb,
+            Away,
+            BeRightBack,
+            Available,
+            Offline
+        }
+
+        public enum ActivityIcon
+        {
+            InACall,
+            OnThePhone,
+            Offline,
+            InAMeeting,
+            InAConferenceCall,
+            OutOfOffice,
+            NotInACall,
+            Presenting
+        }
+        static string GetStatusIcon(string status)
+        {
+            return status switch
+            {
+                "Busy" => "mdi:account-cancel",
+                "On the phone" => "mdi:phone-in-talk-outline",
+                "Do not disturb" => "mdi:minus-circle-outline",
+                "Away" => "mdi:timer-sand",
+                "Be right back" => "mdi:timer-sand",
+                "Available" => "mdi:account",
+                "Offline" => "mdi:account-off",
+                _ => "mdi:account-off",
+            };
+        }
+
+        static string GetActivityIcon(string activity)
+        {
+            return activity switch
+            {
+                "In a call" => "mdi:phone-in-talk-outline",
+                "On the phone" => "mdi:phone-in-talk-outline",
+                "Offline" => "mdi:account-off",
+                "In a meeting" => "mdi:acc",
+                "In A Conference Call" => "mdi:phone-in-talk-outline",
+                "Out of Office" => "mdi:account-off",
+                "Not in a Call" => "mdi:account",
+                "Presenting" => "mdi:presentation-play",
+                _ => "mdi:account-off",
+            };
+        }
         private async Task PublishMqttUpdate(State state)
         {
             //PublishMqttConfig();
@@ -122,66 +174,9 @@ namespace THFHA_V1._0.apis
             var camicon = "";
             var micicon = "";
 
-            switch (state.Status)
-            {
-                case "Busy":
-                    statusicon = "mdi:account-cancel";
-                    break;
-                case "On the phone":
-                    statusicon = "mdi:phone-in-talk-outline";
-                    break;
-                case "Do not disturb":
-                    statusicon = "mdi:minus-circle-outline";
-                    break;
-                case "Away":
-                    statusicon = "mdi:timer-sand";
-                    break;
-                case "Be right back":
-                    statusicon = "mdi:timer-sand";
-                    break;
-                case "Available":
-                    statusicon = "mdi:account";
-                    break;
-                case "Offline":
-                    statusicon = "mdi:account-off";
-                    break;
-                default:
-                    statusicon = "mdi:account-off";
-                    break;
+            var statusIcon = GetStatusIcon(state.Status);
+            var activityIcon = GetActivityIcon(state.Activity);
 
-            }
-            switch (state.Activity)
-            {
-                case "In a call":
-                    activityicon = "mdi:phone-in-talk-outline";
-                    break;
-                case "On the phone":
-                    activityicon = "mdi:phone-in-talk-outline";
-                    break;
-                case "Offline":
-                    activityicon = "mdi:account-off";
-                    break;
-                case "In a meeting":
-                    activityicon = "mdi:acc";
-                    break;
-                case "In A Conference Call":
-                    activityicon = "mdi:phone-in-talk-outline";
-                    break;
-                case "Out of Office":
-                    activityicon = "mdi:account-off";
-                    break;
-                case "Not in a Call":
-                    activityicon = "mdi:account";
-                    break;
-                case "Presenting":
-                    activityicon = "mdi:presentation-play";
-                    break;
-
-
-                default:
-                    activityicon = "mdi:account-off";
-                    break;
-            }
             if (state.Camera == "On")
             {
                 camicon = "mdi:camera";
