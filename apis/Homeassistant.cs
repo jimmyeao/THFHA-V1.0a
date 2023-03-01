@@ -330,7 +330,7 @@ namespace THFHA_V1._0.apis
         public async Task UpdateEntity(string entityName, string stateText, string icon)
         {
             var client = new HttpClient();
-            // client.BaseAddress = new Uri(settings.Haurl + "/api/");
+            client.BaseAddress = new Uri(settings.Haurl + "/api/");
             var token = "Bearer " + settings.Hatoken;
             client.DefaultRequestHeaders.Add("Authorization", token);
             System.Net.Http.HttpResponseMessage response;
@@ -343,6 +343,7 @@ namespace THFHA_V1._0.apis
             {
                 Log.Error("Error updating {entity} in Home assistant: {ex}", entityName, ex.Message);
                 client.Dispose();
+                isEnabled= false;
                 return;
             }
             Log.Debug("Response to GET request: {response}", response);
@@ -369,6 +370,10 @@ namespace THFHA_V1._0.apis
             {
                 Log.Error("Error updating {entity} in Home assistant: {status}", entityName, response.StatusCode);
                 client.Dispose();
+                isEnabled= false;
+                settings.UseHA = false;
+                settings.Save();
+                OnStopMonitoringRequested();
                 return;
             }
 

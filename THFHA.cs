@@ -82,11 +82,11 @@ namespace THFHA_V1._0
             // open the settings form
             // Create an instance of the SettingsForm
             SettingsForm settingsForm = new SettingsForm(modules);
-
+            _ = StopLogWatcher();
             // Show the SettingsForm
             settingsForm.ShowDialog();
             PopulateModulesList();
-
+            _ = StartLogWatcher();
         }
         private void Settings_SettingChanged(object sender, THFHA_V1._0.Model.Settings.SettingChangedEventArgs e)
         {
