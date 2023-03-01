@@ -1,4 +1,10 @@
-﻿using Serilog;
+﻿using Newtonsoft.Json;
+using Serilog;
+using System.ComponentModel;
+using System.Dynamic;
+using System.Runtime;
+using System.Text;
+using System.Text.Json;
 using THFHA_V1._0.Model;
 using THFHA_V1._0.Views;
 namespace THFHA_V1._0.apis
@@ -8,8 +14,15 @@ namespace THFHA_V1._0.apis
         private string name = "Wled";
         private bool isEnabled = false;
         private State stateInstance;
+        private Settings settings;
+        private bool _enabled = false;
         public event EventHandler? StateChanged;
-
+        private readonly SemaphoreSlim _colorLock;
+        private readonly HttpClient _httpClient = new HttpClient();
+        private dynamic? _originalState;
+        private dynamic? _currentState;
+        private bool staterecorded = false;
+        private readonly object _lockObject = new object();
 
         public string Name
         {
@@ -27,11 +40,42 @@ namespace THFHA_V1._0.apis
                     Log.Debug("WledModule has been disabled.");
                     OnStopMonitoringRequested();
                 }
+                else
+                {
+                    _originalState = GetCurrentState(settings.SelectedWled.Ip);
+                    Start();
+                }
             }
         }
-        public void Start()
+        public async void Start()
         {
-
+            GetCurrentState(settings.SelectedWled.Ip);
+            //stateInstance = (State)sender;
+            StateChanged?.Invoke(this, EventArgs.Empty);
+            switch (stateInstance.Status)
+            {
+                case "Busy":
+                    await ChangeColor("255,0,0");
+                    break;
+                case "On the phone":
+                    await ChangeColor("255,0,0");
+                    break;
+                case "Do not disturb":
+                    await ChangeColor("255,0,0");
+                    break;
+                case "Away":
+                    await ChangeColor("255,255,0");
+                    break;
+                case "Be right back":
+                    await ChangeColor("255,255,0");
+                    break;
+                case "Available":
+                    await ChangeColor("0,255,0");
+                    break;
+                case "Offline":
+                    await ChangeColor("0,0,0");
+                    break;
+            }
         }
         public string State
         {
@@ -52,6 +96,8 @@ namespace THFHA_V1._0.apis
         public WledModule()
         {
             // This is the parameterless constructor that will be used by the ModuleManager class
+            this.settings = Settings.Instance;
+            _colorLock = new SemaphoreSlim(1);
         }
 
         public WledModule(State state) : this()
@@ -70,22 +116,177 @@ namespace THFHA_V1._0.apis
                 OnStopMonitoringRequested();
             }
         }
-        private void OnStateChanged(object sender, EventArgs e)
+        private async void OnStateChanged(object sender, EventArgs e)
         {
             if (IsEnabled)
             {
                 stateInstance = (State)sender;
                 StateChanged?.Invoke(this, EventArgs.Empty);
+                switch (stateInstance.Status)
+                {
+                    case "Busy":
+                        await ChangeColor("255,0,0");
+                        break;
+                    case "On the phone":
+                        await ChangeColor("255,0,0");
+                        break;
+                    case "Do not disturb":
+                        await ChangeColor("255,0,0");
+                        break;
+                    case "Away":
+                        await ChangeColor("255,255,0");
+                        break;
+                    case "Be right back":
+                        await ChangeColor("255,255,0");
+                        break;
+                    case "Available":
+                        await ChangeColor("0,255,0");
+                        break;
+                    case "Offline":
+                        await ChangeColor("0,0,0");
+                        break;
+                }
             }
         }
         private void OnStopMonitoringRequested()
         {
-            // Stop monitoring here
-            var isMonitoring = false;
+            if (IsEnabled)
+            {
+                // Stop monitoring here
+                var isMonitoring = false;
+                LoadState();
+                RestoreState(settings.SelectedWled.Ip, _originalState);
+            }
 
 
         }
+        private void LoadState()
+        {
+            string filePath = Path.Combine(Environment.CurrentDirectory, "originalstate.json");
 
+            if (File.Exists(filePath))
+            {
+                string json = File.ReadAllText(filePath);
+                _originalState = JsonConvert.DeserializeObject<dynamic>(json);
+              
+            }
+            else
+            {
+                _originalState = new ExpandoObject();
+                
+            }
+        }
+        private void SaveState()
+        {
+            string filePath = Path.Combine(Environment.CurrentDirectory, "originalstate.json");
+            string json = JsonConvert.SerializeObject(_currentState);
+            File.WriteAllText(filePath, json);
+        }
+        public async Task<dynamic> GetCurrentState(string ip)
+        {
+            if (_currentState == null)
+            {
+                Log.Information("Saving state of WLED light {wledDev}", settings.SelectedWled.ToString);
+
+                try
+                {
+                    var response = await _httpClient.GetAsync($"http://{settings.SelectedWled.Ip}/json/state");
+                    var json = await response.Content.ReadAsStringAsync();
+
+                    Log.Information("Current state of WLED light {wledDev}: {state}", settings.WledDev.ToString(), json);
+
+                    _currentState = JsonConvert.DeserializeObject<dynamic>(json);
+
+                    if (_currentState == null)
+                    {
+                        _originalState = _currentState;
+                        SaveState();
+                    }
+
+                    if (!staterecorded)
+                    {
+
+                        SaveState();
+                        staterecorded = true;
+                    }
+
+                    return _currentState;
+                }
+                catch (Exception ex)
+                {
+                    Log.Error("Error Connecting to WLED light {name} with exception {ex}", settings.WledDev, ex.Message);
+                }
+            }
+
+            return _currentState;
+        }
+        public async Task RestoreState(string ip, dynamic originalState)
+        {
+            lock (_lockObject)
+            {
+                if (originalState == null)
+                {
+                    Log.Warning("Unable to restore state: original state data is missing");
+                    return;
+                }
+
+                var json = JsonConvert.SerializeObject(originalState);
+                Log.Information("Restoring state of WLED light {wledDev}: {state}", settings.WledDev.ToString(), json);
+                var data = new StringContent(json, Encoding.UTF8, "application/json");
+
+                try
+                {
+                    using var client = new HttpClient();
+                    var response = client.PutAsync($"http://{settings.SelectedWled.Ip}/json/state", data).GetAwaiter().GetResult();
+                    response.EnsureSuccessStatusCode();
+                    Log.Information($"{response.StatusCode}");
+                    _enabled = false;
+                }
+                catch (Exception ex)
+                {
+                    Log.Error("Error Connecting to WLED light {name} with exception {ex}", settings.WledDev, ex.Message);
+                }
+            }
+        }
+
+        public async Task ChangeColor(string newColor)
+        {
+            
+                await _colorLock.WaitAsync();
+                try
+                {
+                    // Creating a payload to send to the WLED light
+                    var colorArray = newColor.Split(',').Select(x => int.Parse(x)).ToArray();
+                    var payload = new { on = true, seg = new[] { new { col = new[] { colorArray } } } };
+                    var jsonPayload = System.Text.Json.JsonSerializer.Serialize(payload, new JsonSerializerOptions());
+                    var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
+                    // Sending a PUT request to change the color of the WLED light
+                    using var client = new HttpClient();
+                    //TODO change below to use the ip instead of the .local name.
+                    var response = await client.PutAsync($"http://{settings.SelectedWled.Ip}/json/state", content);
+                    Log.Information("Changing state of {WledDev} to {jsonPayload}", settings.WledDev.ToString(), jsonPayload);
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        var responseContent = await response.Content.ReadAsStringAsync();
+                        Log.Information("Error changing state of WLED light {responseContent}", responseContent.ToString());
+                    }
+                }
+                catch (HttpRequestException e)
+                {
+
+                    Log.Error("Error connecting to {WLEDDev}: {Message}", settings.WledDev.ToString(), e.Message.ToString());
+                }
+                catch (FormatException e)
+                {
+
+                    Log.Error("Error parsing color value {messsage}", e.Message.ToString());
+                }
+                finally
+                {
+                    _colorLock.Release();
+                }
+            
+        }
 
     }
 
