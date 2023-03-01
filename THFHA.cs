@@ -7,7 +7,7 @@ namespace THFHA_V1._0
     public partial class THFHA : Form
     {
         private List<IModule> modules;
-        private LogWatcher logWatcher;
+        public static LogWatcher logWatcher;
         private State state;
         private Settings settings;
         public event EventHandler? StopMonitoringRequested;
@@ -59,6 +59,10 @@ namespace THFHA_V1._0
             else
             {
                 btn_start.Enabled = true; btn_stop.Enabled = false;
+                foreach (IModule module in modules)
+                {
+                    module.OnFormClosing();
+                }
             }
 
         }

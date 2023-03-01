@@ -1,4 +1,5 @@
 ﻿using Serilog;
+using System.Reflection;
 using THFHA_V1._0.Model;
 using THFHA_V1._0.Views;
 
@@ -11,7 +12,7 @@ namespace THFHA_V1._0.apis
         private State stateInstance;
         private Settings settings;
         public event EventHandler? StateChanged;
-
+        
         public string Name
         {
             get { return name; }
@@ -127,7 +128,7 @@ namespace THFHA_V1._0.apis
         {
             stateInstance = state;
             stateInstance.StateChanged += OnStateChanged;
-
+            
             // Initialize your module here
         }
 
@@ -145,92 +146,99 @@ namespace THFHA_V1._0.apis
         // fuinctionality here
         public async Task ShowImage(State state)
         {
-            if (settings.Hatcherip == "")
+            if (isEnabled && THFHA.logWatcher?.IsRunning == true)
             {
-                return;
-            }
-            
-            //_state.PropertyChanged += State_PropertyChanged;
-
-            var uri = new Uri("http://" + settings.Hatcherip + ":5000/showimage");
-
-            Log.Information("Changing Hatcher state to {state} ", state.Status);
 
 
-            //List<KeyValuePair<string, string>> keyValues;
-            var keyValues = state.Status switch
-            {
-                "Available" => new List<KeyValuePair<string, string>>
+
+
+
+                if (settings.Hatcherip == "")
+                {
+                    return;
+                }
+
+                //_state.PropertyChanged += State_PropertyChanged;
+
+                var uri = new Uri("http://" + settings.Hatcherip + ":5000/showimage");
+
+                Log.Information("Changing Hatcher state to {state} ", state.Status);
+
+
+                //List<KeyValuePair<string, string>> keyValues;
+                var keyValues = state.Status switch
+                {
+                    "Available" => new List<KeyValuePair<string, string>>
                     {
                         new("image_type", "available"),
                         new("text1", "Available")
                     },
-                "Busy" => new List<KeyValuePair<string, string>>
+                    "Busy" => new List<KeyValuePair<string, string>>
                     {
                         new("image_type", "busy"),
                         new("text1", "Busy")
                     },
-                "Do not disturb" => new List<KeyValuePair<string, string>>
+                    "Do not disturb" => new List<KeyValuePair<string, string>>
                     {
                         new("image_type", "dnd"),
                         new("text1", "Do Not"),
                         new("text2", "Disturb")
                     },
-                "Offline" => new List<KeyValuePair<string, string>>
+                    "Offline" => new List<KeyValuePair<string, string>>
                     {
                         new("image_type", "offline"),
                         new("text1", "Offline")
                     },
-                "On the Phone" => new List<KeyValuePair<string, string>>
+                    "On the Phone" => new List<KeyValuePair<string, string>>
                     {
                         new("image_type", "onthephone"),
                         new("text1", "On The Phone")
                     },
-                "Be Right Back" => new List<KeyValuePair<string, string>>
+                    "Be Right Back" => new List<KeyValuePair<string, string>>
                     {
                         new("image_type", "away"),
                         new("text1", "Be Right Back")
                     },
-                "Away" => new List<KeyValuePair<string, string>>
+                    "Away" => new List<KeyValuePair<string, string>>
                     {
                         new("image_type", "away"),
                         new("text1", "Away")
                     },
-                ".." => new List<KeyValuePair<string, string>>
+                    ".." => new List<KeyValuePair<string, string>>
                     {
                         new("image_type", "offline"),
                         new("text1", "Offline")
                     },
-                _ => new List<KeyValuePair<string, string>>
+                    _ => new List<KeyValuePair<string, string>>
                     {
                         new("image_type", "offline"),
                         new("text1", "Offline")
                     }
 
-            };
+                };
 
 
-            var content = new FormUrlEncodedContent(keyValues);
-            using (var client = new HttpClient())
-            {
-                try
+                var content = new FormUrlEncodedContent(keyValues);
+                using (var client = new HttpClient())
                 {
-                    Task delay = Task.Delay(1000);
-                    var response = await client.PostAsync(uri, content);
-                    Task delay2 = Task.Delay(1000);
+                    try
+                    {
+                        Task delay = Task.Delay(1000);
+                        var response = await client.PostAsync(uri, content);
+                        Task delay2 = Task.Delay(1000);
 
-                }
-                catch (Exception ex)
-                {
-                    Log.Error("Error Setting hatcher state" + ex);
-                    new Thread(() => System.Windows.Forms.MessageBox.Show("Hatcher failed." + Environment.NewLine + "Has the IP changed?")).Start();
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Error("Error Setting hatcher state" + ex);
+                        new Thread(() => System.Windows.Forms.MessageBox.Show("Hatcher failed." + Environment.NewLine + "Has the IP changed?")).Start();
 
+                    }
                 }
+
+
+
             }
-
-
-
-
 
         }
     }

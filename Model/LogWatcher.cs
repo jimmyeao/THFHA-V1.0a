@@ -11,6 +11,7 @@ namespace THFHA_V1._0.Model
         private string filePath;
         private CancellationTokenSource _cts;
         private State state;
+        private bool isRunning;
         string _status = "";
         string _activity = "";
         string _mute = "";
@@ -24,7 +25,7 @@ namespace THFHA_V1._0.Model
             this.filePath = _logFile;
             this.state = state;
             _cts = new CancellationTokenSource();
-
+            isRunning = false;
             // Start a background task to read the file continuously
             Task.Run(() => ReadLogFileAsync(_cts.Token), _cts.Token);
         }
@@ -157,13 +158,19 @@ namespace THFHA_V1._0.Model
 
         public async Task Stop()
         {
+            isRunning = false;
             _cts.Cancel();
             Dispose();
             Log.Information("Teams log monitoring has stopped");
         }
+        public bool IsRunning
+        {
+            get { return isRunning; }
+        }
 
         public async Task Start()
         {
+            isRunning = true;
             Task.Run(() => ReadLogFileAsync(_cts.Token), _cts.Token);
 
         }
