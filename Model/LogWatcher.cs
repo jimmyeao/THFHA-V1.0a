@@ -22,7 +22,7 @@ namespace THFHA_V1._0.Model
             string _appDir = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
             string _logPath = _appDir + @"\Microsoft\Teams\";
             string _logFile = _logPath + "logs.txt";
-            filePath = _logFile;
+            this.filePath = _logFile;
             this.state = state;
             _cts = new CancellationTokenSource();
             isRunning = false;
@@ -101,7 +101,7 @@ namespace THFHA_V1._0.Model
                     state.Activity = _activity;
                     StateChanged?.Invoke(this, EventArgs.Empty);
                 }
-                if (state.Status != _status)
+                if (state.Status!= _status)
                 {
                     state.Status = _status;
                     StateChanged?.Invoke(this, EventArgs.Empty);

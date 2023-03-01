@@ -16,7 +16,7 @@ namespace THFHA_V1._0
         public THFHA(List<IModule> modules, State state)
         {
             InitializeComponent();
-            settings = Settings.Instance;
+            this.settings = Settings.Instance;
             this.modules = modules;
             this.state = state; // set the state
             // Initialize the IsEnabled property of each module based on the value stored in the Settings singleton
@@ -61,7 +61,7 @@ namespace THFHA_V1._0
                 btn_start.Enabled = true; btn_stop.Enabled = false;
                 foreach (IModule module in modules)
                 {
-                    //module.OnFormClosing();
+                    module.OnFormClosing();
                 }
             }
 
@@ -82,11 +82,11 @@ namespace THFHA_V1._0
             // open the settings form
             // Create an instance of the SettingsForm
             SettingsForm settingsForm = new SettingsForm(modules);
-            _ = StopLogWatcher();
+
             // Show the SettingsForm
             settingsForm.ShowDialog();
             PopulateModulesList();
-            _ = StartLogWatcher();
+
         }
         private void Settings_SettingChanged(object sender, THFHA_V1._0.Model.Settings.SettingChangedEventArgs e)
         {
@@ -114,7 +114,7 @@ namespace THFHA_V1._0
             }
 
             // Refresh the modules list in the THFHA form
-            if (Owner is THFHA thfha)
+            if (this.Owner is THFHA thfha)
             {
                 thfha.PopulateModulesList();
             }
@@ -151,16 +151,16 @@ namespace THFHA_V1._0
             if (logWatcher != null)
             {
                 await logWatcher.Stop();
+                foreach (IModule module in modules)
+                {
+                    module.OnFormClosing();
+                }
             }
-            foreach (IModule module in modules)
-            {
-                module.OnFormClosing();
-            }
+
             statuslabel.Text = "Monitoring Stopped";
         }
         private void lbx_modules_DoubleClick(object sender, EventArgs e)
         {
-            _ = StopLogWatcher();
             // Get the selected module
             IModule selectedModule = modules[lbx_modules.SelectedIndex];
 
@@ -169,9 +169,7 @@ namespace THFHA_V1._0
 
             // Show the settings form
             settingsForm.ShowDialog();
-            _ = StartLogWatcher();
         }
-
         private void THFHA_MouseDown(object sender, MouseEventArgs e)
 
         {
@@ -190,7 +188,6 @@ namespace THFHA_V1._0
                 }
             }
         }
-
         private void enableModuleToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (lbx_modules.SelectedIndex >= 0)
@@ -235,7 +232,6 @@ namespace THFHA_V1._0
                 settings.Save();
             }
         }
-
         private void disableModuleToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (lbx_modules.SelectedIndex >= 0)
