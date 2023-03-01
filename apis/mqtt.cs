@@ -100,8 +100,7 @@ namespace THFHA_V1._0.apis
             connectionCheckTimer.Interval = 1000;
             //connectionCheckTimer.Elapsed += CheckConnection;
             connectionCheckTimer.Start();
-            //TODO attach to the state changed event and update mqtt each time
-            //_state.PropertyChanged += PublishMqttUpdateEvent;
+
 
         }
         /// <summary>
@@ -406,5 +405,6 @@ namespace THFHA_V1._0.apis
                 }
             }
         }
+
     }
 }
