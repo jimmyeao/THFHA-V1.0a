@@ -218,6 +218,7 @@ namespace THFHA_V1._0
                         break;
                 }
                 PopulateModulesList(); // Refresh the list to update the module status
+                settings.Save();    
             }
         }
         private void disableModuleToolStripMenuItem_Click(object sender, EventArgs e)
@@ -251,6 +252,7 @@ namespace THFHA_V1._0
                         break;
                 }
                 PopulateModulesList(); // Refresh the list to update the module status
+                settings.Save();
             }
         }
         private void lbx_modules_MouseDown(object sender, MouseEventArgs e)

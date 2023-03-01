@@ -150,12 +150,15 @@ namespace THFHA_V1._0.apis
         }
         private void OnStopMonitoringRequested()
         {
-            if (IsEnabled)
+            try
             {
                 // Stop monitoring here
                 var isMonitoring = false;
                 LoadState();
                 RestoreState(settings.SelectedWled.Ip, _originalState);
+            }catch(Exception ex)
+            {
+                Log.Error("Something went wrong stopping WLED");
             }
 
 

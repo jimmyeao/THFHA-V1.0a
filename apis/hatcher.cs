@@ -69,7 +69,7 @@ namespace THFHA_V1._0.apis
 
         private void OnStopMonitoringRequested()
         {
-            if (IsEnabled)
+            try
             {
                 // Stop monitoring here
                 var isMonitoring = false;
@@ -117,7 +117,10 @@ namespace THFHA_V1._0.apis
                 {
                     Log.Error("Error Setting hatcher state: no ip address");
                 }
-            }
+            }catch(Exception ex)
+            {
+                Log.Error("Error Setting hatcher state: " + ex);
+            }   
         }
             
 
