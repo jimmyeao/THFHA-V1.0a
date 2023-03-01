@@ -27,7 +27,16 @@ namespace THFHA_V1._0.apis
         public bool IsEnabled
         {
             get { return isEnabled; }
-            set { isEnabled = value; }
+            set
+            {
+                isEnabled = value;
+                if (!isEnabled)
+                {
+                    // Perform some actions when the module is disabled
+                    Log.Debug("mqtt Module has been disabled.");
+                    OnStopMonitoringRequested();
+                }
+            }
         }
         public string State
         {
@@ -52,6 +61,10 @@ namespace THFHA_V1._0.apis
                 _ = PublishMqttUpdate(stateInstance);
                 _ = PublishMqttConfig(stateInstance);
             }
+            else
+            {
+                OnStopMonitoringRequested();
+            }
         }
         public MqttModule()
         {
@@ -65,6 +78,10 @@ namespace THFHA_V1._0.apis
             // Handle the form closing event here
             var isMonitoring = false;
             Log.Debug("Stop monitoring requested");
+            if (IsEnabled)
+            {
+                OnStopMonitoringRequested();
+            }
         }
         public MqttModule(State state) : this()
         {
@@ -75,32 +92,33 @@ namespace THFHA_V1._0.apis
         
         public async Task Start(State state)
         {
-
-            // dispose the timer if it's already running
-            // create a new instance of the client
-            client = factory.CreateMqttClient();
-            var options = new MqttClientOptionsBuilder()
-                .WithClientId(Guid.NewGuid().ToString())
-                .WithTcpServer(settings.Mqttip)
-            .WithCredentials(settings.Mqttusername, settings.Mqttpassword)
-                .Build();
-            //start the client
-            var connectionsresponse = await client.ConnectAsync(options);
+            try
+            {
+                // dispose the timer if it's already running
+                // create a new instance of the client
+                client = factory.CreateMqttClient();
+                var options = new MqttClientOptionsBuilder()
+                    .WithClientId(Guid.NewGuid().ToString())
+                    .WithTcpServer(settings.Mqttip)
+                .WithCredentials(settings.Mqttusername, settings.Mqttpassword)
+                    .Build();
+                //start the client
+                var connectionsresponse = await client.ConnectAsync(options);
+            
             // check if it's started
             await CheckConnection();
             //send the config to broker
-            if (connectionsresponse.ResultCode == MQTTnet.Client.MqttClientConnectResultCode.Success)
-            {
-                PublishMqttUpdate(state);
-            }
-            //TODO move this to onconnected
-            Log.Information("Published MQTT Config");
-            // create a new timer and start it
-            connectionCheckTimer = new System.Timers.Timer();
-            connectionCheckTimer.Interval = 1000;
-            //connectionCheckTimer.Elapsed += CheckConnection;
-            connectionCheckTimer.Start();
+                if (connectionsresponse.ResultCode == MQTTnet.Client.MqttClientConnectResultCode.Success)
+                {
+                    _ = PublishMqttUpdate(state);
+                    _ = PublishMqttConfig(state);
 
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error("Error starting MQTT " + ex.Message);
+            }
 
         }
         /// <summary>
@@ -116,7 +134,17 @@ namespace THFHA_V1._0.apis
             Available,
             Offline
         }
+        private void OnStopMonitoringRequested()
+        {
+            // Stop monitoring here
+            var isMonitoring = false;
 
+            if (client != null)
+            {
+                client.Dispose();
+                Log.Information("MQTTclient disposed");
+            }
+        }
         public enum ActivityIcon
         {
             InACall,

@@ -20,7 +20,20 @@ namespace THFHA_V1._0.apis
         public bool IsEnabled
         {
             get { return isEnabled; }
-            set { isEnabled = value; }
+            set
+            {
+                isEnabled = value;
+                if (!isEnabled)
+                {
+                    // Perform some actions when the module is disabled
+                    Log.Debug("Hatcher Module has been disabled.");
+                    OnStopMonitoringRequested();
+                }else
+                {
+                    Log.Debug("Hatcher Module has been enabled.");
+                    _ = ShowImage(stateInstance);
+                }
+            }
         }
 
         public string State
@@ -126,10 +139,6 @@ namespace THFHA_V1._0.apis
             }
         }
 
-
-        // Initialize your module here
-
-
         // fuinctionality here
         public async Task ShowImage(State state)
         {
@@ -137,7 +146,7 @@ namespace THFHA_V1._0.apis
             {
                 return;
             }
-            await Task.Delay(500);
+            
             //_state.PropertyChanged += State_PropertyChanged;
 
             var uri = new Uri("http://" + settings.Hatcherip + ":5000/showimage");
@@ -203,7 +212,7 @@ namespace THFHA_V1._0.apis
             {
                 try
                 {
-                    Task delay = Task.Delay(500);
+                    Task delay = Task.Delay(1000);
                     var response = await client.PostAsync(uri, content);
 
                 }

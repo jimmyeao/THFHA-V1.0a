@@ -19,7 +19,15 @@ namespace THFHA_V1._0.apis
         public bool IsEnabled
         {
             get { return isEnabled; }
-            set { isEnabled = value; }
+            set { 
+                isEnabled = value;
+                if (!isEnabled)
+                {
+                    // Perform some actions when the module is disabled
+                    Log.Debug("WledModule has been disabled.");
+                    OnStopMonitoringRequested();
+                }
+            }
         }
 
         public string State
@@ -54,6 +62,10 @@ namespace THFHA_V1._0.apis
             // Handle the form closing event here
             var isMonitoring = false;
             Log.Debug("Stop monitoring requested");
+            if (IsEnabled)
+            {
+                OnStopMonitoringRequested();
+            }
         }
         private void OnStateChanged(object sender, EventArgs e)
         {
@@ -62,6 +74,13 @@ namespace THFHA_V1._0.apis
                 stateInstance = (State)sender;
                 StateChanged?.Invoke(this, EventArgs.Empty);
             }
+        }
+        private void OnStopMonitoringRequested()
+        {
+            // Stop monitoring here
+            var isMonitoring = false;
+
+
         }
 
 
