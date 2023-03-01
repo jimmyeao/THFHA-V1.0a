@@ -25,7 +25,7 @@ namespace THFHA_V1._0.apis
         }
         public void Start()
         {
-            if (settings.Hueip == null || settings.Hueusername == null)
+            if (settings.Hueip == null || settings.Hueusername == null || settings.IsMqttModuleSettingsValid == false)
             {
                 Log.Error("Hue ip or username is null");
                 return;
@@ -59,6 +59,10 @@ namespace THFHA_V1._0.apis
                 {
                     // Perform some actions when the module is disabled
                     Log.Debug("Hue Module has been disabled.");
+                    if (!settings.IsHueModuleSettingsValid)
+                    {
+                        return;
+                    }
                     OnStopMonitoringRequested();
                 }
             }
@@ -90,15 +94,23 @@ namespace THFHA_V1._0.apis
         {
             // This is the parameterless constructor that will be used by the ModuleManager class
             settings = Settings.Instance;
-            if (settings.Hueip == null || settings.Hueusername == null)
+            if (settings.Hueip == "" || settings.Hueusername == "")
             {
                 Log.Error("Hue ip or username is null");
+                return;
+            }
+            if (!settings.IsHueModuleSettingsValid)
+            {
+                Log.Warning("Hue module settings are not valid. Not subscribing to state changes.");
                 return;
             }
             ILocalHueClient localClient = new LocalHueClient(settings.Hueip);
             localClient.Initialize(settings.Hueusername);
             client = localClient;
+            stateInstance = new State(); // Initialize stateInstance here
+            stateInstance.StateChanged += OnStateChanged;
         }
+
 
         public void OnFormClosing()
         {
@@ -119,6 +131,10 @@ namespace THFHA_V1._0.apis
         }
         private void OnStopMonitoringRequested()
         {
+            if (!settings.IsHueModuleSettingsValid)
+            {
+                return;
+            }
             // Stop monitoring here
             var isMonitoring = false;
             originalState = LoadOriginalState();

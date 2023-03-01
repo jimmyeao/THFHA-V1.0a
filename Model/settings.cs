@@ -99,6 +99,12 @@ namespace THFHA_V1._0.Model
                 SettingChanged?.Invoke(this, new SettingChangedEventArgs(nameof(UseHA)));
             }
         }
+        private bool _ishaModuleSettingsValid;
+        public bool IsHaModuleSettingsValid
+        {
+            get { return _ishaModuleSettingsValid; }
+            set { _ishaModuleSettingsValid = value; OnPropertyChanged(nameof(IsHaModuleSettingsValid)); }
+        }
 
         private string _hatoken;
         public string Hatoken
@@ -129,6 +135,12 @@ namespace THFHA_V1._0.Model
                 OnPropertyChanged(nameof(UseMQTT));
                 SettingChanged?.Invoke(this, new SettingChangedEventArgs(nameof(UseMQTT))); // pass the EventArgs parameter
             }
+        }
+        private bool _ismqttModuleSettingsValid;
+        public bool IsMqttModuleSettingsValid
+        {
+            get { return _ismqttModuleSettingsValid; }
+            set { _ismqttModuleSettingsValid = value; OnPropertyChanged(nameof(IsMqttModuleSettingsValid)); }
         }
         private string _mqttip;
         public string Mqttip
@@ -170,6 +182,12 @@ namespace THFHA_V1._0.Model
                 SettingChanged?.Invoke(this, new SettingChangedEventArgs(nameof(UseHue))); // pass the EventArgs parameter
             }
         }
+        private bool _isHueModuleSettingsValid;
+        public bool IsHueModuleSettingsValid
+        {
+            get { return _isHueModuleSettingsValid; }
+            set { _isHueModuleSettingsValid = value; OnPropertyChanged(nameof(IsHueModuleSettingsValid)); }
+        }
         private string _hueip;
         public string Hueip
         {
@@ -209,6 +227,12 @@ namespace THFHA_V1._0.Model
                 SettingChanged?.Invoke(this, new SettingChangedEventArgs(nameof(UseWLED))); // pass the EventArgs parameter
             }
         }
+        private bool _isWledModuleSettingsValid;
+        public bool IsWledModuleSettingsValid
+        {
+            get { return _isWledModuleSettingsValid; }
+            set { _isWledModuleSettingsValid = value; OnPropertyChanged(nameof(IsWledModuleSettingsValid)); }
+        }
         public WLED SelectedWled { get; set; } // Add this property to store the selected WLED light.
         private List<WLED> _wledDevices = new List<WLED>();
         public List<WLED> WledDevices
@@ -243,6 +267,12 @@ namespace THFHA_V1._0.Model
                 OnPropertyChanged(nameof(UseHatcher));
                 SettingChanged?.Invoke(this, new SettingChangedEventArgs(nameof(UseHatcher))); // pass the EventArgs parameter
             }
+        }
+        private bool _isHatcherModuleSettingsValid;
+        public bool IsHatcherModuleSettingsValid
+        {
+            get { return _isHatcherModuleSettingsValid; }
+            set { _isHatcherModuleSettingsValid = value; OnPropertyChanged(nameof(IsHatcherModuleSettingsValid)); }
         }
         private string _hatcherip;
         public string Hatcherip

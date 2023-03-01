@@ -171,6 +171,7 @@ namespace THFHA_V1._0
             settingsForm.ShowDialog();
             _ = StartLogWatcher();
         }
+
         private void THFHA_MouseDown(object sender, MouseEventArgs e)
 
         {
@@ -189,11 +190,22 @@ namespace THFHA_V1._0
                 }
             }
         }
+
         private void enableModuleToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (lbx_modules.SelectedIndex >= 0)
             {
                 IModule selectedModule = modules[lbx_modules.SelectedIndex];
+
+                // Check if the module settings are valid
+                string propertyName = "Is" + selectedModule.Name + "ModuleSettingsValid";
+                var moduleSettingsValidProp = typeof(Settings).GetProperty(propertyName);
+                if (moduleSettingsValidProp != null && !(bool)moduleSettingsValidProp.GetValue(Settings.Instance))
+                {
+                    MessageBox.Show(selectedModule.Name + " module settings are invalid. Please check the settings.", "Invalid settings", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
                 selectedModule.IsEnabled = true;
                 selectedModule.UpdateSettings(selectedModule.IsEnabled); // Update the settings based on the new state of the module
                 switch (selectedModule.Name.ToLower())
@@ -223,6 +235,7 @@ namespace THFHA_V1._0
                 settings.Save();
             }
         }
+
         private void disableModuleToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (lbx_modules.SelectedIndex >= 0)

@@ -19,6 +19,12 @@ namespace THFHA_V1._0.Views
             cb_usemqtt.Checked = settings.UseMQTT;
             cb_hatchersettings.Checked = settings.UseHatcher;
             cb_usewled.Checked = settings.UseWLED;
+            cb_useha.Enabled = settings.IsHaModuleSettingsValid;
+            cb_usemqtt.Enabled = settings.IsMqttModuleSettingsValid;
+            cb_usewled.Enabled = settings.IsWledModuleSettingsValid;
+            cb_usehue.Enabled = settings.IsHueModuleSettingsValid;
+            cb_hatchersettings.Enabled = settings.IsHatcherModuleSettingsValid;
+
             if (settings.Haurl == "" || settings.Hatoken == "")
             {
                 cb_useha.Checked = false;
@@ -120,6 +126,7 @@ namespace THFHA_V1._0.Views
         #region checkboxes
         private void cb_useha_CheckedChanged(object sender, EventArgs e)
         {
+
             settings.UseHA = cb_useha.Checked;
             settings.Save();
             HomeassistantModule haModule = modules.Find(module => module.Name == "Homeassistant") as HomeassistantModule;
@@ -132,6 +139,7 @@ namespace THFHA_V1._0.Views
 
         private void cb_usehue_CheckedChanged(object sender, EventArgs e)
         {
+
             settings.UseHue = cb_usehue.Checked;
             settings.Save();
             HueModule hueModule = modules.Find(module => module.Name == "hue") as HueModule;

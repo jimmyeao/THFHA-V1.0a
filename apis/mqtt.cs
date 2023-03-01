@@ -9,7 +9,7 @@ namespace THFHA_V1._0.apis
 {
     public class MqttModule : IModule
     {
-        private string name = "MQTT";
+        private string name = "Mqtt";
         private bool isEnabled = false;
         private MqttFactory factory;
         private Settings settings;

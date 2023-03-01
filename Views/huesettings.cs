@@ -68,8 +68,12 @@ namespace THFHA_V1._0.Views
                             settings.HueLight.Add(new CustomLight(currentLight));
 
                             Log.Information("Added a Hue light called {light}", currentLight.Name);
+                            settings.IsHueModuleSettingsValid= true;
                         }
-                        PopulateListBox();
+                        if (cb_huelights.Items.Count == 0) // check if the list box is already populated
+                        {
+                            PopulateListBox();
+                        }
 
                         foreach (var light in lights)
                         {
@@ -87,6 +91,8 @@ namespace THFHA_V1._0.Views
                     {
                         MessageBox.Show("Hub Linking", "Linked failed with error " + ex.Message, MessageBoxButtons.OK);
                         Log.Information("An error occurred linking Hue hub " + ex.Message);
+                        settings.IsHueModuleSettingsValid= false;
+                        settings.Save();
                     }
             }
             else
