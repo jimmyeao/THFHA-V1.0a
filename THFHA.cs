@@ -160,6 +160,7 @@ namespace THFHA_V1._0
         }
         private void lbx_modules_DoubleClick(object sender, EventArgs e)
         {
+            _ = StopLogWatcher();
             // Get the selected module
             IModule selectedModule = modules[lbx_modules.SelectedIndex];
 
@@ -168,6 +169,7 @@ namespace THFHA_V1._0
 
             // Show the settings form
             settingsForm.ShowDialog();
+            _ = StartLogWatcher();
         }
         private void THFHA_MouseDown(object sender, MouseEventArgs e)
 
