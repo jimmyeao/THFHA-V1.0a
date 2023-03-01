@@ -69,52 +69,55 @@ namespace THFHA_V1._0.apis
 
         private void OnStopMonitoringRequested()
         {
-            // Stop monitoring here
-            var isMonitoring = false;
-
-            Log.Debug("Stop monitoring requested");
-            if (settings.Hatcherip == null)  //just in case we enabled the module with no ip address!
+            if (IsEnabled)
             {
-                return;
-            }
-            try
-            {
-                var uri = new Uri("http://" + settings.Hatcherip + ":5000/showimage");
+                // Stop monitoring here
+                var isMonitoring = false;
 
-                var keyValues = new List<KeyValuePair<string, string>>
+                Log.Debug("Stop monitoring requested");
+                if (settings.Hatcherip == null)  //just in case we enabled the module with no ip address!
+                {
+                    return;
+                }
+                try
+                {
+                    var uri = new Uri("http://" + settings.Hatcherip + ":5000/showimage");
+
+                    var keyValues = new List<KeyValuePair<string, string>>
         {
             new("image_type", "offline"),
             new("text1", "Offline")
         };
-                var content = new FormUrlEncodedContent(keyValues);
-                using (var client = new HttpClient())
-                {
-                    try
+                    var content = new FormUrlEncodedContent(keyValues);
+                    using (var client = new HttpClient())
                     {
-                        var cts = new CancellationTokenSource(TimeSpan.FromSeconds(10)); // Timeout after 10 seconds
-                                                                                         //var response = await client.PostAsync(uri, content, cts.Token);
-                        Task.WaitAll(new Task[] { client.PostAsync(uri, content, cts.Token) });
-                        Log.Information("Hatcher state set to offline");
+                        try
+                        {
+                            var cts = new CancellationTokenSource(TimeSpan.FromSeconds(10)); // Timeout after 10 seconds
+                                                                                             //var response = await client.PostAsync(uri, content, cts.Token);
+                            Task.WaitAll(new Task[] { client.PostAsync(uri, content, cts.Token) });
+                            Log.Information("Hatcher state set to offline");
 
-                    }
-                    catch (OperationCanceledException)
-                    {
-                        Log.Error("Error Setting hatcher state: request timed out");
-                        new Thread(() => System.Windows.Forms.MessageBox.Show("Hatcher request timed out.")).Start();
+                        }
+                        catch (OperationCanceledException)
+                        {
+                            Log.Error("Error Setting hatcher state: request timed out");
+                            new Thread(() => System.Windows.Forms.MessageBox.Show("Hatcher request timed out.")).Start();
 
-                    }
-                    catch (Exception ex)
-                    {
-                        Log.Error("Error Setting hatcher state" + ex);
-                        new Thread(() => System.Windows.Forms.MessageBox.Show("Hatcher failed." + Environment.NewLine + "Has the IP changed?")).Start();
+                        }
+                        catch (Exception ex)
+                        {
+                            Log.Error("Error Setting hatcher state" + ex);
+                            new Thread(() => System.Windows.Forms.MessageBox.Show("Hatcher failed." + Environment.NewLine + "Has the IP changed?")).Start();
 
+                        }
                     }
                 }
-            }
-            catch 
+                catch
                 {
-                Log.Error("Error Setting hatcher state: no ip address");
-                } 
+                    Log.Error("Error Setting hatcher state: no ip address");
+                }
+            }
         }
             
 

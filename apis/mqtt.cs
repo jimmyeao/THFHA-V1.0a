@@ -36,6 +36,10 @@ namespace THFHA_V1._0.apis
                     Log.Debug("mqtt Module has been disabled.");
                     OnStopMonitoringRequested();
                 }
+                else
+                {
+                    _ = Start(stateInstance);
+                }
             }
         }
         public void Start()
@@ -258,7 +262,7 @@ namespace THFHA_V1._0.apis
 
 
             string jsonPayload = JsonConvert.SerializeObject(payload);
-
+           
             // are we connected?
             if (!client.IsConnected)
             {
