@@ -48,7 +48,7 @@ namespace THFHA_V1._0.apis
         }
         public async void Start()
         {
-            GetCurrentState(settings.SelectedWled.Ip);
+            _originalState = GetCurrentState(settings.SelectedWled.Ip);
             //stateInstance = (State)sender;
             StateChanged?.Invoke(this, EventArgs.Empty);
             switch (stateInstance.Status)

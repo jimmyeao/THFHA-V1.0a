@@ -25,7 +25,7 @@ namespace THFHA_V1._0.apis
         }
         public void Start()
         {
-            if (settings.Hueip == null || settings.Hueusername == null || settings.IsMqttModuleSettingsValid == false)
+            if (settings.Hueip == null || settings.Hueusername == null || settings.IsHueModuleSettingsValid == false)
             {
                 Log.Error("Hue ip or username is null");
                 return;
