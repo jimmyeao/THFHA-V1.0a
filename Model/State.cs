@@ -10,11 +10,11 @@ namespace THFHA_V1._0.Model
         public event StateChangedEventHandler? StateChanged;
 
         // Define properties for the different components of the state
-        private string _status;
-        private string _activity;
-        private string _camera;
-        private string _microphone;
-        private string _message;
+        private string _status ="";
+        private string _activity = "";
+        private string _camera = "";
+        private string _microphone = "";
+        private string _message = "";
 
         public string Status
         {

@@ -22,43 +22,30 @@ namespace THFHA_V1._0.apis
         {
             get { return name; }
         }
-        public async Task<bool> EntityExists(string entity)
-        {
-            var client = new HttpClient();
-            client.BaseAddress = new Uri(settings.Haurl + "/api/");
-            client.DefaultRequestHeaders.Add("Authorization", settings.Hatoken);
-
-            var response = await client.GetAsync($"states/{entity}");
-
-            return response.IsSuccessStatusCode;
-            client.Dispose();
-        }
+        
         public async void Start()
         {
-            string oldstattus = null;
-            string oldact = null;
-            string oldcam = null;
-            string oldmic = null;
+            
             bool exists = false;
             exists = await EntityExists("sensor.thfha_status");
             if (!exists)
             {
-                 await Create_Entity("sensor.thfha_status");
+                await Create_Entity("sensor.thfha_status");
             }
             exists = await EntityExists("sensor.thfha_activity");
             if (!exists)
             {
-                 await Create_Entity("sensor.thfha_activity");
+                await Create_Entity("sensor.thfha_activity");
             }
-            exists =await EntityExists("sensor.thfha_camera");
+            exists = await EntityExists("sensor.thfha_camera");
             if (!exists)
             {
-                 await Create_Entity("sensor.thfha_camera");
+                await Create_Entity("sensor.thfha_camera");
             }
-            exists =  await EntityExists("sensor.thfha_microphone");
+            exists = await EntityExists("sensor.thfha_microphone");
             if (!exists)
             {
-                 await Create_Entity("sensor.thfha_microphone");
+                await Create_Entity("sensor.thfha_microphone");
             }
             //lets update the entities
             var statusicon = "";
@@ -126,23 +113,15 @@ namespace THFHA_V1._0.apis
                     break;
             }
 
-            if (stateInstance.Status != oldstattus)
-            {
+            
                 await UpdateEntity("sensor.thfha_status", stateInstance.Status, statusicon);
-            }
-            if (stateInstance.Activity != oldact)
-            {
+            
                 await UpdateEntity("sensor.thfha_activity", stateInstance.Activity, activityicon);
-            }
-
-            if (stateInstance.Camera == "On")
-            {
+            
                 await UpdateEntity("sensor.thfha_camera", stateInstance.Camera, "mdi:camera");
-            }
-            else
-            {
+            
                 await UpdateEntity("sensor.thfha_camera", stateInstance.Camera, "mdi:camera-off");
-            }
+            
 
 
             if (stateInstance.Microphone == "Mute Off")
@@ -156,33 +135,7 @@ namespace THFHA_V1._0.apis
 
             return;
         }
-        public async Task Create_Entity(string entity)
-        {
-            var client = new HttpClient();
-            client.BaseAddress = new Uri(settings.Haurl + "/api/");
 
-            var token = "Bearer " + settings.Hatoken;
-            client.DefaultRequestHeaders.Add("Authorization", token);
-
-            var content = new StringContent($@"{{
-                ""entity_id"": ""{entity}"",
-                ""state"": ""Unknown""
-            }}");
-
-            content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-
-            try
-            {
-                var response = await client.PostAsync($"states/{entity}", content);
-                response.EnsureSuccessStatusCode();
-            }
-            catch (Exception ex)
-            {
-                Log.Error("Error creating {entity} in Home assistant: {ex}", entity, ex.Message);
-            }
-
-            client.Dispose();
-        }
         public bool IsEnabled
         {
             get { return isEnabled; }
@@ -194,6 +147,10 @@ namespace THFHA_V1._0.apis
                     // Perform some actions when the module is disabled
                     Log.Debug("HomeAssistanrt Module has been disabled.");
                     OnStopMonitoringRequested();
+                }
+                else
+                {
+                    Start();
                 }
             }
         }
@@ -314,14 +271,13 @@ namespace THFHA_V1._0.apis
                 return;
             }
         }
-
         public HomeassistantModule()
         {
             // This is the parameterless constructor that will be used by the ModuleManager class
             this.settings = Settings.Instance;
 
 
-    }
+        }
         public void OnFormClosing()
         {
             // Handle the form closing event here
@@ -330,23 +286,21 @@ namespace THFHA_V1._0.apis
             if (IsEnabled)
             {
                 OnStopMonitoringRequested();
+
             }
         }
-
         public HomeassistantModule(State state) : this()
         {
             stateInstance = state;
             stateInstance.StateChanged += OnStateChanged;
 
             // Initialize your module here
-            
+
         }
         private void OnStopMonitoringRequested()
         {
             // Stop monitoring here
             var isMonitoring = false;
-
-
         }
         public async Task UpdateEntity(string entityName, string stateText, string icon)
         {
@@ -355,7 +309,7 @@ namespace THFHA_V1._0.apis
             var token = "Bearer " + settings.Hatoken;
             client.DefaultRequestHeaders.Add("Authorization", token);
             System.Net.Http.HttpResponseMessage response;
-            // First, check if the state object exists for the entity using a GET request
+
             try
             {
                 response = await client.GetAsync($"states/{entityName}");
@@ -366,12 +320,12 @@ namespace THFHA_V1._0.apis
                 client.Dispose();
                 return;
             }
-            //Log.Debug("Response to GET request: {response}", response);
+            Log.Debug("Response to GET request: {response}", response);
 
             if (response.IsSuccessStatusCode)
             {
                 Log.Information("Updating {entity} in Home assistant to {state}", entityName, stateText);
-                // If the state object exists, update it with a POST request
+
                 var payload = $@"{{
                     ""state"": ""{stateText}"",
                     ""entity_id"": ""{entityName}"",
@@ -384,11 +338,10 @@ namespace THFHA_V1._0.apis
                 content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
 
                 response = await client.PostAsync($"states/{entityName}", content);
-                //Log.Debug("Response to POST request: {response}", response);
+                Log.Debug("Response to POST request: {response}", response);
             }
             else
             {
-                // If the state object does not exist, log an error and return
                 Log.Error("Error updating {entity} in Home assistant: {status}", entityName, response.StatusCode);
                 client.Dispose();
                 return;
@@ -397,6 +350,46 @@ namespace THFHA_V1._0.apis
             response.EnsureSuccessStatusCode();
             client.Dispose();
         }
+        public async Task Create_Entity(string entity)
+        {
+            var client = new HttpClient();
+            client.BaseAddress = new Uri(settings.Haurl + "/api/");
+
+            var token = "Bearer " + settings.Hatoken;
+            client.DefaultRequestHeaders.Add("Authorization", token);
+
+            var content = new StringContent($@"{{
+                ""entity_id"": ""{entity}"",
+                ""state"": ""Unknown""
+            }}");
+
+            content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+            try
+            {
+                var response = await client.PostAsync($"states/{entity}", content);
+                response.EnsureSuccessStatusCode();
+            }
+            catch (Exception ex)
+            {
+                Log.Error("Error creating {entity} in Home assistant: {ex}", entity, ex.Message);
+            }
+
+            client.Dispose();
+        }
+        public async Task<bool> EntityExists(string entity)
+                {
+                    var client = new HttpClient();
+                    client.BaseAddress = new Uri(settings.Haurl + "/api/");
+                    client.DefaultRequestHeaders.Add("Authorization", settings.Hatoken);
+
+                    var response = await client.GetAsync($"states/{entity}");
+
+                    return response.IsSuccessStatusCode;
+                    client.Dispose();
+                }
+
+
     }
 
 }
