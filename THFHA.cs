@@ -140,6 +140,10 @@ namespace THFHA_V1._0
             {
                 await logWatcher.Stop();
             }
+            foreach (IModule module in modules)
+            {
+                module.OnFormClosing();
+            }
             statuslabel.Text = "Monitoring Stopped";
         }
         private void lbx_modules_DoubleClick(object sender, EventArgs e)

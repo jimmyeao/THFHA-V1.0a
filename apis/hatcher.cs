@@ -214,6 +214,7 @@ namespace THFHA_V1._0.apis
                 {
                     Task delay = Task.Delay(1000);
                     var response = await client.PostAsync(uri, content);
+                    Task delay2 = Task.Delay(1000);
 
                 }
                 catch (Exception ex)
