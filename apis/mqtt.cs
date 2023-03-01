@@ -205,7 +205,7 @@ namespace THFHA_V1._0.apis
             {
                 client = new
                 {
-                    //value = state.Running,
+                    //value = state.Running,   need to fix this
                     value = "Running",
                     icon = new { value = "mdi:television-classic" }
                 },
