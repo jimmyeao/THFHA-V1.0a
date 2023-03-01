@@ -7,7 +7,7 @@ namespace THFHA_V1._0
     public partial class THFHA : Form
     {
         private List<IModule> modules;
-        private LogWatcher logWatcher;
+        public static LogWatcher logWatcher;
         private State state;
         private Settings settings;
         public event EventHandler? StopMonitoringRequested;
@@ -59,6 +59,10 @@ namespace THFHA_V1._0
             else
             {
                 btn_start.Enabled = true; btn_stop.Enabled = false;
+                foreach (IModule module in modules)
+                {
+                    module.OnFormClosing();
+                }
             }
 
         }
@@ -128,17 +132,29 @@ namespace THFHA_V1._0
             logWatcher = new LogWatcher(new State());
 
             await logWatcher.Start();
+            Task delay = Task.Delay(1000);
             statuslabel.Text = "Monitoring Started";
             UpdateLabel(lbl_status, state.Status);
             UpdateLabel(lbl_activity, state.Activity);
             UpdateLabel(lbl_camera, state.Camera);
             UpdateLabel(lbl_mute, state.Microphone);
+            foreach (IModule module in modules)
+            {
+                if (module.IsEnabled)
+                {
+                    module.Start();
+                }
+            }
         }
         private async Task StopLogWatcher()
         {
             if (logWatcher != null)
             {
                 await logWatcher.Stop();
+            }
+            foreach (IModule module in modules)
+            {
+                module.OnFormClosing();
             }
             statuslabel.Text = "Monitoring Stopped";
         }
@@ -202,6 +218,7 @@ namespace THFHA_V1._0
                         break;
                 }
                 PopulateModulesList(); // Refresh the list to update the module status
+                settings.Save();    
             }
         }
         private void disableModuleToolStripMenuItem_Click(object sender, EventArgs e)
@@ -235,6 +252,7 @@ namespace THFHA_V1._0
                         break;
                 }
                 PopulateModulesList(); // Refresh the list to update the module status
+                settings.Save();
             }
         }
         private void lbx_modules_MouseDown(object sender, MouseEventArgs e)
@@ -289,6 +307,14 @@ namespace THFHA_V1._0
                 module.OnFormClosing();
             }
             ApplicationClosing?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void THFHA_Shown(object sender, EventArgs e)
+        {
+            UpdateLabel(lbl_status, state.Status);
+            UpdateLabel(lbl_activity, state.Activity);
+            UpdateLabel(lbl_camera, state.Camera);
+            UpdateLabel(lbl_mute, state.Microphone);
         }
     }
 }

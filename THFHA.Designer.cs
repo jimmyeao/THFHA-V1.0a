@@ -240,6 +240,7 @@
             this.Name = "THFHA";
             this.Text = "THFHA";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.THFHA_FormClosing);
+            this.Shown += new System.EventHandler(this.THFHA_Shown);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.contextMenuStrip1.ResumeLayout(false);

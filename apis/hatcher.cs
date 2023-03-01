@@ -1,4 +1,5 @@
 ﻿using Serilog;
+using System.Reflection;
 using THFHA_V1._0.Model;
 using THFHA_V1._0.Views;
 
@@ -11,16 +12,32 @@ namespace THFHA_V1._0.apis
         private State stateInstance;
         private Settings settings;
         public event EventHandler? StateChanged;
-
+        
         public string Name
         {
             get { return name; }
         }
-
+        public void Start()
+        {
+            ShowImage(stateInstance);
+        }
         public bool IsEnabled
         {
             get { return isEnabled; }
-            set { isEnabled = value; }
+            set
+            {
+                isEnabled = value;
+                if (!isEnabled)
+                {
+                    // Perform some actions when the module is disabled
+                    Log.Debug("Hatcher Module has been disabled.");
+                    OnStopMonitoringRequested();
+                }else
+                {
+                    Log.Debug("Hatcher Module has been enabled.");
+                    _ = ShowImage(stateInstance);
+                }
+            }
         }
 
         public string State
@@ -52,52 +69,58 @@ namespace THFHA_V1._0.apis
 
         private void OnStopMonitoringRequested()
         {
-            // Stop monitoring here
-            var isMonitoring = false;
-
-            Log.Debug("Stop monitoring requested");
-            if (settings.Hatcherip == null)  //just in case we enabled the module with no ip address!
-            {
-                return;
-            }
             try
             {
-                var uri = new Uri("http://" + settings.Hatcherip + ":5000/showimage");
+                // Stop monitoring here
+                var isMonitoring = false;
 
-                var keyValues = new List<KeyValuePair<string, string>>
+                Log.Debug("Stop monitoring requested");
+                if (settings.Hatcherip == null)  //just in case we enabled the module with no ip address!
+                {
+                    return;
+                }
+                try
+                {
+                    var uri = new Uri("http://" + settings.Hatcherip + ":5000/showimage");
+
+                    var keyValues = new List<KeyValuePair<string, string>>
         {
             new("image_type", "offline"),
             new("text1", "Offline")
         };
-                var content = new FormUrlEncodedContent(keyValues);
-                using (var client = new HttpClient())
-                {
-                    try
+                    var content = new FormUrlEncodedContent(keyValues);
+                    using (var client = new HttpClient())
                     {
-                        var cts = new CancellationTokenSource(TimeSpan.FromSeconds(10)); // Timeout after 10 seconds
-                                                                                         //var response = await client.PostAsync(uri, content, cts.Token);
-                        Task.WaitAll(new Task[] { client.PostAsync(uri, content, cts.Token) });
-                        Log.Information("Hatcher state set to offline");
+                        try
+                        {
+                            var cts = new CancellationTokenSource(TimeSpan.FromSeconds(10)); // Timeout after 10 seconds
+                                                                                             //var response = await client.PostAsync(uri, content, cts.Token);
+                            Task.WaitAll(new Task[] { client.PostAsync(uri, content, cts.Token) });
+                            Log.Information("Hatcher state set to offline");
 
-                    }
-                    catch (OperationCanceledException)
-                    {
-                        Log.Error("Error Setting hatcher state: request timed out");
-                        new Thread(() => System.Windows.Forms.MessageBox.Show("Hatcher request timed out.")).Start();
+                        }
+                        catch (OperationCanceledException)
+                        {
+                            Log.Error("Error Setting hatcher state: request timed out");
+                            new Thread(() => System.Windows.Forms.MessageBox.Show("Hatcher request timed out.")).Start();
 
-                    }
-                    catch (Exception ex)
-                    {
-                        Log.Error("Error Setting hatcher state" + ex);
-                        new Thread(() => System.Windows.Forms.MessageBox.Show("Hatcher failed." + Environment.NewLine + "Has the IP changed?")).Start();
+                        }
+                        catch (Exception ex)
+                        {
+                            Log.Error("Error Setting hatcher state" + ex);
+                            new Thread(() => System.Windows.Forms.MessageBox.Show("Hatcher failed." + Environment.NewLine + "Has the IP changed?")).Start();
 
+                        }
                     }
                 }
-            }
-            catch 
+                catch
                 {
-                Log.Error("Error Setting hatcher state: no ip address");
-                } 
+                    Log.Error("Error Setting hatcher state: no ip address");
+                }
+            }catch(Exception ex)
+            {
+                Log.Error("Error Setting hatcher state: " + ex);
+            }   
         }
             
 
@@ -111,7 +134,7 @@ namespace THFHA_V1._0.apis
         {
             stateInstance = state;
             stateInstance.StateChanged += OnStateChanged;
-
+            
             // Initialize your module here
         }
 
@@ -126,98 +149,102 @@ namespace THFHA_V1._0.apis
             }
         }
 
-
-        // Initialize your module here
-
-
         // fuinctionality here
         public async Task ShowImage(State state)
         {
-            if (settings.Hatcherip == "")
+            if (isEnabled && THFHA.logWatcher?.IsRunning == true)
             {
-                return;
-            }
-            await Task.Delay(500);
-            //_state.PropertyChanged += State_PropertyChanged;
-
-            var uri = new Uri("http://" + settings.Hatcherip + ":5000/showimage");
-
-            Log.Information("Changing Hatcher state to {state} ", state.Status);
 
 
-            //List<KeyValuePair<string, string>> keyValues;
-            var keyValues = state.Status switch
-            {
-                "Available" => new List<KeyValuePair<string, string>>
+
+
+
+                if (settings.Hatcherip == "")
+                {
+                    return;
+                }
+
+                //_state.PropertyChanged += State_PropertyChanged;
+
+                var uri = new Uri("http://" + settings.Hatcherip + ":5000/showimage");
+
+                Log.Information("Changing Hatcher state to {state} ", state.Status);
+
+
+                //List<KeyValuePair<string, string>> keyValues;
+                var keyValues = state.Status switch
+                {
+                    "Available" => new List<KeyValuePair<string, string>>
                     {
                         new("image_type", "available"),
                         new("text1", "Available")
                     },
-                "Busy" => new List<KeyValuePair<string, string>>
+                    "Busy" => new List<KeyValuePair<string, string>>
                     {
                         new("image_type", "busy"),
                         new("text1", "Busy")
                     },
-                "Do not disturb" => new List<KeyValuePair<string, string>>
+                    "Do not disturb" => new List<KeyValuePair<string, string>>
                     {
                         new("image_type", "dnd"),
                         new("text1", "Do Not"),
                         new("text2", "Disturb")
                     },
-                "Offline" => new List<KeyValuePair<string, string>>
+                    "Offline" => new List<KeyValuePair<string, string>>
                     {
                         new("image_type", "offline"),
                         new("text1", "Offline")
                     },
-                "On the Phone" => new List<KeyValuePair<string, string>>
+                    "On the Phone" => new List<KeyValuePair<string, string>>
                     {
                         new("image_type", "onthephone"),
                         new("text1", "On The Phone")
                     },
-                "Be Right Back" => new List<KeyValuePair<string, string>>
+                    "Be Right Back" => new List<KeyValuePair<string, string>>
                     {
                         new("image_type", "away"),
                         new("text1", "Be Right Back")
                     },
-                "Away" => new List<KeyValuePair<string, string>>
+                    "Away" => new List<KeyValuePair<string, string>>
                     {
                         new("image_type", "away"),
                         new("text1", "Away")
                     },
-                ".." => new List<KeyValuePair<string, string>>
+                    ".." => new List<KeyValuePair<string, string>>
                     {
                         new("image_type", "offline"),
                         new("text1", "Offline")
                     },
-                _ => new List<KeyValuePair<string, string>>
+                    _ => new List<KeyValuePair<string, string>>
                     {
                         new("image_type", "offline"),
                         new("text1", "Offline")
                     }
 
-            };
+                };
 
 
-            var content = new FormUrlEncodedContent(keyValues);
-            using (var client = new HttpClient())
-            {
-                try
+                var content = new FormUrlEncodedContent(keyValues);
+                using (var client = new HttpClient())
                 {
-                    Task delay = Task.Delay(500);
-                    var response = await client.PostAsync(uri, content);
+                    try
+                    {
+                        Task delay = Task.Delay(1000);
+                        var response = await client.PostAsync(uri, content);
+                        Task delay2 = Task.Delay(1000);
 
-                }
-                catch (Exception ex)
-                {
-                    Log.Error("Error Setting hatcher state" + ex);
-                    new Thread(() => System.Windows.Forms.MessageBox.Show("Hatcher failed." + Environment.NewLine + "Has the IP changed?")).Start();
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Error("Error Setting hatcher state" + ex);
+                        new Thread(() => System.Windows.Forms.MessageBox.Show("Hatcher failed." + Environment.NewLine + "Has the IP changed?")).Start();
 
+                    }
                 }
+
+
+
             }
-
-
-
-
 
         }
     }

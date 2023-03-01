@@ -1,6 +1,16 @@
-﻿using Serilog;
+﻿using Newtonsoft.Json;
+using Q42.HueApi;
+using Q42.HueApi.ColorConverters;
+using Q42.HueApi.ColorConverters.Original;
+using Q42.HueApi.Interfaces;
+using Serilog;
+using System.ComponentModel;
+using System.Runtime;
 using THFHA_V1._0.Model;
 using THFHA_V1._0.Views;
+using static System.Windows.Forms.AxHost;
+using State = THFHA_V1._0.Model.State;
+
 namespace THFHA_V1._0.apis
 {
     public class HueModule : IModule
@@ -8,16 +18,48 @@ namespace THFHA_V1._0.apis
         private string name = "Hue";
         private bool isEnabled = false;
         private State stateInstance;
+        private Settings settings;
+        private Q42.HueApi.State? originalState;
+        private IHueClient client;
         public event EventHandler? StateChanged;
         public string Name
         {
             get { return name; }
         }
+        public void Start()
+        {
+            _ = GetState();
+            _ = PublishHueUpdate(stateInstance);
+        }
+        private async Task GetState()
+        {
+        var light = await client.GetLightAsync(settings.SelectedLightId);
+        Log.Information("got the state of {light}", light);
+                if (light != null)
+                {
+                    originalState = light.State;
+
+                    // Save the original state to a file
+                    var json = JsonConvert.SerializeObject(originalState);
+        File.WriteAllText("originalState.json", json);
+                    Log.Information("Original state saved to file.");
+                }
+   
+        }
 
         public bool IsEnabled
         {
             get { return isEnabled; }
-            set { isEnabled = value; }
+            set
+            {
+                isEnabled = value;
+                if (!isEnabled)
+                {
+                    // Perform some actions when the module is disabled
+                    Log.Debug("Hue Module has been disabled.");
+                    OnStopMonitoringRequested();
+                }
+            }
         }
 
         public string State
@@ -39,17 +81,27 @@ namespace THFHA_V1._0.apis
             {
                 stateInstance = (State)sender;
                 StateChanged?.Invoke(this, EventArgs.Empty);
+                _ = PublishHueUpdate(stateInstance);
             }
         }
         public HueModule()
         {
             // This is the parameterless constructor that will be used by the ModuleManager class
+            this.settings = Settings.Instance;
+            ILocalHueClient localClient = new LocalHueClient(settings.Hueip);
+            localClient.Initialize(settings.Hueusername);
+            client = localClient;
         }
+
         public void OnFormClosing()
         {
             // Handle the form closing event here
             var isMonitoring = false;
             Log.Debug("Stop monitoring requested");
+            if (IsEnabled)
+            {
+                OnStopMonitoringRequested();
+            }
         }
 
         public HueModule(State state) : this()
@@ -57,6 +109,90 @@ namespace THFHA_V1._0.apis
             stateInstance = state;
             stateInstance.StateChanged += OnStateChanged;
             // Initialize your module here
+        }
+        private void OnStopMonitoringRequested()
+        {
+            // Stop monitoring here
+            var isMonitoring = false;
+            originalState = LoadOriginalState();
+            if (originalState != null)
+            {
+                Log.Information("Restoring state of hue lights");
+                var client = new LocalHueClient(settings.Hueip);
+                client.Initialize(settings.Hueusername);
+                var command = new LightCommand()
+                {
+                    On = originalState.On,
+                    Brightness = originalState.Brightness,
+                    Hue = originalState.Hue,
+                    Saturation = originalState.Saturation
+                };
+                try
+                {
+                    Task.WaitAll(new Task[] { client.SendCommandAsync(command, new[] { settings.SelectedLightId }) });
+                }
+                catch (Exception ex)
+                {
+                    Log.Error("Failed to restore state of hue lights: {ex}", ex.Message);
+                }
+
+            }
+
+        }
+        private async Task PublishHueUpdate(State state)
+        {
+           
+
+            var color = GetRGBColorForState(state);
+
+            var client = new LocalHueClient(settings.Hueip);
+            client.Initialize(settings.Hueusername);
+
+            var command = new LightCommand { On = true }.SetColor(color);
+            await client.SendCommandAsync(command, new List<string> { settings.SelectedLightId });
+
+
+
+            Log.Information("Hue Light set to {status}", state.Status);
+        }
+
+        private RGBColor GetRGBColorForState(State state)
+        {
+            return state.Status switch
+            {
+                "Busy" => new RGBColor("ff0000"),
+                "On the Phone" => new RGBColor("ff0000"),
+                "Do not disturb" => new RGBColor("ff0000"),
+                "Away" => new RGBColor("ffff00"),
+                "Be right back" => new RGBColor("ffff00"),
+                "Available" => new RGBColor("00ff00"),
+                "Offline" => new RGBColor("000000"),
+                "In a meeting" => new RGBColor("ff0000"),
+                "Out of office" => new RGBColor("A020F0"),
+                "Be Right Back" => new RGBColor("ffff00"),
+                ".." => new RGBColor("000000"),
+                "" => new RGBColor("000000"),
+                _ => throw new ArgumentException($"Invalid state: {state.Status}")
+            };
+        }
+        private Q42.HueApi.State? LoadOriginalState()
+        {
+            if (File.Exists("originalState.json"))
+            {
+                try
+                {
+                    var json = File.ReadAllText("originalState.json");
+                    var state = JsonConvert.DeserializeObject<Q42.HueApi.State>(json);
+                    Log.Information("Original state loaded from file.");
+                    return state;
+                }
+                catch (Exception ex)
+                {
+                    Log.Error("Failed to load original state from file: {ex}", ex.Message);
+                }
+            }
+
+            return null;
         }
     }
 
