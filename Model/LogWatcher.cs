@@ -39,6 +39,7 @@ namespace THFHA_V1._0.Model
         }
         private async Task ReadLogFileAsync(CancellationToken cancellationToken)
         {
+
             while (!_cts.IsCancellationRequested)
             {
                 try
@@ -109,6 +110,7 @@ namespace THFHA_V1._0.Model
                 if (state.Microphone != _mute) { state.Microphone = _mute; }
                 await Task.Delay(1000, cancellationToken); // Example delay
             }
+
         }
         private readonly Dictionary<string, (string StatusText, string ActivityText)> matchDictionary = new()
         {
