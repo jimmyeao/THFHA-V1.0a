@@ -15,7 +15,7 @@ namespace THFHA_V1._0.Views
 
             InitializeComponent();
 
-            this.settings = Settings.Instance;
+            settings = Settings.Instance;
             tb_hueip.Text = settings.Hueip;
             // Set the selected item in the list box to the previously selected light
             if (!string.IsNullOrEmpty(settings.SelectedLightId))
@@ -85,7 +85,7 @@ namespace THFHA_V1._0.Views
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show("Hub Linking", "Linked failed with error " +ex.Message, MessageBoxButtons.OK);
+                        MessageBox.Show("Hub Linking", "Linked failed with error " + ex.Message, MessageBoxButtons.OK);
                         Log.Information("An error occurred linking Hue hub " + ex.Message);
                     }
             }

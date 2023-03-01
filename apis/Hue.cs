@@ -4,11 +4,8 @@ using Q42.HueApi.ColorConverters;
 using Q42.HueApi.ColorConverters.Original;
 using Q42.HueApi.Interfaces;
 using Serilog;
-using System.ComponentModel;
-using System.Runtime;
 using THFHA_V1._0.Model;
 using THFHA_V1._0.Views;
-using static System.Windows.Forms.AxHost;
 using State = THFHA_V1._0.Model.State;
 
 namespace THFHA_V1._0.apis
@@ -28,23 +25,28 @@ namespace THFHA_V1._0.apis
         }
         public void Start()
         {
+            if (settings.Hueip == null || settings.Hueusername == null)
+            {
+                Log.Error("Hue ip or username is null");
+                return;
+            }
             _ = GetState();
             _ = PublishHueUpdate(stateInstance);
         }
         private async Task GetState()
         {
-        var light = await client.GetLightAsync(settings.SelectedLightId);
-        Log.Information("got the state of {light}", light);
-                if (light != null)
-                {
-                    originalState = light.State;
+            var light = await client.GetLightAsync(settings.SelectedLightId);
+            Log.Information("got the state of {light}", light);
+            if (light != null)
+            {
+                originalState = light.State;
 
-                    // Save the original state to a file
-                    var json = JsonConvert.SerializeObject(originalState);
-        File.WriteAllText("originalState.json", json);
-                    Log.Information("Original state saved to file.");
-                }
-   
+                // Save the original state to a file
+                var json = JsonConvert.SerializeObject(originalState);
+                File.WriteAllText("originalState.json", json);
+                Log.Information("Original state saved to file.");
+            }
+
         }
 
         public bool IsEnabled
@@ -87,7 +89,12 @@ namespace THFHA_V1._0.apis
         public HueModule()
         {
             // This is the parameterless constructor that will be used by the ModuleManager class
-            this.settings = Settings.Instance;
+            settings = Settings.Instance;
+            if (settings.Hueip == null || settings.Hueusername == null)
+            {
+                Log.Error("Hue ip or username is null");
+                return;
+            }
             ILocalHueClient localClient = new LocalHueClient(settings.Hueip);
             localClient.Initialize(settings.Hueusername);
             client = localClient;
@@ -141,7 +148,7 @@ namespace THFHA_V1._0.apis
         }
         private async Task PublishHueUpdate(State state)
         {
-           
+
 
             var color = GetRGBColorForState(state);
 

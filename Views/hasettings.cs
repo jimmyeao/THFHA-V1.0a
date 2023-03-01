@@ -14,7 +14,7 @@ namespace THFHA_V1._0.Views
         public hasettings()
         {
             InitializeComponent();
-            this.settings = Settings.Instance;
+            settings = Settings.Instance;
             richTextBox1.Text = settings.Hatoken;
             tb_haurl.Text = settings.Haurl;
 

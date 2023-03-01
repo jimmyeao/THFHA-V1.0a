@@ -13,7 +13,7 @@ namespace THFHA_V1._0.Views
         public hatchersettings()
         {
             InitializeComponent();
-            this.settings = Settings.Instance;      //instantiate our settings
+            settings = Settings.Instance;      //instantiate our settings
             textBox1.Text = settings.Hatcherip;     //load the settings into the form
         }
 
@@ -50,9 +50,9 @@ namespace THFHA_V1._0.Views
 
                             Log.Information("The server is running and listening on {0}:{1}", ipAddress, port);
                             var title = "Connection Success";
-                            var message = "The server is running and listening on "+ ipAddress+", " + port;
+                            var message = "The server is running and listening on " + ipAddress + ", " + port;
                             MessageBox.Show(message, title);
-                            toolStripStatusLabel1.Text= message;
+                            toolStripStatusLabel1.Text = message;
                         }
 
                     }
@@ -62,7 +62,7 @@ namespace THFHA_V1._0.Views
                         var title = "Connection Error";
                         var message = "An error occurred while trying to connect to the server: " + ex.Message;
                         MessageBox.Show(message, title);
-                        toolStripStatusLabel1.Text+= message;
+                        toolStripStatusLabel1.Text += message;
 
                         // Log the exception for debugging purposes
                         Log.Error(ex, "An error occurred while trying to connect to the server.");

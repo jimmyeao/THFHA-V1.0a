@@ -15,8 +15,8 @@ namespace THFHA_V1._0.Model
         {
             if (light != null)
             {
-                this.Id = light.Id;
-                this.Name = light.Name;
+                Id = light.Id;
+                Name = light.Name;
                 // Other properties
             }
         }
@@ -26,8 +26,8 @@ namespace THFHA_V1._0.Model
         {
             return new Light()
             {
-                Id = this.Id,
-                Name = this.Name,
+                Id = Id,
+                Name = Name,
                 // Other properties
             };
         }

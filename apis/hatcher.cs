@@ -1,5 +1,4 @@
 ﻿using Serilog;
-using System.Reflection;
 using THFHA_V1._0.Model;
 using THFHA_V1._0.Views;
 
@@ -12,7 +11,7 @@ namespace THFHA_V1._0.apis
         private State stateInstance;
         private Settings settings;
         public event EventHandler? StateChanged;
-        
+
         public string Name
         {
             get { return name; }
@@ -32,7 +31,8 @@ namespace THFHA_V1._0.apis
                     // Perform some actions when the module is disabled
                     Log.Debug("Hatcher Module has been disabled.");
                     OnStopMonitoringRequested();
-                }else
+                }
+                else
                 {
                     Log.Debug("Hatcher Module has been enabled.");
                     _ = ShowImage(stateInstance);
@@ -117,24 +117,25 @@ namespace THFHA_V1._0.apis
                 {
                     Log.Error("Error Setting hatcher state: no ip address");
                 }
-            }catch(Exception ex)
+            }
+            catch (Exception ex)
             {
                 Log.Error("Error Setting hatcher state: " + ex);
-            }   
+            }
         }
-            
+
 
         public HatcherModule()
         {
             // This is the parameterless constructor that will be used by the ModuleManager class
-            this.settings = Settings.Instance;
+            settings = Settings.Instance;
         }
 
         public HatcherModule(State state) : this()
         {
             stateInstance = state;
             stateInstance.StateChanged += OnStateChanged;
-            
+
             // Initialize your module here
         }
 

@@ -11,7 +11,7 @@ namespace THFHA_V1._0.Views
         public mqttsettings()
         {
             InitializeComponent();
-            this.settings = Settings.Instance;
+            settings = Settings.Instance;
             tb_mqttip.Text = settings.Mqttip;
             tb_mqttuser.Text = settings.Mqttusername;
             tb_mqttpass.Text = settings.Mqttpassword;
@@ -84,7 +84,7 @@ namespace THFHA_V1._0.Views
 
         private void mqtttopic_TextChanged(object sender, EventArgs e)
         {
-            settings.Mqtttopic= tb_mqtttopic.Text;
+            settings.Mqtttopic = tb_mqtttopic.Text;
             settings.Save();
         }
     }

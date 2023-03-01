@@ -16,7 +16,7 @@ namespace THFHA_V1._0
         public THFHA(List<IModule> modules, State state)
         {
             InitializeComponent();
-            this.settings = Settings.Instance;
+            settings = Settings.Instance;
             this.modules = modules;
             this.state = state; // set the state
             // Initialize the IsEnabled property of each module based on the value stored in the Settings singleton
@@ -114,7 +114,7 @@ namespace THFHA_V1._0
             }
 
             // Refresh the modules list in the THFHA form
-            if (this.Owner is THFHA thfha)
+            if (Owner is THFHA thfha)
             {
                 thfha.PopulateModulesList();
             }
@@ -198,7 +198,7 @@ namespace THFHA_V1._0
                 {
                     case "hue":
                         Settings.Instance.UseHue = selectedModule.IsEnabled;
-                        statuslabel.Text= selectedModule.Name+" Enabled";
+                        statuslabel.Text = selectedModule.Name + " Enabled";
                         break;
                     case "homeassistant":
                         Settings.Instance.UseHA = selectedModule.IsEnabled;
@@ -218,7 +218,7 @@ namespace THFHA_V1._0
                         break;
                 }
                 PopulateModulesList(); // Refresh the list to update the module status
-                settings.Save();    
+                settings.Save();
             }
         }
         private void disableModuleToolStripMenuItem_Click(object sender, EventArgs e)

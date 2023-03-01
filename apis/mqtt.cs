@@ -2,10 +2,7 @@
 using MQTTnet.Client;
 using Newtonsoft.Json;
 using Serilog;
-using System.ComponentModel;
-using System.Runtime;
 using System.Text;
-using System.Timers;
 using THFHA_V1._0.Model;
 using THFHA_V1._0.Views;
 namespace THFHA_V1._0.apis
@@ -76,9 +73,9 @@ namespace THFHA_V1._0.apis
         }
         public MqttModule()
         {
-            this.settings = Settings.Instance;
-            this.factory = new MqttFactory(); // Initialize the factory object
-            this.settings = Settings.Instance;
+            settings = Settings.Instance;
+            factory = new MqttFactory(); // Initialize the factory object
+            settings = Settings.Instance;
             // This is the parameterless constructor that will be used by the ModuleManager class
         }
         public void OnFormClosing()
@@ -97,7 +94,7 @@ namespace THFHA_V1._0.apis
             stateInstance.StateChanged += OnStateChanged;
             // Initialize your module here
         }
-        
+
         public async Task Start(State state)
         {
             try
@@ -112,10 +109,10 @@ namespace THFHA_V1._0.apis
                     .Build();
                 //start the client
                 var connectionsresponse = await client.ConnectAsync(options);
-            
-            // check if it's started
-            await CheckConnection();
-            //send the config to broker
+
+                // check if it's started
+                await CheckConnection();
+                //send the config to broker
                 if (connectionsresponse.ResultCode == MQTTnet.Client.MqttClientConnectResultCode.Success)
                 {
                     _ = PublishMqttUpdate(state);
@@ -179,9 +176,9 @@ namespace THFHA_V1._0.apis
             };
         }
         private async Task CheckConnection()
-                {
+        {
 
-                }
+        }
         static string GetActivityIcon(string activity)
         {
             return activity switch
@@ -262,7 +259,7 @@ namespace THFHA_V1._0.apis
 
 
             string jsonPayload = JsonConvert.SerializeObject(payload);
-           
+
             // are we connected?
             if (!client.IsConnected)
             {
@@ -282,7 +279,7 @@ namespace THFHA_V1._0.apis
         }
         private async Task PublishMqttConfig(State state)
         {
-            if( settings.Mqtttopic == "")
+            if (settings.Mqtttopic == "")
             {
                 settings.Mqtttopic = "Default";
             }

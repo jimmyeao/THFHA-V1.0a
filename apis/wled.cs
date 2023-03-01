@@ -1,8 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Serilog;
-using System.ComponentModel;
 using System.Dynamic;
-using System.Runtime;
 using System.Text;
 using System.Text.Json;
 using THFHA_V1._0.Model;
@@ -32,7 +30,8 @@ namespace THFHA_V1._0.apis
         public bool IsEnabled
         {
             get { return isEnabled; }
-            set { 
+            set
+            {
                 isEnabled = value;
                 if (!isEnabled)
                 {
@@ -96,7 +95,7 @@ namespace THFHA_V1._0.apis
         public WledModule()
         {
             // This is the parameterless constructor that will be used by the ModuleManager class
-            this.settings = Settings.Instance;
+            settings = Settings.Instance;
             _colorLock = new SemaphoreSlim(1);
         }
 
@@ -156,7 +155,8 @@ namespace THFHA_V1._0.apis
                 var isMonitoring = false;
                 LoadState();
                 RestoreState(settings.SelectedWled.Ip, _originalState);
-            }catch(Exception ex)
+            }
+            catch (Exception ex)
             {
                 Log.Error("Something went wrong stopping WLED");
             }
@@ -171,12 +171,12 @@ namespace THFHA_V1._0.apis
             {
                 string json = File.ReadAllText(filePath);
                 _originalState = JsonConvert.DeserializeObject<dynamic>(json);
-              
+
             }
             else
             {
                 _originalState = new ExpandoObject();
-                
+
             }
         }
         private void SaveState()
@@ -254,41 +254,41 @@ namespace THFHA_V1._0.apis
 
         public async Task ChangeColor(string newColor)
         {
-            
-                await _colorLock.WaitAsync();
-                try
-                {
-                    // Creating a payload to send to the WLED light
-                    var colorArray = newColor.Split(',').Select(x => int.Parse(x)).ToArray();
-                    var payload = new { on = true, seg = new[] { new { col = new[] { colorArray } } } };
-                    var jsonPayload = System.Text.Json.JsonSerializer.Serialize(payload, new JsonSerializerOptions());
-                    var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
-                    // Sending a PUT request to change the color of the WLED light
-                    using var client = new HttpClient();
-                    //TODO change below to use the ip instead of the .local name.
-                    var response = await client.PutAsync($"http://{settings.SelectedWled.Ip}/json/state", content);
-                    Log.Information("Changing state of {WledDev} to {jsonPayload}", settings.WledDev.ToString(), jsonPayload);
-                    if (!response.IsSuccessStatusCode)
-                    {
-                        var responseContent = await response.Content.ReadAsStringAsync();
-                        Log.Information("Error changing state of WLED light {responseContent}", responseContent.ToString());
-                    }
-                }
-                catch (HttpRequestException e)
-                {
 
-                    Log.Error("Error connecting to {WLEDDev}: {Message}", settings.WledDev.ToString(), e.Message.ToString());
-                }
-                catch (FormatException e)
+            await _colorLock.WaitAsync();
+            try
+            {
+                // Creating a payload to send to the WLED light
+                var colorArray = newColor.Split(',').Select(x => int.Parse(x)).ToArray();
+                var payload = new { on = true, seg = new[] { new { col = new[] { colorArray } } } };
+                var jsonPayload = System.Text.Json.JsonSerializer.Serialize(payload, new JsonSerializerOptions());
+                var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
+                // Sending a PUT request to change the color of the WLED light
+                using var client = new HttpClient();
+                //TODO change below to use the ip instead of the .local name.
+                var response = await client.PutAsync($"http://{settings.SelectedWled.Ip}/json/state", content);
+                Log.Information("Changing state of {WledDev} to {jsonPayload}", settings.WledDev.ToString(), jsonPayload);
+                if (!response.IsSuccessStatusCode)
                 {
+                    var responseContent = await response.Content.ReadAsStringAsync();
+                    Log.Information("Error changing state of WLED light {responseContent}", responseContent.ToString());
+                }
+            }
+            catch (HttpRequestException e)
+            {
 
-                    Log.Error("Error parsing color value {messsage}", e.Message.ToString());
-                }
-                finally
-                {
-                    _colorLock.Release();
-                }
-            
+                Log.Error("Error connecting to {WLEDDev}: {Message}", settings.WledDev.ToString(), e.Message.ToString());
+            }
+            catch (FormatException e)
+            {
+
+                Log.Error("Error parsing color value {messsage}", e.Message.ToString());
+            }
+            finally
+            {
+                _colorLock.Release();
+            }
+
         }
 
     }

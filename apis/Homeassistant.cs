@@ -1,7 +1,5 @@
 ﻿using Serilog;
-using System.ComponentModel;
 using System.Net.Http.Headers;
-using System.Runtime;
 using THFHA_V1._0.Model;
 using THFHA_V1._0.Views;
 namespace THFHA_V1._0.apis
@@ -22,10 +20,21 @@ namespace THFHA_V1._0.apis
         {
             get { return name; }
         }
-        
+
         public async void Start()
         {
-            
+            if (string.IsNullOrWhiteSpace(settings.Haurl))
+            {
+                Log.Error("HomeAssistant URL is missing.");
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(settings.Haurl))
+            {
+                Log.Error("HomeAssistant token is missing.");
+                return;
+            }
+
             bool exists = false;
             exists = await EntityExists("sensor.thfha_status");
             if (!exists)
@@ -113,15 +122,15 @@ namespace THFHA_V1._0.apis
                     break;
             }
 
-            
-                await UpdateEntity("sensor.thfha_status", stateInstance.Status, statusicon);
-            
-                await UpdateEntity("sensor.thfha_activity", stateInstance.Activity, activityicon);
-            
-                await UpdateEntity("sensor.thfha_camera", stateInstance.Camera, "mdi:camera");
-            
-                await UpdateEntity("sensor.thfha_camera", stateInstance.Camera, "mdi:camera-off");
-            
+
+            await UpdateEntity("sensor.thfha_status", stateInstance.Status, statusicon);
+
+            await UpdateEntity("sensor.thfha_activity", stateInstance.Activity, activityicon);
+
+            await UpdateEntity("sensor.thfha_camera", stateInstance.Camera, "mdi:camera");
+
+            await UpdateEntity("sensor.thfha_camera", stateInstance.Camera, "mdi:camera-off");
+
 
 
             if (stateInstance.Microphone == "Mute Off")
@@ -145,15 +154,30 @@ namespace THFHA_V1._0.apis
                 if (!isEnabled)
                 {
                     // Perform some actions when the module is disabled
-                    Log.Debug("HomeAssistanrt Module has been disabled.");
+                    Log.Debug("HomeAssistant Module has been disabled.");
                     OnStopMonitoringRequested();
                 }
                 else
                 {
+                    // Check for valid URL and token
+                    if (string.IsNullOrWhiteSpace(settings.Haurl))
+                    {
+                        Log.Error("HomeAssistant URL is missing.");
+                        return;
+                    }
+
+                    if (string.IsNullOrWhiteSpace(settings.Haurl))
+                    {
+                        Log.Error("HomeAssistant token is missing.");
+                        return;
+                    }
+
+                    // Start monitoring if URL and token are valid
                     Start();
                 }
             }
         }
+
 
         public string State
         {
@@ -274,7 +298,7 @@ namespace THFHA_V1._0.apis
         public HomeassistantModule()
         {
             // This is the parameterless constructor that will be used by the ModuleManager class
-            this.settings = Settings.Instance;
+            settings = Settings.Instance;
 
 
         }
@@ -378,15 +402,15 @@ namespace THFHA_V1._0.apis
             client.Dispose();
         }
         public async Task<bool> EntityExists(string entity)
-                {
-                    var client = new HttpClient();
-                    client.BaseAddress = new Uri(settings.Haurl + "/api/");
-                    client.DefaultRequestHeaders.Add("Authorization", settings.Hatoken);
+        {
+            var client = new HttpClient();
+            client.BaseAddress = new Uri(settings.Haurl + "/api/");
+            client.DefaultRequestHeaders.Add("Authorization", settings.Hatoken);
             try
             {
                 var response = await client.GetAsync($"states/{entity}");
                 return response.IsSuccessStatusCode;
-                                    client.Dispose();
+                client.Dispose();
             }
             catch
             {
@@ -394,8 +418,8 @@ namespace THFHA_V1._0.apis
                 return false;
             }
 
-                    
-                }
+
+        }
 
 
     }
