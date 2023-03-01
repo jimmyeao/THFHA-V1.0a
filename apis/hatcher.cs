@@ -16,7 +16,10 @@ namespace THFHA_V1._0.apis
         {
             get { return name; }
         }
-
+        public void Start()
+        {
+            ShowImage(stateInstance);
+        }
         public bool IsEnabled
         {
             get { return isEnabled; }

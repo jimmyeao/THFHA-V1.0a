@@ -128,11 +128,19 @@ namespace THFHA_V1._0
             logWatcher = new LogWatcher(new State());
 
             await logWatcher.Start();
+            Task delay = Task.Delay(1000);
             statuslabel.Text = "Monitoring Started";
             UpdateLabel(lbl_status, state.Status);
             UpdateLabel(lbl_activity, state.Activity);
             UpdateLabel(lbl_camera, state.Camera);
             UpdateLabel(lbl_mute, state.Microphone);
+            foreach (IModule module in modules)
+            {
+                if (module.IsEnabled)
+                {
+                    module.Start();
+                }
+            }
         }
         private async Task StopLogWatcher()
         {
@@ -293,6 +301,14 @@ namespace THFHA_V1._0
                 module.OnFormClosing();
             }
             ApplicationClosing?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void THFHA_Shown(object sender, EventArgs e)
+        {
+            UpdateLabel(lbl_status, state.Status);
+            UpdateLabel(lbl_activity, state.Activity);
+            UpdateLabel(lbl_camera, state.Camera);
+            UpdateLabel(lbl_mute, state.Microphone);
         }
     }
 }

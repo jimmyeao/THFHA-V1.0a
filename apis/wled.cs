@@ -29,7 +29,10 @@ namespace THFHA_V1._0.apis
                 }
             }
         }
+        public void Start()
+        {
 
+        }
         public string State
         {
             get { return stateInstance.ToString(); }

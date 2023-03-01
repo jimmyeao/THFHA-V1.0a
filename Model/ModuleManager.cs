@@ -55,7 +55,7 @@ namespace THFHA_V1._0.Model
         event EventHandler StateChanged; // Add StateChanged event to interface
 
         Form GetSettingsForm();
-
+        void Start();
         void UpdateSettings(bool isEnabled);
         void OnFormClosing();
     }
