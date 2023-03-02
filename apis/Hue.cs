@@ -19,6 +19,7 @@ namespace THFHA_V1._0.apis
         private string name = "Hue";
         private Q42.HueApi.State? originalState;
         private Settings settings;
+        private bool staterecorded = false;
         private State stateInstance;
 
         #endregion Private Fields
@@ -163,24 +164,28 @@ namespace THFHA_V1._0.apis
 
         private async Task GetState()
         {
-            if (client == null)
+            if (!staterecorded)
             {
-                ILocalHueClient localClient = new LocalHueClient(settings.Hueip);
-                localClient.Initialize(settings.Hueusername);
-                client = localClient;
-                stateInstance = new State(); // Initialize stateInstance here
-                stateInstance.StateChanged += OnStateChanged;
-            }
-            var light = await client.GetLightAsync(settings.SelectedLightId);
-            Log.Information("got the state of {light}", light);
-            if (light != null)
-            {
-                originalState = light.State;
+                if (client == null)
+                {
+                    ILocalHueClient localClient = new LocalHueClient(settings.Hueip);
+                    localClient.Initialize(settings.Hueusername);
+                    client = localClient;
+                    stateInstance = new State(); // Initialize stateInstance here
+                    stateInstance.StateChanged += OnStateChanged;
+                }
+                var light = await client.GetLightAsync(settings.SelectedLightId);
+                Log.Information("got the state of {light}", light);
+                if (light != null)
+                {
+                    originalState = light.State;
 
-                // Save the original state to a file
-                var json = JsonConvert.SerializeObject(originalState);
-                File.WriteAllText("originalState.json", json);
-                Log.Information("Original state saved to file.");
+                    // Save the original state to a file
+                    var json = JsonConvert.SerializeObject(originalState);
+                    File.WriteAllText("originalState.json", json);
+                    Log.Information("Original state saved to file.");
+                    staterecorded= true;
+                }
             }
         }
 
@@ -220,7 +225,7 @@ namespace THFHA_V1._0.apis
             {
                 return;
             }
-            if (IsEnabled) { 
+            
             // Stop monitoring here
             var isMonitoring = false;
             originalState = LoadOriginalState();
@@ -245,7 +250,7 @@ namespace THFHA_V1._0.apis
                         Log.Error("Failed to restore state of hue lights: {ex}", ex.Message);
                     }
                 }
-            }
+            
         }
 
         private async Task PublishHueUpdate(State state)

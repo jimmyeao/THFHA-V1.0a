@@ -1,4 +1,5 @@
 ﻿using Serilog;
+using System.Reflection;
 using THFHA_V1._0.Model;
 using THFHA_V1._0.Views;
 
@@ -246,6 +247,7 @@ namespace THFHA_V1._0
                 {
                     case "hue":
                         Settings.Instance.UseHue = selectedModule.IsEnabled;
+                        
                         statuslabel.Text = selectedModule.Name + " Disabled";
                         break;
                     case "homeassistant":
