@@ -89,7 +89,7 @@
             this.tb_mqttuser.Location = new System.Drawing.Point(149, 56);
             this.tb_mqttuser.Name = "tb_mqttuser";
             this.tb_mqttuser.Size = new System.Drawing.Size(209, 27);
-            this.tb_mqttuser.TabIndex = 1;
+            this.tb_mqttuser.TabIndex = 2;
             this.tb_mqttuser.TextChanged += new System.EventHandler(this.mqttuser_TextChanged);
             // 
             // tb_mqttpass
@@ -97,7 +97,7 @@
             this.tb_mqttpass.Location = new System.Drawing.Point(149, 90);
             this.tb_mqttpass.Name = "tb_mqttpass";
             this.tb_mqttpass.Size = new System.Drawing.Size(209, 27);
-            this.tb_mqttpass.TabIndex = 1;
+            this.tb_mqttpass.TabIndex = 3;
             this.tb_mqttpass.TextChanged += new System.EventHandler(this.mqttpass_TextChanged);
             // 
             // tb_mqtttopic
@@ -105,7 +105,7 @@
             this.tb_mqtttopic.Location = new System.Drawing.Point(149, 124);
             this.tb_mqtttopic.Name = "tb_mqtttopic";
             this.tb_mqtttopic.Size = new System.Drawing.Size(209, 27);
-            this.tb_mqtttopic.TabIndex = 1;
+            this.tb_mqtttopic.TabIndex = 4;
             this.tb_mqtttopic.TextChanged += new System.EventHandler(this.mqtttopic_TextChanged);
             // 
             // btn_test
@@ -113,7 +113,7 @@
             this.btn_test.Location = new System.Drawing.Point(264, 171);
             this.btn_test.Name = "btn_test";
             this.btn_test.Size = new System.Drawing.Size(94, 29);
-            this.btn_test.TabIndex = 2;
+            this.btn_test.TabIndex = 5;
             this.btn_test.Text = "Test";
             this.btn_test.UseVisualStyleBackColor = true;
             this.btn_test.Click += new System.EventHandler(this.buttontest_Click);
