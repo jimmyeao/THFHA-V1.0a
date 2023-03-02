@@ -49,6 +49,8 @@
             this.lbl_mute = new System.Windows.Forms.Label();
             this.lbl_camera = new System.Windows.Forms.Label();
             this.stateBindingSource = new System.Windows.Forms.BindingSource(this.components);
+            this.applicationLogsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.teamsLogsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
@@ -85,7 +87,9 @@
             // helpToolStripMenuItem
             // 
             this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.aboutToolStripMenuItem});
+            this.aboutToolStripMenuItem,
+            this.applicationLogsToolStripMenuItem,
+            this.teamsLogsToolStripMenuItem});
             this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
             this.helpToolStripMenuItem.Size = new System.Drawing.Size(55, 24);
             this.helpToolStripMenuItem.Text = "Help";
@@ -93,7 +97,7 @@
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(133, 26);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
             this.aboutToolStripMenuItem.Text = "About";
             // 
             // lbx_modules
@@ -220,6 +224,20 @@
             // 
             this.stateBindingSource.DataSource = typeof(THFHA_V1._0.Model.State);
             // 
+            // applicationLogsToolStripMenuItem
+            // 
+            this.applicationLogsToolStripMenuItem.Name = "applicationLogsToolStripMenuItem";
+            this.applicationLogsToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.applicationLogsToolStripMenuItem.Text = "Application Logs";
+            this.applicationLogsToolStripMenuItem.Click += new System.EventHandler(this.applicationLogsToolStripMenuItem_Click);
+            // 
+            // teamsLogsToolStripMenuItem
+            // 
+            this.teamsLogsToolStripMenuItem.Name = "teamsLogsToolStripMenuItem";
+            this.teamsLogsToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.teamsLogsToolStripMenuItem.Text = "Teams Logs";
+            this.teamsLogsToolStripMenuItem.Click += new System.EventHandler(this.teamsLogsToolStripMenuItem_Click);
+            // 
             // THFHA
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
@@ -273,5 +291,7 @@
         private Label lbl_mute;
         private Label lbl_camera;
         private BindingSource stateBindingSource;
+        private ToolStripMenuItem applicationLogsToolStripMenuItem;
+        private ToolStripMenuItem teamsLogsToolStripMenuItem;
     }
 }

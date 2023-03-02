@@ -341,32 +341,54 @@ namespace THFHA_V1._0.Model
         #region operations
 
         // public event PropertyChangedEventHandler PropertyChanged;
-
-        public void Save()
-        {
-            var json = JsonConvert.SerializeObject(this);
-            File.WriteAllText("settings.json", json);
-        }
-
-        public void UpdateSettings()
+  public void UpdateSettings()
         {
             SettingsUpdated?.Invoke(this, EventArgs.Empty);
+        }
+       
+        public void Save()
+        {
+            try
+            {
+                // Get the path to the local user data folder
+                string appDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+                string folderPath = Path.Combine(appDataFolder, "TeamsHelper");
+                string filePath = Path.Combine(folderPath, "settings.json");
+
+                // Create the folder if it doesn't exist
+                Directory.CreateDirectory(folderPath);
+
+                // Serialize the settings to JSON
+                string json = JsonConvert.SerializeObject(this);
+
+                // Write the JSON to the file
+                File.WriteAllText(filePath, json);
+            }
+            catch (Exception ex)
+            {
+               Log.Error("Error saving settings: " + ex.Message);
+            }
         }
 
         public void Load()
         {
-            if (File.Exists("settings.json"))
+            try
             {
-                var json = File.ReadAllText("settings.json");
-                try
+                // Get the path to the local user data folder
+                string appDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+                string folderPath = Path.Combine(appDataFolder, "TeamsHelper");
+                string filePath = Path.Combine(folderPath, "settings.json");
+
+                // Load the settings from the file
+                if (File.Exists(filePath))
                 {
+                    string json = File.ReadAllText(filePath);
                     JsonConvert.PopulateObject(json, this);
-                    Log.Information("Settings loaded");
                 }
-                catch (Exception ex)
-                {
-                    Log.Error(ex, "Error loading settings");
-                }
+            }
+            catch (Exception ex)
+            {
+               Log.Error("Error loading settings: " + ex.Message);
             }
         }
 
