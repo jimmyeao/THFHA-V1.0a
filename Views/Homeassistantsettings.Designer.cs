@@ -91,22 +91,22 @@
             this.statusStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripStatusLabel1});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 259);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 292);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(725, 24);
+            this.statusStrip1.Size = new System.Drawing.Size(725, 22);
             this.statusStrip1.TabIndex = 5;
             this.statusStrip1.Text = "statusStrip1";
             // 
             // toolStripStatusLabel1
             // 
             this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
-            this.toolStripStatusLabel1.Size = new System.Drawing.Size(0, 18);
+            this.toolStripStatusLabel1.Size = new System.Drawing.Size(0, 16);
             // 
-            // hasettings
+            // Homeassistantsettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(725, 283);
+            this.ClientSize = new System.Drawing.Size(725, 314);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.btn_test);
             this.Controls.Add(this.richTextBox1);
@@ -114,7 +114,7 @@
             this.Controls.Add(this.tb_haurl);
             this.Controls.Add(this.label1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Name = "hasettings";
+            this.Name = "Homeassistantsettings";
             this.Text = "hasettings";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.hasettings_FormClosed);
             this.statusStrip1.ResumeLayout(false);

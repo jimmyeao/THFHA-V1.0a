@@ -74,15 +74,15 @@ namespace THFHA_V1._0.Views
 
             // Show the SettingsForm
             hasettings.ShowDialog();
-            if (settings.Haurl == "" || settings.Hatoken == "")
+            if (settings.IsHomeassistantModuleSettingsValid)
             {
-                cb_useha.Checked = false;
-                cb_useha.Enabled = false;
+                
+                cb_useha.Enabled = true;
             }
             else
             {
 
-                cb_useha.Enabled = true;
+                cb_useha.Enabled = false;
             }
         }
 
@@ -92,6 +92,14 @@ namespace THFHA_V1._0.Views
 
             // Show the SettingsForm
             huesettings.ShowDialog();
+            if (settings.IsHueModuleSettingsValid)
+            {
+                cb_usehue.Enabled = true;
+            }
+            else
+            {
+                cb_usehue.Enabled = false;
+            }
         }
 
         private void bt_mqttsettings_Click(object sender, EventArgs e)
@@ -100,6 +108,14 @@ namespace THFHA_V1._0.Views
 
             // Show the SettingsForm
             mqttsettings.ShowDialog();
+            if (settings.IsMqttModuleSettingsValid)
+            {
+                cb_usemqtt.Enabled = true;
+            }
+            else
+            {
+                cb_usemqtt.Enabled = false;
+            }
         }
 
         private void bt_usewled_Click(object sender, EventArgs e)
@@ -108,13 +124,28 @@ namespace THFHA_V1._0.Views
 
             // Show the SettingsForm
             wledsettings.ShowDialog();
+            if(settings.IsWledModuleSettingsValid)
+            {
+                cb_usewled.Enabled = true;
+            }
+            else
+            {
+                cb_usewled.Enabled = false;
+            }
 
         }
         private void btn_hatchersettings_Click(object sender, EventArgs e)
         {
             hatchersettings hatchersettings = new hatchersettings();
             hatchersettings.ShowDialog();
-
+            if(settings.IsHatcherModuleSettingsValid)
+            {
+                cb_hatchersettings.Enabled = true;
+            }
+            else
+            {
+                cb_hatchersettings.Enabled = false;
+            }
         }
         #endregion
         #region checkboxes
@@ -184,5 +215,54 @@ namespace THFHA_V1._0.Views
             }
         }
         #endregion
+
+        private void SettingsForm_Load(object sender, EventArgs e)
+        {
+            if (!settings.UseHue)
+            {
+                cb_usehue.Enabled = false; cb_usehue.Checked = false;
+
+            }
+            else
+            {
+                cb_usehue.Enabled = true;
+            }
+            if (!settings.UseHA)
+            {
+                cb_useha.Enabled = false; cb_useha.Checked = false;
+
+            }
+            else
+            {
+                cb_useha.Enabled = true;
+            }
+            if (!settings.UseHatcher)
+            {
+                cb_hatchersettings.Enabled = false; cb_hatchersettings.Checked = false;
+
+            }
+            else
+            {
+                cb_hatchersettings.Enabled = true;
+            }
+            if (!settings.UseMQTT)
+            {
+                cb_usemqtt.Enabled = false; cb_usemqtt.Checked = false;
+
+            }
+            else
+            {
+                cb_usemqtt.Enabled = true;
+            }
+            if (!settings.UseWLED)
+            {
+                cb_usewled.Enabled = false; cb_usewled.Checked = false;
+
+            }
+            else
+            {
+                cb_usewled.Enabled = true;
+            }
+        }
     }
 }

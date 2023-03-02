@@ -220,28 +220,30 @@ namespace THFHA_V1._0.apis
             {
                 return;
             }
+            if (IsEnabled) { 
             // Stop monitoring here
             var isMonitoring = false;
             originalState = LoadOriginalState();
-            if (originalState != null)
-            {
-                Log.Information("Restoring state of hue lights");
-                var client = new LocalHueClient(settings.Hueip);
-                client.Initialize(settings.Hueusername);
-                var command = new LightCommand()
+                if (originalState != null)
                 {
-                    On = originalState.On,
-                    Brightness = originalState.Brightness,
-                    Hue = originalState.Hue,
-                    Saturation = originalState.Saturation
-                };
-                try
-                {
-                    Task.WaitAll(new Task[] { client.SendCommandAsync(command, new[] { settings.SelectedLightId }) });
-                }
-                catch (Exception ex)
-                {
-                    Log.Error("Failed to restore state of hue lights: {ex}", ex.Message);
+                    Log.Information("Restoring state of hue lights");
+                    var client = new LocalHueClient(settings.Hueip);
+                    client.Initialize(settings.Hueusername);
+                    var command = new LightCommand()
+                    {
+                        On = originalState.On,
+                        Brightness = originalState.Brightness,
+                        Hue = originalState.Hue,
+                        Saturation = originalState.Saturation
+                    };
+                    try
+                    {
+                        Task.WaitAll(new Task[] { client.SendCommandAsync(command, new[] { settings.SelectedLightId }) });
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Error("Failed to restore state of hue lights: {ex}", ex.Message);
+                    }
                 }
             }
         }

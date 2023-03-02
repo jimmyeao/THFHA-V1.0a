@@ -19,6 +19,8 @@ namespace THFHA_V1._0
             this.settings = Settings.Instance;
             this.modules = modules;
             this.state = state; // set the state
+    
+
             // Initialize the IsEnabled property of each module based on the value stored in the Settings singleton
             foreach (IModule module in this.modules)
             {

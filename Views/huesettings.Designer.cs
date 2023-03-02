@@ -94,6 +94,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "huesettings";
             this.Text = "huesettings";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.huesettings_FormClosing);
             this.ResumeLayout(false);
             this.PerformLayout();
 

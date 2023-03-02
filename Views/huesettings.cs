@@ -75,6 +75,7 @@ namespace THFHA_V1._0.Views
 
                             Log.Information("Added a Hue light called {light}", currentLight.Name);
                             settings.IsHueModuleSettingsValid = true;
+                            settings.Save();
                         }
                         if (cb_huelights.Items.Count == 0) // check if the list box is already populated
                         {
@@ -146,6 +147,25 @@ namespace THFHA_V1._0.Views
                 settings.SelectedLightId = selectedLight.Id;
                 settings.Save();
             }
+        }
+
+        private void huesettings_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            //need to chewck the ip is still ok
+            if (Regex.IsMatch(tb_hueip.Text, @"^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$"))
+            {
+                //valid ip continue
+                settings.Hueip = tb_hueip.Text;
+                settings.Save();
+            }
+            else
+            {
+                Log.Error("Not a valid IP for Hue!");
+                settings.IsHueModuleSettingsValid = false;
+                settings.UseHue = false;
+                settings.Save();
+            }
+
         }
     }
 }
