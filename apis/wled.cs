@@ -117,6 +117,11 @@ namespace THFHA_V1._0.apis
         }
         private async void OnStateChanged(object sender, EventArgs e)
         {
+            if (!staterecorded)
+            {
+                _originalState = GetCurrentState(settings.SelectedWled.Ip);
+                staterecorded = true;
+            }
             if (IsEnabled)
             {
                 stateInstance = (State)sender;
@@ -227,13 +232,13 @@ namespace THFHA_V1._0.apis
         {
             lock (_lockObject)
             {
-                if (originalState == null)
+                if (_currentState == null)
                 {
                     Log.Warning("Unable to restore state: original state data is missing");
                     return;
                 }
 
-                var json = JsonConvert.SerializeObject(originalState);
+                var json = JsonConvert.SerializeObject(_currentState);
                 Log.Information("Restoring state of WLED light {wledDev}: {state}", settings.WledDev.ToString(), json);
                 var data = new StringContent(json, Encoding.UTF8, "application/json");
 

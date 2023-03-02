@@ -46,9 +46,15 @@ namespace THFHA_V1._0.Views
                 //It will throw an LinkButtonNotPressedException if the user did not press the button
                 var result = MessageBox.Show("Please press the button on the hub before proceeding", "Press button on hub",
                     MessageBoxButtons.OKCancel);
+                cb_huelights.DataSource = null;
+                cb_huelights.Items.Clear();
+
+                cb_huelights.DisplayMember = "Name";
                 if (result == DialogResult.OK)
                     try
                     {
+                     
+                        
                         if (settings.HueLight != null)
                         {
                             settings.HueLight.Clear();
@@ -84,14 +90,14 @@ namespace THFHA_V1._0.Views
                             }
                         }
                         MessageBox.Show("Hub Linked", "Success!", MessageBoxButtons.OK);
-
+                      
                         settings.Save();
                     }
                     catch (Exception ex)
                     {
                         MessageBox.Show("Hub Linking", "Linked failed with error " + ex.Message, MessageBoxButtons.OK);
                         Log.Information("An error occurred linking Hue hub " + ex.Message);
-                        settings.IsHueModuleSettingsValid= false;
+                        settings.IsHueModuleSettingsValid = false;
                         settings.Save();
                     }
             }

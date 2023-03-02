@@ -35,6 +35,14 @@ namespace THFHA_V1._0.apis
         }
         private async Task GetState()
         {
+            if(client == null)
+            {
+                ILocalHueClient localClient = new LocalHueClient(settings.Hueip);
+                localClient.Initialize(settings.Hueusername);
+                client = localClient;
+                stateInstance = new State(); // Initialize stateInstance here
+                stateInstance.StateChanged += OnStateChanged;
+            }
             var light = await client.GetLightAsync(settings.SelectedLightId);
             Log.Information("got the state of {light}", light);
             if (light != null)
@@ -64,6 +72,14 @@ namespace THFHA_V1._0.apis
                         return;
                     }
                     OnStopMonitoringRequested();
+                }
+                else
+                {
+                    if (settings.IsHueModuleSettingsValid)
+                    {
+                        _ = GetState();
+                        _ = PublishHueUpdate(stateInstance);
+                    }
                 }
             }
         }

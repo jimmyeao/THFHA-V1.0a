@@ -4,7 +4,9 @@ if its not enabled, dont allow ot to subscribe to state changes etc
 grey out enable buttons and right click enable option until tested = true
 
 hue				fixed
-wled			not fixed
+wled			fixed
 mqtt			not fixed
 hatcher			not fixed
 homeassistant	not fixed
+
+hatcher - shorten timeout in test 
