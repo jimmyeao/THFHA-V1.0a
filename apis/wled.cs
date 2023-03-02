@@ -318,7 +318,8 @@ namespace THFHA_V1._0.apis
 
         private void OnStopMonitoringRequested()
         {
-            
+            if (settings.IsWledModuleSettingsValid)
+            {
                 try
                 {
                     // Stop monitoring here
@@ -330,6 +331,7 @@ namespace THFHA_V1._0.apis
                 {
                     Log.Error("Something went wrong stopping WLED");
                 }
+            }
             
         }
 
