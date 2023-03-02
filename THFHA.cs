@@ -64,7 +64,7 @@ namespace THFHA_V1._0
                 btn_start.Enabled = true; btn_stop.Enabled = false;
                 foreach (IModule module in modules)
                 {
-                    module.OnFormClosing();
+                    //module.OnFormClosing();
                 }
             }
 
