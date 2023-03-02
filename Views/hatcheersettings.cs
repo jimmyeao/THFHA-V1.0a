@@ -40,33 +40,37 @@ namespace THFHA_V1._0.Views
             try
             {
                 // Create a new TCP client and connect to the server on a separate thread
-                await Task.Run(() =>
+                await Task.Run(async () =>
                 {
-                    try
-                    {
-                        using (TcpClient client = new TcpClient(ipAddress, port))
+                    
+                        using (TcpClient client = new TcpClient())
                         {
-                            // If the connection is successful, the server is running and listening
+                            var cancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(2));
+                            await client.ConnectAsync(ipAddress, port).WaitAsync(cancellationTokenSource.Token);
+                            if (client.Connected)
+                            {
+                                Log.Information("The server is running and listening on {0}:{1}", ipAddress, port);
+                                var title = "Connection Success";
+                                var message = "The server is running and listening on " + ipAddress + ", " + port;
+                                MessageBox.Show(message, title);
+                                toolStripStatusLabel1.Text = message;
+                                settings.IsHatcherModuleSettingsValid= true;
+                            }
+                            else
+                            {
+                                // Display a user-friendly error message
+                                var title = "Connection Error";
+                                var message = "An error occurred while trying to connect to the server: ";
+                                MessageBox.Show(message, title);
+                                toolStripStatusLabel1.Text += message;
+                            settings.IsHatcherModuleSettingsValid = false;
+                            // Log the exception for debugging purposes
+                            Log.Error("An error occurred while trying to connect to the server.");
+                            }
 
-                            Log.Information("The server is running and listening on {0}:{1}", ipAddress, port);
-                            var title = "Connection Success";
-                            var message = "The server is running and listening on " + ipAddress + ", " + port;
-                            MessageBox.Show(message, title);
-                            toolStripStatusLabel1.Text = message;
-                        }
-
+                    
                     }
-                    catch (Exception ex)
-                    {
-                        // Display a user-friendly error message
-                        var title = "Connection Error";
-                        var message = "An error occurred while trying to connect to the server: " + ex.Message;
-                        MessageBox.Show(message, title);
-                        toolStripStatusLabel1.Text += message;
-
-                        // Log the exception for debugging purposes
-                        Log.Error(ex, "An error occurred while trying to connect to the server.");
-                    }
+                   
                 });
 
                 // Close the connection

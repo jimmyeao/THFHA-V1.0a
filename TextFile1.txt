@@ -6,7 +6,7 @@ grey out enable buttons and right click enable option until tested = true
 hue				fixed
 wled			fixed
 mqtt			not fixed
-hatcher			not fixed
+hatcher			fixed
 homeassistant	not fixed
 
 hatcher - shorten timeout in test 
