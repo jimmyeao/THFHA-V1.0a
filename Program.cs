@@ -9,6 +9,7 @@ namespace THFHA_V1._0
         static void Main()
         {
             Application.EnableVisualStyles();
+            SetProcessDPIAware();
             Application.SetCompatibleTextRenderingDefault(false);
             LoggingConfig.Configure();
             var state = new State(); // create a new instance of State
@@ -22,5 +23,7 @@ namespace THFHA_V1._0
             Application.Run(thfha);
             Log.CloseAndFlush();
         }
+        [System.Runtime.InteropServices.DllImport("user32.dll")]
+        private static extern bool SetProcessDPIAware();
     }
 }

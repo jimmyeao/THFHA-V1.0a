@@ -51,10 +51,16 @@
             this.lbl_mute = new System.Windows.Forms.Label();
             this.lbl_camera = new System.Windows.Forms.Label();
             this.stateBindingSource = new System.Windows.Forms.BindingSource(this.components);
+            this.pb_Status = new System.Windows.Forms.PictureBox();
+            this.pb_Activity = new System.Windows.Forms.PictureBox();
+            this.pb_mute = new System.Windows.Forms.PictureBox();
             this.menuStrip1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.stateBindingSource)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pb_Status)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pb_Activity)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pb_mute)).BeginInit();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -65,7 +71,7 @@
             this.helpToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(459, 28);
+            this.menuStrip1.Size = new System.Drawing.Size(385, 28);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -97,21 +103,21 @@
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(204, 26);
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
             // applicationLogsToolStripMenuItem
             // 
             this.applicationLogsToolStripMenuItem.Name = "applicationLogsToolStripMenuItem";
-            this.applicationLogsToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.applicationLogsToolStripMenuItem.Size = new System.Drawing.Size(204, 26);
             this.applicationLogsToolStripMenuItem.Text = "Application Logs";
             this.applicationLogsToolStripMenuItem.Click += new System.EventHandler(this.applicationLogsToolStripMenuItem_Click);
             // 
             // teamsLogsToolStripMenuItem
             // 
             this.teamsLogsToolStripMenuItem.Name = "teamsLogsToolStripMenuItem";
-            this.teamsLogsToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.teamsLogsToolStripMenuItem.Size = new System.Drawing.Size(204, 26);
             this.teamsLogsToolStripMenuItem.Text = "Teams Logs";
             this.teamsLogsToolStripMenuItem.Click += new System.EventHandler(this.teamsLogsToolStripMenuItem_Click);
             // 
@@ -121,9 +127,9 @@
             this.lbx_modules.ContextMenuStrip = this.contextMenuStrip1;
             this.lbx_modules.FormattingEnabled = true;
             this.lbx_modules.ItemHeight = 20;
-            this.lbx_modules.Location = new System.Drawing.Point(270, 65);
+            this.lbx_modules.Location = new System.Drawing.Point(182, 65);
             this.lbx_modules.Name = "lbx_modules";
-            this.lbx_modules.Size = new System.Drawing.Size(165, 204);
+            this.lbx_modules.Size = new System.Drawing.Size(191, 144);
             this.lbx_modules.TabIndex = 1;
             this.lbx_modules.DoubleClick += new System.EventHandler(this.lbx_modules_DoubleClick);
             this.lbx_modules.MouseDown += new System.Windows.Forms.MouseEventHandler(this.lbx_modules_MouseDown);
@@ -155,7 +161,7 @@
             // 
             this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(303, 42);
+            this.label1.Location = new System.Drawing.Point(182, 42);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(132, 20);
             this.label1.TabIndex = 2;
@@ -167,9 +173,9 @@
             this.statusStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.statuslabel});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 266);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 316);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(459, 26);
+            this.statusStrip1.Size = new System.Drawing.Size(385, 26);
             this.statusStrip1.TabIndex = 3;
             this.statusStrip1.Text = "statusStrip1";
             // 
@@ -181,7 +187,7 @@
             // 
             // btn_start
             // 
-            this.btn_start.Location = new System.Drawing.Point(34, 225);
+            this.btn_start.Location = new System.Drawing.Point(234, 238);
             this.btn_start.Name = "btn_start";
             this.btn_start.Size = new System.Drawing.Size(94, 29);
             this.btn_start.TabIndex = 4;
@@ -191,7 +197,7 @@
             // 
             // btn_stop
             // 
-            this.btn_stop.Location = new System.Drawing.Point(156, 225);
+            this.btn_stop.Location = new System.Drawing.Point(234, 273);
             this.btn_stop.Name = "btn_stop";
             this.btn_stop.Size = new System.Drawing.Size(94, 29);
             this.btn_stop.TabIndex = 5;
@@ -239,11 +245,44 @@
             // 
             this.stateBindingSource.DataSource = typeof(THFHA_V1._0.Model.State);
             // 
+            // pb_Status
+            // 
+            this.pb_Status.BackgroundImage = global::THFHA_V1._0.Resource1.available;
+            this.pb_Status.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.pb_Status.Location = new System.Drawing.Point(15, 238);
+            this.pb_Status.Name = "pb_Status";
+            this.pb_Status.Size = new System.Drawing.Size(50, 50);
+            this.pb_Status.TabIndex = 25;
+            this.pb_Status.TabStop = false;
+            // 
+            // pb_Activity
+            // 
+            this.pb_Activity.BackgroundImage = global::THFHA_V1._0.Resource1.notinacall;
+            this.pb_Activity.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.pb_Activity.Location = new System.Drawing.Point(85, 238);
+            this.pb_Activity.Name = "pb_Activity";
+            this.pb_Activity.Size = new System.Drawing.Size(50, 50);
+            this.pb_Activity.TabIndex = 26;
+            this.pb_Activity.TabStop = false;
+            // 
+            // pb_mute
+            // 
+            this.pb_mute.BackgroundImage = global::THFHA_V1._0.Resource1.mic_icon;
+            this.pb_mute.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.pb_mute.Location = new System.Drawing.Point(156, 238);
+            this.pb_mute.Name = "pb_mute";
+            this.pb_mute.Size = new System.Drawing.Size(50, 50);
+            this.pb_mute.TabIndex = 28;
+            this.pb_mute.TabStop = false;
+            // 
             // THFHA
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(459, 292);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(120F, 120F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+            this.ClientSize = new System.Drawing.Size(385, 342);
+            this.Controls.Add(this.pb_mute);
+            this.Controls.Add(this.pb_Activity);
+            this.Controls.Add(this.pb_Status);
             this.Controls.Add(this.lbl_camera);
             this.Controls.Add(this.lbl_mute);
             this.Controls.Add(this.lbl_activity);
@@ -266,6 +305,9 @@
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.stateBindingSource)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pb_Status)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pb_Activity)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pb_mute)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -294,5 +336,8 @@
         private BindingSource stateBindingSource;
         private ToolStripMenuItem applicationLogsToolStripMenuItem;
         private ToolStripMenuItem teamsLogsToolStripMenuItem;
+        private PictureBox pb_Status;
+        private PictureBox pb_Activity;
+        private PictureBox pb_mute;
     }
 }
