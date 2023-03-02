@@ -44,7 +44,6 @@ namespace THFHA_V1._0.Model
             { "SfB:TeamsPendingCall", ("", "Pending Call")},
             { "SfB:TeamsActiveCall", ("Busy", "In A Call")},
 
-
             { "DeviceCallControlManager Desktop: reportCallEnded processed",("",  "Not in a call")}
 
             //{ "Resuming daemon App updates", ("Not In A Call", "") },
