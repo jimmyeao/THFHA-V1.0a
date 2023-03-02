@@ -218,7 +218,7 @@ namespace THFHA_V1._0.Views
 
         private void SettingsForm_Load(object sender, EventArgs e)
         {
-            if (!settings.UseHue)
+            if (!settings.IsHueModuleSettingsValid)
             {
                 cb_usehue.Enabled = false; cb_usehue.Checked = false;
 
@@ -227,7 +227,7 @@ namespace THFHA_V1._0.Views
             {
                 cb_usehue.Enabled = true;
             }
-            if (!settings.UseHA)
+            if (!settings.IsHomeassistantModuleSettingsValid)
             {
                 cb_useha.Enabled = false; cb_useha.Checked = false;
 
@@ -236,7 +236,7 @@ namespace THFHA_V1._0.Views
             {
                 cb_useha.Enabled = true;
             }
-            if (!settings.UseHatcher)
+            if (!settings.IsHatcherModuleSettingsValid)
             {
                 cb_hatchersettings.Enabled = false; cb_hatchersettings.Checked = false;
 
@@ -245,7 +245,7 @@ namespace THFHA_V1._0.Views
             {
                 cb_hatchersettings.Enabled = true;
             }
-            if (!settings.UseMQTT)
+            if (!settings.IsMqttModuleSettingsValid)
             {
                 cb_usemqtt.Enabled = false; cb_usemqtt.Checked = false;
 
@@ -254,7 +254,7 @@ namespace THFHA_V1._0.Views
             {
                 cb_usemqtt.Enabled = true;
             }
-            if (!settings.UseWLED)
+            if (!settings.IsWledModuleSettingsValid)
             {
                 cb_usewled.Enabled = false; cb_usewled.Checked = false;
 
