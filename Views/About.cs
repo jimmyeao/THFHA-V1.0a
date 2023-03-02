@@ -1,12 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Linq;
+﻿using System.Diagnostics;
 using System.Reflection;
-using System.Diagnostics;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace THFHA_V1._0.Views
 {
@@ -15,14 +8,14 @@ namespace THFHA_V1._0.Views
         public About()
         {
             InitializeComponent();
-           
+
             this.Text = String.Format("About {0}", AssemblyTitle);
             this.labelProductName.Text = AssemblyProduct;
             this.labelVersion.Text = String.Format("Version {0}", AssemblyVersion);
-          
+
             this.labelCompanyName.Text = AssemblyCompany;
             this.textBoxDescription.Text = AssemblyDescription;
-           
+
         }
 
         #region Assembly Attribute Accessors

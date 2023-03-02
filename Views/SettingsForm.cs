@@ -76,7 +76,7 @@ namespace THFHA_V1._0.Views
             hasettings.ShowDialog();
             if (settings.IsHomeassistantModuleSettingsValid)
             {
-                
+
                 cb_useha.Enabled = true;
             }
             else
@@ -124,7 +124,7 @@ namespace THFHA_V1._0.Views
 
             // Show the SettingsForm
             wledsettings.ShowDialog();
-            if(settings.IsWledModuleSettingsValid)
+            if (settings.IsWledModuleSettingsValid)
             {
                 cb_usewled.Enabled = true;
             }
@@ -138,7 +138,7 @@ namespace THFHA_V1._0.Views
         {
             hatchersettings hatchersettings = new hatchersettings();
             hatchersettings.ShowDialog();
-            if(settings.IsHatcherModuleSettingsValid)
+            if (settings.IsHatcherModuleSettingsValid)
             {
                 cb_hatchersettings.Enabled = true;
             }
@@ -191,7 +191,7 @@ namespace THFHA_V1._0.Views
             if (wledModule != null)
             {
                 wledModule.IsEnabled = cb_usewled.Checked;
-               
+
             }
         }
 

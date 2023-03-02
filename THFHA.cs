@@ -1,13 +1,7 @@
-﻿using MQTTnet.Internal;
-using Serilog;
+﻿using Serilog;
 using System.Diagnostics;
-using System.Drawing;
-using System.Reflection;
-using System.Windows.Forms;
 using THFHA_V1._0.Model;
 using THFHA_V1._0.Views;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 
 namespace THFHA_V1._0
 {
@@ -26,10 +20,10 @@ namespace THFHA_V1._0
             this.settings = Settings.Instance;
             this.modules = modules;
             this.state = state; // set the state
-    
+
 
             // Initialize the IsEnabled property of each module based on the value stored in the Settings singleton
-           updatemodules();
+            updatemodules();
 
             string _appDir = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
             string _logPath = _appDir + @"\Microsoft\Teams\";
@@ -57,7 +51,8 @@ namespace THFHA_V1._0
 
         }
         private void updatemodules()
-        {             foreach (IModule module in this.modules)
+        {
+            foreach (IModule module in this.modules)
             {
                 switch (module.Name.ToLower())
                 {
@@ -108,13 +103,13 @@ namespace THFHA_V1._0
         {
             if (icon == Resource1.outofoffice)
             {
-               // notifyMenuStatus.Image = Resource1.outofoffice;
-               // notifyMenuStatus.Text = "Offline";
+                // notifyMenuStatus.Image = Resource1.outofoffice;
+                // notifyMenuStatus.Text = "Offline";
             }
             else
             {
-               // notifyMenuStatus.Image = icon;
-               // notifyMenuStatus.Text = state.Status;
+                // notifyMenuStatus.Image = icon;
+                // notifyMenuStatus.Text = state.Status;
             }
         }
         public void UpdateMuteStatus(string micstatus)
@@ -441,7 +436,7 @@ namespace THFHA_V1._0
                 {
                     case "hue":
                         Settings.Instance.UseHue = selectedModule.IsEnabled;
-                        
+
                         statuslabel.Text = selectedModule.Name + " Disabled";
                         break;
                     case "homeassistant":
@@ -576,13 +571,13 @@ namespace THFHA_V1._0
             };
 
             foreach (string path in notepadPaths)
-              {
+            {
                 if (File.Exists(path))
-                 {
-                    
+                {
+
                     return path;
                 }
-               
+
             }
             return null;
         }
