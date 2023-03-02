@@ -1,7 +1,9 @@
 ﻿using Serilog;
+using System.Diagnostics;
 using System.Reflection;
 using THFHA_V1._0.Model;
 using THFHA_V1._0.Views;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 
 namespace THFHA_V1._0
 {
@@ -339,6 +341,68 @@ namespace THFHA_V1._0
             UpdateLabel(lbl_activity, state.Activity);
             UpdateLabel(lbl_camera, state.Camera);
             UpdateLabel(lbl_mute, state.Microphone);
+        }
+
+        private void applicationLogsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var templogpath = LoggingConfig.logFileFullPath;
+            var logpath = AddQuotesIfRequired(templogpath);
+            var notepadapp = HasNotepadplusplus();
+            if (notepadapp != null)
+            {
+                Process.Start(notepadapp, logpath);
+            }
+            else
+            {
+                Process.Start("notepad.exe", logpath);
+            }
+        }
+        public string AddQuotesIfRequired(string path)
+        {
+            return !string.IsNullOrWhiteSpace(path) ?
+                path.Contains(" ") && (!path.StartsWith("\"") && !path.EndsWith("\"")) ?
+                    "\"" + path + "\"" : path :
+                string.Empty;
+        }
+        private void teamsLogsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var username = Environment.UserName;
+            var logpath = "c:\\users\\" + username + "\\AppData\\roaming\\Microsoft\\Teams\\logs.txt";
+            var notepadapp = HasNotepadplusplus();
+            if (notepadapp != null)
+            {
+                Process.Start(notepadapp, logpath);
+            }
+            else
+            {
+                Process.Start("notepad.exe", logpath);
+            }
+        }
+        private string HasNotepadplusplus()
+        {
+
+            string[] notepadPaths = new string[]
+            {
+                @"C:\Program Files (x86)\Notepad++\notepad++.exe",
+                @"C:\Program Files\Notepad++\notepad++.exe",
+            };
+
+            foreach (string path in notepadPaths)
+              {
+                if (File.Exists(path))
+                 {
+                    
+                    return path;
+                }
+               
+            }
+            return null;
+        }
+
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            About about = new About();
+            about.Show();
         }
     }
 }

@@ -1,5 +1,7 @@
 ﻿using Serilog;
 using Serilog.Sinks.File;
+using System;
+using System.IO;
 using System.Text;
 
 namespace THFHA_V1._0.Model
@@ -8,7 +10,7 @@ namespace THFHA_V1._0.Model
     {
         #region Public Fields
 
-        public static string logFileFullPath;
+        public static string? logFileFullPath;
 
         #endregion Public Fields
 
@@ -17,9 +19,12 @@ namespace THFHA_V1._0.Model
         public static void Configure()
         {
             var filePathHook = new CaptureFilePathHook();
+            string appDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            string folderPath = Path.Combine(appDataFolder, "TeamsHelper");
+            var logFilePath = Path.Combine(folderPath, "TMHA_Log.txt");
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Debug()
-                .WriteTo.File("logs\\TMHA_Log.txt", rollingInterval: RollingInterval.Day, hooks: filePathHook)
+                .WriteTo.File(logFilePath, rollingInterval: RollingInterval.Day, hooks: filePathHook)
                 .WriteTo.Debug()
                 .CreateLogger();
             Log.Information("Logger Created");

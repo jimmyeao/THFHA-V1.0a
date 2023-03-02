@@ -9,24 +9,16 @@ namespace THFHA_V1._0
         static void Main()
         {
             Application.EnableVisualStyles();
-
             Application.SetCompatibleTextRenderingDefault(false);
             LoggingConfig.Configure();
             var state = new State(); // create a new instance of State
             ModuleManager<IModule> moduleManager = new ModuleManager<IModule>(state);
             List<IModule> modules = moduleManager.Modules;
-
-
             SettingsForm settingsForm = new SettingsForm(modules);
-
             // create the LogWatcher and pass the state to it
             var logWatcher = new LogWatcher(state);
-
             // create the THFHA form and pass the modules and state to it
             var thfha = new THFHA(modules, state);
-
-
-
             Application.Run(thfha);
             Log.CloseAndFlush();
         }
