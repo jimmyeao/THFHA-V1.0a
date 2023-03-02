@@ -138,6 +138,7 @@ namespace THFHA_V1._0.Views
                                 //wasn't a wled device
                                 Log.Error("Exception on Discovery of WLED lights {ex}", ex.Message.ToString());
                                 settings.IsWledModuleSettingsValid = false;
+                                settings.Save();
                             }
                         }
                     }

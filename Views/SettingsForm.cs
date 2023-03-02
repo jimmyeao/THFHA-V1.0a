@@ -191,6 +191,7 @@ namespace THFHA_V1._0.Views
             if (wledModule != null)
             {
                 wledModule.IsEnabled = cb_usewled.Checked;
+               
             }
         }
 

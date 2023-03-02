@@ -89,6 +89,27 @@ namespace THFHA_V1._0
 
             // Show the SettingsForm
             settingsForm.ShowDialog();
+            foreach (IModule module in this.modules)
+            {
+                switch (module.Name.ToLower())
+                {
+                    case "hue":
+                        module.IsEnabled = Settings.Instance.UseHue;
+                        break;
+                    case "homeassistant":
+                        module.IsEnabled = Settings.Instance.UseHA;
+                        break;
+                    case "mqtt":
+                        module.IsEnabled = Settings.Instance.UseMQTT;
+                        break;
+                    case "wled":
+                        module.IsEnabled = Settings.Instance.UseWLED;
+                        break;
+                    case "hatcher":
+                        module.IsEnabled = Settings.Instance.UseHatcher;
+                        break;
+                }
+            }
             PopulateModulesList();
 
         }
