@@ -187,7 +187,7 @@ namespace THFHA_V1._0.apis
         }
         public Form GetSettingsForm()
         {
-            return new hasettings(); // Replace with your module's settings form
+            return new Homeassistantsettings(); // Replace with your module's settings form
         }
         public void UpdateSettings(bool isEnabled)
         {

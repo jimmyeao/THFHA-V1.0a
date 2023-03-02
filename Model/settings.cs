@@ -100,10 +100,10 @@ namespace THFHA_V1._0.Model
             }
         }
         private bool _ishaModuleSettingsValid;
-        public bool IsHaModuleSettingsValid
+        public bool IsHomeassistantModuleSettingsValid
         {
             get { return _ishaModuleSettingsValid; }
-            set { _ishaModuleSettingsValid = value; OnPropertyChanged(nameof(IsHaModuleSettingsValid)); }
+            set { _ishaModuleSettingsValid = value; OnPropertyChanged(nameof(IsHomeassistantModuleSettingsValid)); }
         }
 
         private string _hatoken;

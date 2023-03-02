@@ -7,11 +7,11 @@ using THFHA_V1._0.Model;
 
 namespace THFHA_V1._0.Views
 {
-    public partial class hasettings : Form
+    public partial class Homeassistantsettings : Form
     {
         private Settings settings;
         private static HttpClient? httpClient;
-        public hasettings()
+        public Homeassistantsettings()
         {
             InitializeComponent();
             settings = Settings.Instance;
@@ -42,73 +42,9 @@ namespace THFHA_V1._0.Views
             settings.Save();
         }
 
-        private void btn_test_Click(object sender, EventArgs e)
+        private async void btn_test_Click(object sender, EventArgs e)
         {
-            string message = "";
-            string title = "";
-            if (string.IsNullOrWhiteSpace(settings.Haurl)) settings.Haurl = "http://homeassistant.local:8123";
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
-            tb_haurl.Text = settings.Haurl;
-            // clear the httpclient before testing
-            httpClient = new HttpClient();
-            string err = "";
-            httpClient.BaseAddress = new Uri(settings.Haurl);
-            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", settings.Hatoken);
-            try
-            {
-                var response = httpClient.GetAsync("/api/states").Result;
-                response.EnsureSuccessStatusCode();
-                var json = response.Content.ReadAsStringAsync().Result;
-                GetHAConfig();
-                //return "HA Connected!";
-                message = "Homeassistant is connected ";
-                title = "Home Assistant Check";
-                MessageBox.Show(message, title);
-            }
-            catch (AggregateException ae)
-            {
-                foreach (var ex in ae.InnerExceptions)
-                    // Handle the custom exception.
-                    if (ex is HttpRequestException)
-                    {
-                        err = "Error: " + ex.Message;
-                        // Rethrow any other exception.
-                        //return err;
-                        message = "Homeassistant connection Failed " + ex.Message;
-                        title = "Home Assistant Check";
-                        MessageBox.Show(message, title);
-                        httpClient.Dispose();
-                    }
-                    // Rethrow any other exception.
-                    else
-                    {
-
-                        httpClient.Dispose();
-                        throw ex;
-                    }
-                Log.Error("Error checking HA connectivity {ae}", ae);
-                message = "Homeassistant connection Failed " + ae.ToString;
-                title = "Home Assistant Check";
-                MessageBox.Show(message, title);
-            }
-            catch (HttpRequestException httpEx)
-            {
-                if (httpEx.StatusCode.HasValue)
-                {
-                    err = httpEx.StatusCode.Value.ToString();
-                    httpClient.Dispose();
-                    //return "Error: " + err;
-                    message = "Homeassistant errored " + err;
-                    title = "Home Assistant Check";
-                    MessageBox.Show(message, title);
-                }
-                Log.Error("Error checking HA connectivity {httpEx}", httpEx);
-                httpClient.Dispose();
-                //return "Error: " + httpEx.Message;
-                message = "Homeassistant Error " + httpEx.Message;
-                title = "Home Assistant Check";
-                MessageBox.Show(message, title);
-            }
+            await CheckHa();
         }
         private async void GetHAConfig()
         {
@@ -157,6 +93,94 @@ namespace THFHA_V1._0.Views
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
             }
             client.Dispose();
+        }
+        private async Task CheckHa()
+        {
+            string message = "";
+            string title = "";
+            if (string.IsNullOrWhiteSpace(settings.Haurl)) settings.Haurl = "http://homeassistant.local:8123";
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
+            tb_haurl.Text = settings.Haurl;
+            // clear the httpclient before testing
+            httpClient = new HttpClient();
+            string err = "";
+            httpClient.BaseAddress = new Uri(settings.Haurl);
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", settings.Hatoken);
+            try
+            {
+                var response = httpClient.GetAsync("/api/states").Result;
+                response.EnsureSuccessStatusCode();
+                var json = response.Content.ReadAsStringAsync().Result;
+                GetHAConfig();
+                //return "HA Connected!";
+                message = "Homeassistant is connected ";
+                title = "Home Assistant Check";
+                settings.IsHomeassistantModuleSettingsValid = true;
+                settings.Save();
+                toolStripStatusLabel1.Text = message;
+            }
+            catch (AggregateException ae)
+            {
+                foreach (var ex in ae.InnerExceptions)
+                    // Handle the custom exception.
+                    if (ex is HttpRequestException)
+                    {
+                        err = "Error: " + ex.Message;
+                        // Rethrow any other exception.
+                        //return err;
+                        message = "Homeassistant connection Failed " + ex.Message;
+                        title = "Home Assistant Check";
+                        MessageBox.Show(message, title);
+                        toolStripStatusLabel1.Text = message;
+                        settings.IsHomeassistantModuleSettingsValid = false;
+                        
+                        settings.Save();
+                        httpClient.Dispose();
+                    }
+                    // Rethrow any other exception.
+                    else
+                    {
+
+                        httpClient.Dispose();
+                        throw ex;
+                    }
+                Log.Error("Error checking HA connectivity {ae}", ae);
+                message = "Homeassistant connection Failed " + ae.ToString;
+                title = "Home Assistant Check";
+                MessageBox.Show(message, title);
+                toolStripStatusLabel1.Text = message;
+            }
+            catch (HttpRequestException httpEx)
+            {
+                if (httpEx.StatusCode.HasValue)
+                {
+                    err = httpEx.StatusCode.Value.ToString();
+                    httpClient.Dispose();
+                    //return "Error: " + err;
+                    message = "Homeassistant errored " + err;
+                    title = "Home Assistant Check";
+                    MessageBox.Show(message, title);
+                    settings.IsHomeassistantModuleSettingsValid = false;
+                    settings.Save();
+                    toolStripStatusLabel1.Text = message;
+                }
+                Log.Error("Error checking HA connectivity {httpEx}", httpEx);
+                httpClient.Dispose();
+                //return "Error: " + httpEx.Message;
+                settings.IsHomeassistantModuleSettingsValid = false;
+                settings.Save();
+                message = "Homeassistant Error " + httpEx.Message;
+                toolStripStatusLabel1.Text = message;
+                title = "Home Assistant Check";
+                MessageBox.Show(message, title);
+            }
+        }
+
+        private async void hasettings_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            // chek settings are still valid
+            await CheckHa();
+
         }
     }
 }
