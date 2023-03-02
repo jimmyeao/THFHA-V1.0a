@@ -133,7 +133,7 @@ namespace THFHA_V1._0.Views
                         MessageBox.Show(message, title);
                         toolStripStatusLabel1.Text = message;
                         settings.IsHomeassistantModuleSettingsValid = false;
-                        
+
                         settings.Save();
                         httpClient.Dispose();
                     }

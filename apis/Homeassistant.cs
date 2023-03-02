@@ -1,6 +1,5 @@
 ﻿using Serilog;
 using System.Net.Http.Headers;
-using System.Security.Policy;
 using THFHA_V1._0.Model;
 using THFHA_V1._0.Views;
 namespace THFHA_V1._0.apis
@@ -343,7 +342,7 @@ namespace THFHA_V1._0.apis
             {
                 Log.Error("Error updating {entity} in Home assistant: {ex}", entityName, ex.Message);
                 client.Dispose();
-                isEnabled= false;
+                isEnabled = false;
                 return;
             }
             Log.Debug("Response to GET request: {response}", response);
@@ -370,7 +369,7 @@ namespace THFHA_V1._0.apis
             {
                 Log.Error("Error updating {entity} in Home assistant: {status}", entityName, response.StatusCode);
                 client.Dispose();
-                isEnabled= false;
+                isEnabled = false;
                 settings.UseHA = false;
                 settings.Save();
                 OnStopMonitoringRequested();
@@ -389,8 +388,8 @@ namespace THFHA_V1._0.apis
 
         public async Task Create_Entity(string entity)
         {
-            if(!IsValidUrl(settings.Haurl))
-                { return; }
+            if (!IsValidUrl(settings.Haurl))
+            { return; }
             var client = new HttpClient();
             client.BaseAddress = new Uri(settings.Haurl + "/api/");
 
@@ -422,22 +421,22 @@ namespace THFHA_V1._0.apis
             if (!IsValidUrl(settings.Haurl))
             { return false; }
             var client = new HttpClient();
-                client.BaseAddress = new Uri(settings.Haurl + "/api/");
-                client.DefaultRequestHeaders.Add("Authorization", settings.Hatoken);
-                try
-                {
-                    var response = await client.GetAsync($"states/{entity}");
-                    return response.IsSuccessStatusCode;
-                    client.Dispose();
-                }
-                catch
-                {
-                    Log.Error($"Error Connecting: {entity}");
-                    return false;
-                }
-            
-            
-           
+            client.BaseAddress = new Uri(settings.Haurl + "/api/");
+            client.DefaultRequestHeaders.Add("Authorization", settings.Hatoken);
+            try
+            {
+                var response = await client.GetAsync($"states/{entity}");
+                return response.IsSuccessStatusCode;
+                client.Dispose();
+            }
+            catch
+            {
+                Log.Error($"Error Connecting: {entity}");
+                return false;
+            }
+
+
+
 
 
         }

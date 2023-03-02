@@ -35,7 +35,7 @@ namespace THFHA_V1._0.apis
         }
         private async Task GetState()
         {
-            if(client == null)
+            if (client == null)
             {
                 ILocalHueClient localClient = new LocalHueClient(settings.Hueip);
                 localClient.Initialize(settings.Hueusername);
@@ -126,8 +126,6 @@ namespace THFHA_V1._0.apis
             stateInstance = new State(); // Initialize stateInstance here
             stateInstance.StateChanged += OnStateChanged;
         }
-
-
         public void OnFormClosing()
         {
             // Handle the form closing event here
@@ -138,7 +136,6 @@ namespace THFHA_V1._0.apis
                 OnStopMonitoringRequested();
             }
         }
-
         public HueModule(State state) : this()
         {
             stateInstance = state;

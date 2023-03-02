@@ -35,7 +35,7 @@ namespace THFHA_V1._0.apis
                 {
                     // Perform some actions when the module is disabled
                     Log.Debug("mqtt Module has been disabled.");
-                    if(!settings.IsMqttModuleSettingsValid)
+                    if (!settings.IsMqttModuleSettingsValid)
                     {
                         return;  //no point doing anything if its not enabled!
                     }
@@ -48,7 +48,7 @@ namespace THFHA_V1._0.apis
                 }
             }
         }
-      
+
         public string State
         {
             get { return stateInstance.ToString(); }
@@ -69,7 +69,7 @@ namespace THFHA_V1._0.apis
                 stateInstance = (State)sender;
                 StateChanged?.Invoke(this, EventArgs.Empty);
                 Start(stateInstance);
-               
+
                 _ = PublishMqttUpdate(stateInstance);
                 _ = PublishMqttConfig(stateInstance);
             }
@@ -98,7 +98,7 @@ namespace THFHA_V1._0.apis
         public MqttModule(State state) : this()
         {
             stateInstance = state;
-            
+
             // Initialize your module here
         }
 

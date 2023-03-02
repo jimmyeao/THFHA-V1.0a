@@ -5,8 +5,8 @@ grey out enable buttons and right click enable option until tested = true
 
 hue				fixed
 wled			fixed
-mqtt			not fixed
+mqtt			fixed
 hatcher			fixed
-homeassistant	not fixed
+homeassistant	fixed
 
-hatcher - shorten timeout in test 
+Stop monitoring doesnt actually stop monitoring not fixed

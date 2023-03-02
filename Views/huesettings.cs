@@ -53,8 +53,8 @@ namespace THFHA_V1._0.Views
                 if (result == DialogResult.OK)
                     try
                     {
-                     
-                        
+
+
                         if (settings.HueLight != null)
                         {
                             settings.HueLight.Clear();
@@ -74,7 +74,7 @@ namespace THFHA_V1._0.Views
                             settings.HueLight.Add(new CustomLight(currentLight));
 
                             Log.Information("Added a Hue light called {light}", currentLight.Name);
-                            settings.IsHueModuleSettingsValid= true;
+                            settings.IsHueModuleSettingsValid = true;
                         }
                         if (cb_huelights.Items.Count == 0) // check if the list box is already populated
                         {
@@ -90,7 +90,7 @@ namespace THFHA_V1._0.Views
                             }
                         }
                         MessageBox.Show("Hub Linked", "Success!", MessageBoxButtons.OK);
-                      
+
                         settings.Save();
                     }
                     catch (Exception ex)
