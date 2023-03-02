@@ -26,6 +26,7 @@ namespace THFHA_V1._0.Views
                 var title = "IP Error";
                 var message = "Please enter a valid IP address.";
                 MessageBox.Show(message, title);
+                settings.IsMqttModuleSettingsValid = false;
                 return;
             }
 
@@ -49,7 +50,7 @@ namespace THFHA_V1._0.Views
                 var title = "Connection Successful";
                 var message = "Successfully connected to the MQTT server.";
                 MessageBox.Show(message, title);
-
+                settings.IsMqttModuleSettingsValid = true;
                 // Disconnect from the MQTT server.
                 await client.DisconnectAsync();
             }
@@ -57,6 +58,7 @@ namespace THFHA_V1._0.Views
             {
                 // Connection failed.
                 var title = "Connection Error";
+                settings.IsMqttModuleSettingsValid = false;
                 var message = $"Failed to connect to the MQTT server. Error: {ex.Message}";
                 MessageBox.Show(message, title);
             }

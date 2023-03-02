@@ -142,7 +142,7 @@ namespace THFHA_V1._0.apis
         public HueModule(State state) : this()
         {
             stateInstance = state;
-            stateInstance.StateChanged += OnStateChanged;
+            //stateInstance.StateChanged += OnStateChanged;
             // Initialize your module here
         }
         private void OnStopMonitoringRequested()
