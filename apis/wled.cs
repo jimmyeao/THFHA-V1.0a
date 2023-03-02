@@ -332,7 +332,6 @@ namespace THFHA_V1._0.apis
                     Log.Error("Something went wrong stopping WLED");
                 }
             }
-            
         }
 
         private void SaveState()
