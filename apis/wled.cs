@@ -273,7 +273,7 @@ namespace THFHA_V1._0.apis
                 _originalState = GetCurrentState(settings.SelectedWled.Ip);
                 staterecorded = true;
             }
-            if (IsEnabled)
+            if (IsEnabled && THFHA.logWatcher?.IsRunning == true)
             {
                 stateInstance = (State)sender;
                 StateChanged?.Invoke(this, EventArgs.Empty);

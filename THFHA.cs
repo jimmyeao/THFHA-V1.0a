@@ -50,9 +50,10 @@ namespace THFHA_V1._0
             Log.Debug("State.StateChanged event subscribed");
 
             PopulateModulesList();
-            Settings.SettingChanged += Settings_SettingChanged; // Subscribe to the SettingChanged event
             if (settings.RunLogWatcherAtStart)
             {
+                Settings.SettingChanged += Settings_SettingChanged; // Subscribe to the SettingChanged event
+
                 StartLogWatcher();
                 btn_start.Enabled = false; btn_stop.Enabled = true;
             }
@@ -284,12 +285,16 @@ namespace THFHA_V1._0
         }
         private void btn_start_Click(object sender, EventArgs e)
         {
+            Settings.SettingChanged += Settings_SettingChanged; // Subscribe to the SettingChanged event
+
             btn_start.Enabled = false; btn_stop.Enabled = true;
 
             _ = StartLogWatcher();
         }
         private void btn_stop_Click(object sender, EventArgs e)
         {
+            Settings.SettingChanged -= Settings_SettingChanged; // Subscribe to the SettingChanged event
+
             btn_start.Enabled = true; btn_stop.Enabled = false;
             _ = StopLogWatcher();
         }

@@ -365,7 +365,7 @@ namespace THFHA_V1._0.apis
 
         private async void OnStateChanged(object sender, EventArgs e)
         {
-            if (IsEnabled)
+            if (IsEnabled && THFHA.logWatcher?.IsRunning == true)
             {
                 stateInstance = (State)sender;
                 StateChanged?.Invoke(this, EventArgs.Empty);

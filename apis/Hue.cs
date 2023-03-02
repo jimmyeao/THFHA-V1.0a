@@ -248,15 +248,18 @@ namespace THFHA_V1._0.apis
 
         private async Task PublishHueUpdate(State state)
         {
-            var color = GetRGBColorForState(state);
+            if (isEnabled && THFHA.logWatcher?.IsRunning == true)
+            {
+                var color = GetRGBColorForState(state);
 
-            var client = new LocalHueClient(settings.Hueip);
-            client.Initialize(settings.Hueusername);
+                var client = new LocalHueClient(settings.Hueip);
+                client.Initialize(settings.Hueusername);
 
-            var command = new LightCommand { On = true }.SetColor(color);
-            await client.SendCommandAsync(command, new List<string> { settings.SelectedLightId });
+                var command = new LightCommand { On = true }.SetColor(color);
+                await client.SendCommandAsync(command, new List<string> { settings.SelectedLightId });
 
-            Log.Information("Hue Light set to {status}", state.Status);
+                Log.Information("Hue Light set to {status}", state.Status);
+            }
         }
 
         #endregion Private Methods
