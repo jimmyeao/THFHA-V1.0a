@@ -207,75 +207,10 @@ namespace THFHA_V1._0.apis
 
         public async void Start()
         {
-            _originalState = GetCurrentState(settings.SelectedWled.Ip);
-            //stateInstance = (State)sender;
-            StateChanged?.Invoke(this, EventArgs.Empty);
-            switch (stateInstance.Status)
-            {
-                case "Busy":
-                    await ChangeColor("255,0,0");
-                    break;
-
-                case "On the phone":
-                    await ChangeColor("255,0,0");
-                    break;
-
-                case "Do not disturb":
-                    await ChangeColor("255,0,0");
-                    break;
-
-                case "Away":
-                    await ChangeColor("255,255,0");
-                    break;
-
-                case "Be right back":
-                    await ChangeColor("255,255,0");
-                    break;
-
-                case "Available":
-                    await ChangeColor("0,255,0");
-                    break;
-
-                case "Offline":
-                    await ChangeColor("0,0,0");
-                    break;
-            }
-        }
-
-        public void UpdateSettings(bool isEnabled)
-        {
-            IsEnabled = isEnabled;
-        }
-
-        #endregion Public Methods
-
-        #region Private Methods
-
-        private void LoadState()
-        {
-            string filePath = Path.Combine(Environment.CurrentDirectory, "originalstate.json");
-
-            if (File.Exists(filePath))
-            {
-                string json = File.ReadAllText(filePath);
-                _originalState = JsonConvert.DeserializeObject<dynamic>(json);
-            }
-            else
-            {
-                _originalState = new ExpandoObject();
-            }
-        }
-
-        private async void OnStateChanged(object sender, EventArgs e)
-        {
-            if (!staterecorded)
+            if (isEnabled && THFHA.logWatcher?.IsRunning == true)
             {
                 _originalState = GetCurrentState(settings.SelectedWled.Ip);
-                staterecorded = true;
-            }
-            if (IsEnabled && THFHA.logWatcher?.IsRunning == true)
-            {
-                stateInstance = (State)sender;
+                //stateInstance = (State)sender;
                 StateChanged?.Invoke(this, EventArgs.Empty);
                 switch (stateInstance.Status)
                 {
@@ -310,19 +245,92 @@ namespace THFHA_V1._0.apis
             }
         }
 
+        public void UpdateSettings(bool isEnabled)
+        {
+            IsEnabled = isEnabled;
+        }
+
+        #endregion Public Methods
+
+        #region Private Methods
+
+        private void LoadState()
+        {
+            string filePath = Path.Combine(Environment.CurrentDirectory, "originalstate.json");
+
+            if (File.Exists(filePath))
+            {
+                string json = File.ReadAllText(filePath);
+                _originalState = JsonConvert.DeserializeObject<dynamic>(json);
+            }
+            else
+            {
+                _originalState = new ExpandoObject();
+            }
+        }
+
+        private async void OnStateChanged(object sender, EventArgs e)
+        {
+            if (isEnabled)
+            {
+                if (_currentState == null && staterecorded == false)
+                {
+                    _originalState = await GetCurrentState(settings.SelectedWled.Ip);
+                    staterecorded = true;
+                }
+                if (IsEnabled && THFHA.logWatcher?.IsRunning == true)
+                {
+                    stateInstance = (State)sender;
+                    StateChanged?.Invoke(this, EventArgs.Empty);
+                    switch (stateInstance.Status)
+                    {
+                        case "Busy":
+                            await ChangeColor("255,0,0");
+                            break;
+
+                        case "On the phone":
+                            await ChangeColor("255,0,0");
+                            break;
+
+                        case "Do not disturb":
+                            await ChangeColor("255,0,0");
+                            break;
+
+                        case "Away":
+                            await ChangeColor("255,255,0");
+                            break;
+
+                        case "Be right back":
+                            await ChangeColor("255,255,0");
+                            break;
+
+                        case "Available":
+                            await ChangeColor("0,255,0");
+                            break;
+
+                        case "Offline":
+                            await ChangeColor("0,0,0");
+                            break;
+                    }
+                }
+            }
+        }
+
         private void OnStopMonitoringRequested()
         {
-            try
-            {
-                // Stop monitoring here
-                var isMonitoring = false;
-                LoadState();
-                RestoreState(settings.SelectedWled.Ip, _originalState);
-            }
-            catch (Exception ex)
-            {
-                Log.Error("Something went wrong stopping WLED");
-            }
+            
+                try
+                {
+                    // Stop monitoring here
+                    var isMonitoring = false;
+                    LoadState();
+                    RestoreState(settings.SelectedWled.Ip, _originalState);
+                }
+                catch (Exception ex)
+                {
+                    Log.Error("Something went wrong stopping WLED");
+                }
+            
         }
 
         private void SaveState()

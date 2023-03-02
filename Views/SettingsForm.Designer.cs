@@ -44,7 +44,7 @@
             // cb_useha
             // 
             this.cb_useha.AutoSize = true;
-            this.cb_useha.Location = new System.Drawing.Point(40, 46);
+            this.cb_useha.Location = new System.Drawing.Point(40, 49);
             this.cb_useha.Name = "cb_useha";
             this.cb_useha.Size = new System.Drawing.Size(169, 24);
             this.cb_useha.TabIndex = 0;
@@ -55,7 +55,7 @@
             // cb_usehue
             // 
             this.cb_usehue.AutoSize = true;
-            this.cb_usehue.Location = new System.Drawing.Point(40, 74);
+            this.cb_usehue.Location = new System.Drawing.Point(40, 81);
             this.cb_usehue.Name = "cb_usehue";
             this.cb_usehue.Size = new System.Drawing.Size(140, 24);
             this.cb_usehue.TabIndex = 1;
@@ -66,7 +66,7 @@
             // cb_usemqtt
             // 
             this.cb_usemqtt.AutoSize = true;
-            this.cb_usemqtt.Location = new System.Drawing.Point(40, 102);
+            this.cb_usemqtt.Location = new System.Drawing.Point(40, 113);
             this.cb_usemqtt.Name = "cb_usemqtt";
             this.cb_usemqtt.Size = new System.Drawing.Size(105, 24);
             this.cb_usemqtt.TabIndex = 2;
@@ -77,7 +77,7 @@
             // cb_usewled
             // 
             this.cb_usewled.AutoSize = true;
-            this.cb_usewled.Location = new System.Drawing.Point(40, 130);
+            this.cb_usewled.Location = new System.Drawing.Point(40, 145);
             this.cb_usewled.Name = "cb_usewled";
             this.cb_usewled.Size = new System.Drawing.Size(106, 24);
             this.cb_usewled.TabIndex = 3;
@@ -89,7 +89,7 @@
             // 
             this.bt_hasettings.Location = new System.Drawing.Point(215, 44);
             this.bt_hasettings.Name = "bt_hasettings";
-            this.bt_hasettings.Size = new System.Drawing.Size(102, 29);
+            this.bt_hasettings.Size = new System.Drawing.Size(102, 32);
             this.bt_hasettings.TabIndex = 4;
             this.bt_hasettings.Text = "Settings";
             this.bt_hasettings.UseVisualStyleBackColor = true;
@@ -97,9 +97,9 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(215, 73);
+            this.button1.Location = new System.Drawing.Point(215, 76);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(102, 29);
+            this.button1.Size = new System.Drawing.Size(102, 32);
             this.button1.TabIndex = 4;
             this.button1.Text = "Settings";
             this.button1.UseVisualStyleBackColor = true;
@@ -107,9 +107,9 @@
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(215, 102);
+            this.button2.Location = new System.Drawing.Point(215, 108);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(102, 29);
+            this.button2.Size = new System.Drawing.Size(102, 32);
             this.button2.TabIndex = 4;
             this.button2.Text = "Settings";
             this.button2.UseVisualStyleBackColor = true;
@@ -117,9 +117,9 @@
             // 
             // button3
             // 
-            this.button3.Location = new System.Drawing.Point(215, 131);
+            this.button3.Location = new System.Drawing.Point(215, 140);
             this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(102, 29);
+            this.button3.Size = new System.Drawing.Size(102, 32);
             this.button3.TabIndex = 4;
             this.button3.Text = "Settings";
             this.button3.UseVisualStyleBackColor = true;
@@ -128,7 +128,7 @@
             // cb_runLogWatcherAtStart
             // 
             this.cb_runLogWatcherAtStart.AutoSize = true;
-            this.cb_runLogWatcherAtStart.Location = new System.Drawing.Point(40, 195);
+            this.cb_runLogWatcherAtStart.Location = new System.Drawing.Point(40, 215);
             this.cb_runLogWatcherAtStart.Name = "cb_runLogWatcherAtStart";
             this.cb_runLogWatcherAtStart.Size = new System.Drawing.Size(136, 24);
             this.cb_runLogWatcherAtStart.TabIndex = 3;
@@ -138,9 +138,9 @@
             // 
             // btn_hatchersettings
             // 
-            this.btn_hatchersettings.Location = new System.Drawing.Point(215, 160);
+            this.btn_hatchersettings.Location = new System.Drawing.Point(215, 172);
             this.btn_hatchersettings.Name = "btn_hatchersettings";
-            this.btn_hatchersettings.Size = new System.Drawing.Size(102, 29);
+            this.btn_hatchersettings.Size = new System.Drawing.Size(102, 32);
             this.btn_hatchersettings.TabIndex = 5;
             this.btn_hatchersettings.Text = "Settings";
             this.btn_hatchersettings.UseVisualStyleBackColor = true;
@@ -149,7 +149,7 @@
             // cb_hatchersettings
             // 
             this.cb_hatchersettings.AutoSize = true;
-            this.cb_hatchersettings.Location = new System.Drawing.Point(40, 160);
+            this.cb_hatchersettings.Location = new System.Drawing.Point(40, 177);
             this.cb_hatchersettings.Name = "cb_hatchersettings";
             this.cb_hatchersettings.Size = new System.Drawing.Size(118, 24);
             this.cb_hatchersettings.TabIndex = 6;
@@ -175,6 +175,7 @@
             this.Controls.Add(this.cb_useha);
             this.Name = "SettingsForm";
             this.Text = "SettingsForm";
+            this.Load += new System.EventHandler(this.SettingsForm_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 

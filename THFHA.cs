@@ -1,4 +1,5 @@
 ﻿using Serilog;
+using System.Reflection;
 using THFHA_V1._0.Model;
 using THFHA_V1._0.Views;
 
@@ -19,6 +20,8 @@ namespace THFHA_V1._0
             this.settings = Settings.Instance;
             this.modules = modules;
             this.state = state; // set the state
+    
+
             // Initialize the IsEnabled property of each module based on the value stored in the Settings singleton
             foreach (IModule module in this.modules)
             {
@@ -62,7 +65,7 @@ namespace THFHA_V1._0
                 btn_start.Enabled = true; btn_stop.Enabled = false;
                 foreach (IModule module in modules)
                 {
-                    module.OnFormClosing();
+                    //module.OnFormClosing();
                 }
             }
 
@@ -244,6 +247,7 @@ namespace THFHA_V1._0
                 {
                     case "hue":
                         Settings.Instance.UseHue = selectedModule.IsEnabled;
+                        
                         statuslabel.Text = selectedModule.Name + " Disabled";
                         break;
                     case "homeassistant":
