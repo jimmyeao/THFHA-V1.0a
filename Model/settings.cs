@@ -21,7 +21,6 @@ namespace THFHA_V1._0.Model
             }
         }
 
-
         public Light ToLight()
         {
             return new Light()
@@ -32,25 +31,31 @@ namespace THFHA_V1._0.Model
             };
         }
     } //custom light class used for Hue lights
+
     public class Settings : INotifyPropertyChanged
     {
         #region setup
+
         private static readonly Settings instance = new Settings();
+
         public event PropertyChangedEventHandler PropertyChanged;
+
         public event EventHandler<EventArgs> SettingsUpdated;
+
         public delegate void SettingChangedEventHandler(object sender, SettingChangedEventArgs e);
 
         public static event SettingChangedEventHandler SettingChanged;
-
 
         private Settings()
         {
             Load();
         }
+
         public static Settings Instance
         {
             get { return instance; }
         }
+
         public class SettingChangedEventArgs : EventArgs
         {
             public string SettingName { get; set; }
@@ -60,8 +65,6 @@ namespace THFHA_V1._0.Model
                 SettingName = settingName;
             }
         }
-
-
 
         protected void OnPropertyChanged(string propertyName)
         {
@@ -73,6 +76,7 @@ namespace THFHA_V1._0.Model
         }
 
         private bool _runLogWatcherAtStart;
+
         public bool RunLogWatcherAtStart
         {
             get { return _runLogWatcherAtStart; }
@@ -80,15 +84,20 @@ namespace THFHA_V1._0.Model
         }
 
         private bool _autorun = false;
+
         public bool Autorun
         {
             get { return _autorun; }
             set { _autorun = value; OnPropertyChanged(nameof(Autorun)); }
         }
-        #endregion
+
+        #endregion setup
+
         #region Homeassistant
+
         // Home assistant
         private bool _useHA;
+
         public bool UseHA
         {
             get { return _useHA; }
@@ -99,7 +108,9 @@ namespace THFHA_V1._0.Model
                 SettingChanged?.Invoke(this, new SettingChangedEventArgs(nameof(UseHA)));
             }
         }
+
         private bool _ishaModuleSettingsValid;
+
         public bool IsHomeassistantModuleSettingsValid
         {
             get { return _ishaModuleSettingsValid; }
@@ -107,25 +118,31 @@ namespace THFHA_V1._0.Model
         }
 
         private string _hatoken;
+
         public string Hatoken
         {
             get { return _hatoken; }
             set
             {
                 _hatoken = value; OnPropertyChanged(nameof(Hatoken));
-
             }
         }
+
         private string _haurl;
+
         public string Haurl
         {
             get { return _haurl; }
             set { _haurl = value; OnPropertyChanged(nameof(Haurl)); }
         }
-        #endregion
+
+        #endregion Homeassistant
+
         #region mqtt
+
         // MQTT
         private bool _useMQTT;
+
         public bool UseMQTT
         {
             get { return _useMQTT; }
@@ -136,42 +153,54 @@ namespace THFHA_V1._0.Model
                 SettingChanged?.Invoke(this, new SettingChangedEventArgs(nameof(UseMQTT))); // pass the EventArgs parameter
             }
         }
+
         private bool _ismqttModuleSettingsValid;
+
         public bool IsMqttModuleSettingsValid
         {
             get { return _ismqttModuleSettingsValid; }
             set { _ismqttModuleSettingsValid = value; OnPropertyChanged(nameof(IsMqttModuleSettingsValid)); }
         }
+
         private string _mqttip;
+
         public string Mqttip
         {
             get { return _mqttip; }
             set { _mqttip = value; OnPropertyChanged(nameof(Mqttip)); }
         }
+
         private string _mqttusername;
+
         public string Mqttusername
         {
             get { return _mqttusername; }
             set { _mqttusername = value; OnPropertyChanged(nameof(Mqttusername)); }
         }
+
         private string _mqttpassword;
+
         public string Mqttpassword
         {
             get { return _mqttpassword; }
             set { _mqttpassword = value; OnPropertyChanged(nameof(Mqttpassword)); }
         }
+
         private string _mqtttopic;
+
         public string Mqtttopic
         {
             get { return _mqtttopic; }
             set { _mqtttopic = value; OnPropertyChanged(nameof(Mqtttopic)); }
         }
 
+        #endregion mqtt
 
-        #endregion
         #region Hue
+
         //Phillips Hue
         private bool _useHue;
+
         public bool UseHue
         {
             get { return _useHue; }
@@ -182,41 +211,54 @@ namespace THFHA_V1._0.Model
                 SettingChanged?.Invoke(this, new SettingChangedEventArgs(nameof(UseHue))); // pass the EventArgs parameter
             }
         }
+
         private bool _isHueModuleSettingsValid;
+
         public bool IsHueModuleSettingsValid
         {
             get { return _isHueModuleSettingsValid; }
             set { _isHueModuleSettingsValid = value; OnPropertyChanged(nameof(IsHueModuleSettingsValid)); }
         }
+
         private string _hueip;
+
         public string Hueip
         {
             get { return _hueip; }
             set { _hueip = value; OnPropertyChanged(nameof(Hueip)); }
         }
+
         private string _hueusername;
+
         public string Hueusername
         {
             get { return _hueusername; }
             set { _hueusername = value; OnPropertyChanged(nameof(Hueusername)); }
         }
+
         private List<CustomLight> _HueLight = new List<CustomLight>();
+
         public List<CustomLight> HueLight
         {
             get { return _HueLight; }
             set { _HueLight = value; OnPropertyChanged(nameof(HueLight)); }
         }
+
         private string _selectedLightId;
+
         public string SelectedLightId
         {
             get { return _selectedLightId; }
             set { _selectedLightId = value; OnPropertyChanged(nameof(SelectedLightId)); }
         }
-        #endregion
+
+        #endregion Hue
+
         #region WLED
 
         // WLED
         private bool _useWLED;
+
         public bool UseWLED
         {
             get { return _useWLED; }
@@ -227,37 +269,46 @@ namespace THFHA_V1._0.Model
                 SettingChanged?.Invoke(this, new SettingChangedEventArgs(nameof(UseWLED))); // pass the EventArgs parameter
             }
         }
+
         private bool _isWledModuleSettingsValid;
+
         public bool IsWledModuleSettingsValid
         {
             get { return _isWledModuleSettingsValid; }
             set { _isWledModuleSettingsValid = value; OnPropertyChanged(nameof(IsWledModuleSettingsValid)); }
         }
+
         public WLED SelectedWled { get; set; } // Add this property to store the selected WLED light.
         private List<WLED> _wledDevices = new List<WLED>();
+
         public List<WLED> WledDevices
         {
             get { return _wledDevices; }
             set { _wledDevices = value; OnPropertyChanged(nameof(WledDevices)); }
         }
 
-
         private string _WledDev = "";
+
         public string WledDev
         {
             get { return _WledDev; }
             set { _WledDev = value; OnPropertyChanged(nameof(WledDev)); }
         }
+
         private string _wledip = "";
+
         public string WLEDIP
         {
             get { return _wledip; }
             set { _wledip = value; OnPropertyChanged(nameof(WLEDIP)); }
         }
 
-        #endregion
+        #endregion WLED
+
         #region Hatcher
+
         private bool _usehatcher;
+
         public bool UseHatcher
         {
             get { return _usehatcher; }
@@ -268,20 +319,27 @@ namespace THFHA_V1._0.Model
                 SettingChanged?.Invoke(this, new SettingChangedEventArgs(nameof(UseHatcher))); // pass the EventArgs parameter
             }
         }
+
         private bool _isHatcherModuleSettingsValid;
+
         public bool IsHatcherModuleSettingsValid
         {
             get { return _isHatcherModuleSettingsValid; }
             set { _isHatcherModuleSettingsValid = value; OnPropertyChanged(nameof(IsHatcherModuleSettingsValid)); }
         }
+
         private string _hatcherip;
+
         public string Hatcherip
         {
             get { return _hatcherip; }
             set { _hatcherip = value; OnPropertyChanged(nameof(Hatcherip)); }
         }
-        #endregion
+
+        #endregion Hatcher
+
         #region operations
+
         // public event PropertyChangedEventHandler PropertyChanged;
 
         public void Save()
@@ -311,7 +369,7 @@ namespace THFHA_V1._0.Model
                 }
             }
         }
-        #endregion
-    }
 
+        #endregion operations
+    }
 }

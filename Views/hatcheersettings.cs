@@ -7,8 +7,17 @@ namespace THFHA_V1._0.Views
 {
     public partial class hatchersettings : Form
     {
-        private Settings settings;                  //set up our settings
-        private static HttpClient? httpClient;      //set up for a http client
+        #region Private Fields
+
+        private static HttpClient? httpClient;
+        private Settings settings;
+
+        #endregion Private Fields
+
+        //set up our settings
+        //set up for a http client
+
+        #region Public Constructors
 
         public hatchersettings()
         {
@@ -17,11 +26,9 @@ namespace THFHA_V1._0.Views
             textBox1.Text = settings.Hatcherip;     //load the settings into the form
         }
 
-        private void textBox1_TextChanged(object sender, EventArgs e)
-        {
-            settings.Hatcherip = textBox1.Text;
-            settings.Save();
-        }
+        #endregion Public Constructors
+
+        #region Private Methods
 
         private async void btn_test_Click(object sender, EventArgs e)
         {
@@ -42,7 +49,6 @@ namespace THFHA_V1._0.Views
                 // Create a new TCP client and connect to the server on a separate thread
                 await Task.Run(async () =>
                 {
-
                     using (TcpClient client = new TcpClient())
                     {
                         var cancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(2));
@@ -67,15 +73,11 @@ namespace THFHA_V1._0.Views
                             // Log the exception for debugging purposes
                             Log.Error("An error occurred while trying to connect to the server.");
                         }
-
-
                     }
-
                 });
 
                 // Close the connection
                 Log.Information("Connection closed.");
-
             }
             catch (Exception ex)
             {
@@ -87,10 +89,14 @@ namespace THFHA_V1._0.Views
                 // Log the exception for debugging purposes
                 Log.Error(ex, "An error occurred while trying to connect to the server.");
             }
-
         }
 
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+            settings.Hatcherip = textBox1.Text;
+            settings.Save();
+        }
 
-
+        #endregion Private Methods
     }
 }

@@ -5,26 +5,80 @@ using Serilog;
 using System.Text;
 using THFHA_V1._0.Model;
 using THFHA_V1._0.Views;
+
 namespace THFHA_V1._0.apis
 {
     public class MqttModule : IModule
     {
-        private string name = "Mqtt";
-        private bool isEnabled = false;
-        private MqttFactory factory;
-        private Settings settings;
-        private System.Timers.Timer connectionCheckTimer = new System.Timers.Timer();
-        private IMqttClient client;
-        private State stateInstance;
-        public event EventHandler? StateChanged;
-        public string Name
-        {
-            get { return name; }
-        }
-        public void Start()
-        {
+        #region Private Fields
 
+        private IMqttClient client;
+        private System.Timers.Timer connectionCheckTimer = new System.Timers.Timer();
+        private MqttFactory factory;
+        private bool isEnabled = false;
+        private string name = "Mqtt";
+        private Settings settings;
+        private State stateInstance;
+
+        #endregion Private Fields
+
+        #region Public Constructors
+
+        public MqttModule()
+        {
+            settings = Settings.Instance;
+            factory = new MqttFactory(); // Initialize the factory object
+            settings = Settings.Instance;
+            // This is the parameterless constructor that will be used by the ModuleManager class
         }
+
+        public MqttModule(State state) : this()
+        {
+            stateInstance = state;
+
+            // Initialize your module here
+        }
+
+        #endregion Public Constructors
+
+        #region Public Events
+
+        public event EventHandler? StateChanged;
+
+        #endregion Public Events
+
+        #region Public Enums
+
+        public enum ActivityIcon
+        {
+            InACall,
+            OnThePhone,
+            Offline,
+            InAMeeting,
+            InAConferenceCall,
+            OutOfOffice,
+            NotInACall,
+            Presenting
+        }
+
+        /// <summary>
+        /// Functionality code below
+        /// </summary>
+        public enum StatusIcon
+        {
+            Busy,
+            OnThePhone,
+            DoNotDisturb,
+            Away,
+            BeRightBack,
+            Available,
+            Offline
+        }
+
+        #endregion Public Enums
+
+        #region Public Properties
+
         public bool IsEnabled
         {
             get { return isEnabled; }
@@ -49,42 +103,26 @@ namespace THFHA_V1._0.apis
             }
         }
 
+        public string Name
+        {
+            get { return name; }
+        }
+
         public string State
         {
             get { return stateInstance.ToString(); }
             set { /* You can leave this empty since the State property is read-only */ }
         }
+
+        #endregion Public Properties
+
+        #region Public Methods
+
         public Form GetSettingsForm()
         {
             return new mqttsettings(); // Replace with your module's settings form
         }
-        public void UpdateSettings(bool isEnabled)
-        {
-            IsEnabled = isEnabled;
-        }
-        private void OnStateChanged(object sender, EventArgs e)
-        {
-            if (IsEnabled)
-            {
-                stateInstance = (State)sender;
-                StateChanged?.Invoke(this, EventArgs.Empty);
-                Start(stateInstance);
 
-                _ = PublishMqttUpdate(stateInstance);
-                _ = PublishMqttConfig(stateInstance);
-            }
-            else
-            {
-                OnStopMonitoringRequested();
-            }
-        }
-        public MqttModule()
-        {
-            settings = Settings.Instance;
-            factory = new MqttFactory(); // Initialize the factory object
-            settings = Settings.Instance;
-            // This is the parameterless constructor that will be used by the ModuleManager class
-        }
         public void OnFormClosing()
         {
             // Handle the form closing event here
@@ -95,19 +133,16 @@ namespace THFHA_V1._0.apis
                 OnStopMonitoringRequested();
             }
         }
-        public MqttModule(State state) : this()
-        {
-            stateInstance = state;
 
-            // Initialize your module here
+        public void Start()
+        {
         }
 
         public async Task Start(State state)
         {
             try
             {
-                // dispose the timer if it's already running
-                // create a new instance of the client
+                // dispose the timer if it's already running create a new instance of the client
                 client = factory.CreateMqttClient();
                 var options = new MqttClientOptionsBuilder()
                     .WithClientId(Guid.NewGuid().ToString())
@@ -124,69 +159,24 @@ namespace THFHA_V1._0.apis
                 {
                     _ = PublishMqttUpdate(state);
                     _ = PublishMqttConfig(state);
-
                 }
             }
             catch (Exception ex)
             {
                 Log.Error("Error starting MQTT " + ex.Message);
             }
+        }
 
-        }
-        /// <summary>
-        /// Functionality code below
-        /// </summary>
-        public enum StatusIcon
+        public void UpdateSettings(bool isEnabled)
         {
-            Busy,
-            OnThePhone,
-            DoNotDisturb,
-            Away,
-            BeRightBack,
-            Available,
-            Offline
+            IsEnabled = isEnabled;
         }
-        private void OnStopMonitoringRequested()
-        {
-            // Stop monitoring here
-            var isMonitoring = false;
 
-            if (client != null)
-            {
-                client.Dispose();
-                Log.Information("MQTTclient disposed");
-            }
-        }
-        public enum ActivityIcon
-        {
-            InACall,
-            OnThePhone,
-            Offline,
-            InAMeeting,
-            InAConferenceCall,
-            OutOfOffice,
-            NotInACall,
-            Presenting
-        }
-        static string GetStatusIcon(string status)
-        {
-            return status switch
-            {
-                "Busy" => "mdi:account-cancel",
-                "On the phone" => "mdi:phone-in-talk-outline",
-                "Do not disturb" => "mdi:minus-circle-outline",
-                "Away" => "mdi:timer-sand",
-                "Be right back" => "mdi:timer-sand",
-                "Available" => "mdi:account",
-                "Offline" => "mdi:account-off",
-                _ => "mdi:account-off",
-            };
-        }
-        private async Task CheckConnection()
-        {
+        #endregion Public Methods
 
-        }
-        static string GetActivityIcon(string activity)
+        #region Private Methods
+
+        private static string GetActivityIcon(string activity)
         {
             return activity switch
             {
@@ -201,6 +191,234 @@ namespace THFHA_V1._0.apis
                 _ => "mdi:account-off",
             };
         }
+
+        private static string GetStatusIcon(string status)
+        {
+            return status switch
+            {
+                "Busy" => "mdi:account-cancel",
+                "On the phone" => "mdi:phone-in-talk-outline",
+                "Do not disturb" => "mdi:minus-circle-outline",
+                "Away" => "mdi:timer-sand",
+                "Be right back" => "mdi:timer-sand",
+                "Available" => "mdi:account",
+                "Offline" => "mdi:account-off",
+                _ => "mdi:account-off",
+            };
+        }
+
+        private async Task CheckConnection()
+        {
+        }
+
+        private void OnStateChanged(object sender, EventArgs e)
+        {
+            if (IsEnabled)
+            {
+                stateInstance = (State)sender;
+                StateChanged?.Invoke(this, EventArgs.Empty);
+                Start(stateInstance);
+
+                _ = PublishMqttUpdate(stateInstance);
+                _ = PublishMqttConfig(stateInstance);
+            }
+            else
+            {
+                OnStopMonitoringRequested();
+            }
+        }
+
+        private void OnStopMonitoringRequested()
+        {
+            // Stop monitoring here
+            var isMonitoring = false;
+
+            if (client != null)
+            {
+                client.Dispose();
+                Log.Information("MQTTclient disposed");
+            }
+        }
+
+        private async Task PublishMqttConfig(State state)
+        {
+            if (settings.Mqtttopic == "")
+            {
+                settings.Mqtttopic = "Default";
+            }
+
+            //teamslient, teams status, teams activity, teams camera
+
+            List<String> Sensors = new List<string>() { "client", "status", "activity", "camera", "microphone" };
+
+            foreach (var sensor in Sensors)
+            {
+                var statusicon = "";
+                var activityicon = "";
+                var camicon = "";
+                var micicon = "";
+
+                switch (state.Status)
+                {
+                    case "Busy":
+                        statusicon = "mdi:account-cancel";
+                        break;
+
+                    case "On the phone":
+                        statusicon = "mdi:phone-in-talk-outline";
+                        break;
+
+                    case "Do not disturb":
+                        statusicon = "mdi:minus-circle-outline";
+                        break;
+
+                    case "Away":
+                        statusicon = "mdi:timer-sand";
+                        break;
+
+                    case "Be right back":
+                        statusicon = "mdi:timer-sand";
+                        break;
+
+                    case "Available":
+                        statusicon = "mdi:account";
+                        break;
+
+                    case "Offline":
+                        statusicon = "mdi:account-off";
+                        break;
+
+                    default:
+                        statusicon = "mdi:account-off";
+                        break;
+                }
+                switch (state.Activity)
+                {
+                    case "In a call":
+                        activityicon = "mdi:phone-in-talk-outline";
+                        break;
+
+                    case "On the phone":
+                        activityicon = "mdi:phone-in-talk-outline";
+                        break;
+
+                    case "Offline":
+                        activityicon = "mdi:account-off";
+                        break;
+
+                    case "In a meeting":
+                        activityicon = "mdi:acc";
+                        break;
+
+                    case "In A Conference Call":
+                        activityicon = "mdi:phone-in-talk-outline";
+                        break;
+
+                    case "Out of Office":
+                        activityicon = "mdi:account-off";
+                        break;
+
+                    case "Not in a Call":
+                        activityicon = "mdi:account";
+                        break;
+
+                    case "Presenting":
+                        activityicon = "mdi:presentation-play";
+                        break;
+
+                    default:
+                        activityicon = "mdi:account-off";
+                        break;
+                }
+                if (state.Camera == "On")
+                {
+                    camicon = "mdi:camera";
+                }
+                else
+                {
+                    camicon = "mdi:camera-off";
+                }
+                if (state.Microphone == "Mute On")
+                {
+                    micicon = "mdi:microphone-off";
+                }
+                else
+                {
+                    micicon = "mdi:microphone";
+                }
+                string Sensor = sensor;
+                string SensorName = (settings.Mqtttopic + " " + Sensor).Replace(" ", "_");
+                string ConfigSensorID = SensorName.ToLower().Replace(" ", "_");
+                string UniqueID = ConfigSensorID;
+                if (settings.Mqtttopic == null)
+                {
+                    settings.Mqtttopic = System.Environment.MachineName;
+                }
+                string StateTopicID = settings.Mqtttopic.ToLower().Replace(" ", "_") + "_teams_monitor";
+                string StateTopic = "homeassistant/sensor/" + StateTopicID + "/state";
+                string Topic = "homeassistant/sensor/" + ConfigSensorID + "/config";
+                //string ValueTemplate = "{{ value_json." + Sensor.ToLower() + "}}";
+                string ValueTemplate = "{{ value_json." + Sensor.ToLower() + ".value}}";
+                string Icon = "mdi:eye"; // Replace this with the desired icon name
+                switch (sensor)
+                {
+                    case "client":
+                        Icon = "mdi:television-classic";
+                        break;
+
+                    case "status":
+                        Icon = statusicon;
+                        break;
+
+                    case "activity":
+                        Icon = activityicon;
+                        break;
+
+                    case "camera":
+                        Icon = camicon;
+                        break;
+
+                    case "microphone":
+                        Icon = micicon;
+                        break;
+
+                    default:
+                        Icon = "mdi:eye";
+                        break;
+                }
+
+                var payload = new
+                {
+                    name = SensorName,
+                    unique_id = UniqueID,
+                    state_topic = StateTopic,
+                    value_template = ValueTemplate,
+                    icon = Icon
+                };
+                string jsonPayload = JsonConvert.SerializeObject(payload);
+                // are we connected?
+                if (!client.IsConnected)
+                {
+                    Log.Information("Ooops MQTT not conected");
+                    //TODO Add some retry code here, the problem is that this is triggered before the connect has completed
+                    //await AttemptReconnect();
+                }
+
+                if (client.IsConnected)
+                {
+                    try
+                    {
+                        await client.PublishBinaryAsync(Topic, Encoding.UTF8.GetBytes(jsonPayload));
+                    }
+                    catch
+                    {
+                        //something went wrong
+                        Log.Error("Error publishing MQTT config");
+                    }
+                }
+            }
+        }
+
         private async Task PublishMqttUpdate(State state)
         {
             //PublishMqttConfig();
@@ -260,10 +478,8 @@ namespace THFHA_V1._0.apis
                 microphone = new
                 {
                     value = state.Microphone,
-
                 }
             };
-
 
             string jsonPayload = JsonConvert.SerializeObject(payload);
 
@@ -271,7 +487,6 @@ namespace THFHA_V1._0.apis
             if (!client.IsConnected)
             {
                 Log.Information("OOOps MQTT not connected {jsonPayload}", jsonPayload);
-
             }
             try
             {
@@ -284,167 +499,7 @@ namespace THFHA_V1._0.apis
                 Log.Information("Error publishing MQTT");
             }
         }
-        private async Task PublishMqttConfig(State state)
-        {
-            if (settings.Mqtttopic == "")
-            {
-                settings.Mqtttopic = "Default";
-            }
 
-            //teamslient, teams status, teams activity, teams camera
-
-            List<String> Sensors = new List<string>() { "client", "status", "activity", "camera", "microphone" };
-
-            foreach (var sensor in Sensors)
-            {
-                var statusicon = "";
-                var activityicon = "";
-                var camicon = "";
-                var micicon = "";
-
-                switch (state.Status)
-                {
-                    case "Busy":
-                        statusicon = "mdi:account-cancel";
-                        break;
-                    case "On the phone":
-                        statusicon = "mdi:phone-in-talk-outline";
-                        break;
-                    case "Do not disturb":
-                        statusicon = "mdi:minus-circle-outline";
-                        break;
-                    case "Away":
-                        statusicon = "mdi:timer-sand";
-                        break;
-                    case "Be right back":
-                        statusicon = "mdi:timer-sand";
-                        break;
-                    case "Available":
-                        statusicon = "mdi:account";
-                        break;
-                    case "Offline":
-                        statusicon = "mdi:account-off";
-                        break;
-                    default:
-                        statusicon = "mdi:account-off";
-                        break;
-
-                }
-                switch (state.Activity)
-                {
-                    case "In a call":
-                        activityicon = "mdi:phone-in-talk-outline";
-                        break;
-                    case "On the phone":
-                        activityicon = "mdi:phone-in-talk-outline";
-                        break;
-                    case "Offline":
-                        activityicon = "mdi:account-off";
-                        break;
-                    case "In a meeting":
-                        activityicon = "mdi:acc";
-                        break;
-                    case "In A Conference Call":
-                        activityicon = "mdi:phone-in-talk-outline";
-                        break;
-                    case "Out of Office":
-                        activityicon = "mdi:account-off";
-                        break;
-                    case "Not in a Call":
-                        activityicon = "mdi:account";
-                        break;
-                    case "Presenting":
-                        activityicon = "mdi:presentation-play";
-                        break;
-
-
-                    default:
-                        activityicon = "mdi:account-off";
-                        break;
-                }
-                if (state.Camera == "On")
-                {
-                    camicon = "mdi:camera";
-                }
-                else
-                {
-                    camicon = "mdi:camera-off";
-                }
-                if (state.Microphone == "Mute On")
-                {
-                    micicon = "mdi:microphone-off";
-                }
-                else
-                {
-                    micicon = "mdi:microphone";
-                }
-                string Sensor = sensor;
-                string SensorName = (settings.Mqtttopic + " " + Sensor).Replace(" ", "_");
-                string ConfigSensorID = SensorName.ToLower().Replace(" ", "_");
-                string UniqueID = ConfigSensorID;
-                if (settings.Mqtttopic == null)
-                {
-                    settings.Mqtttopic = System.Environment.MachineName;
-                }
-                string StateTopicID = settings.Mqtttopic.ToLower().Replace(" ", "_") + "_teams_monitor";
-                string StateTopic = "homeassistant/sensor/" + StateTopicID + "/state";
-                string Topic = "homeassistant/sensor/" + ConfigSensorID + "/config";
-                //string ValueTemplate = "{{ value_json." + Sensor.ToLower() + "}}";
-                string ValueTemplate = "{{ value_json." + Sensor.ToLower() + ".value}}";
-                string Icon = "mdi:eye"; // Replace this with the desired icon name
-                switch (sensor)
-                {
-                    case "client":
-                        Icon = "mdi:television-classic";
-                        break;
-                    case "status":
-                        Icon = statusicon;
-                        break;
-                    case "activity":
-                        Icon = activityicon;
-                        break;
-                    case "camera":
-                        Icon = camicon;
-                        break;
-                    case "microphone":
-                        Icon = micicon;
-                        break;
-                    default:
-                        Icon = "mdi:eye";
-                        break;
-                }
-
-                var payload = new
-                {
-                    name = SensorName,
-                    unique_id = UniqueID,
-                    state_topic = StateTopic,
-                    value_template = ValueTemplate,
-                    icon = Icon
-                };
-                string jsonPayload = JsonConvert.SerializeObject(payload);
-                // are we connected?
-                if (!client.IsConnected)
-                {
-                    Log.Information("Ooops MQTT not conected");
-                    //TODO Add some retry code here, the problem is that this is triggered before the connect has completed
-                    //await AttemptReconnect();
-                }
-
-                if (client.IsConnected)
-                {
-                    try
-                    {
-                        await client.PublishBinaryAsync(Topic, Encoding.UTF8.GetBytes(jsonPayload));
-                    }
-                    catch
-                    {
-                        //something went wrong
-                        Log.Error("Error publishing MQTT config");
-                    }
-                }
-            }
-        }
-
+        #endregion Private Methods
     }
 }
