@@ -398,5 +398,11 @@ namespace THFHA_V1._0
             }
             return null;
         }
+
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            About about = new About();
+            about.Show();
+        }
     }
 }

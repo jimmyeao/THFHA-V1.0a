@@ -10,7 +10,7 @@ namespace THFHA_V1._0.Model
     {
         #region Public Fields
 
-        public static string logFileFullPath;
+        public static string? logFileFullPath;
 
         #endregion Public Fields
 

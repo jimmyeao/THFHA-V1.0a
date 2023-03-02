@@ -35,6 +35,8 @@
             this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.applicationLogsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.teamsLogsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.lbx_modules = new System.Windows.Forms.ListBox();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.enableToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -49,8 +51,6 @@
             this.lbl_mute = new System.Windows.Forms.Label();
             this.lbl_camera = new System.Windows.Forms.Label();
             this.stateBindingSource = new System.Windows.Forms.BindingSource(this.components);
-            this.applicationLogsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.teamsLogsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
@@ -99,6 +99,21 @@
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
             this.aboutToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
             this.aboutToolStripMenuItem.Text = "About";
+            this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
+            // 
+            // applicationLogsToolStripMenuItem
+            // 
+            this.applicationLogsToolStripMenuItem.Name = "applicationLogsToolStripMenuItem";
+            this.applicationLogsToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.applicationLogsToolStripMenuItem.Text = "Application Logs";
+            this.applicationLogsToolStripMenuItem.Click += new System.EventHandler(this.applicationLogsToolStripMenuItem_Click);
+            // 
+            // teamsLogsToolStripMenuItem
+            // 
+            this.teamsLogsToolStripMenuItem.Name = "teamsLogsToolStripMenuItem";
+            this.teamsLogsToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.teamsLogsToolStripMenuItem.Text = "Teams Logs";
+            this.teamsLogsToolStripMenuItem.Click += new System.EventHandler(this.teamsLogsToolStripMenuItem_Click);
             // 
             // lbx_modules
             // 
@@ -223,20 +238,6 @@
             // stateBindingSource
             // 
             this.stateBindingSource.DataSource = typeof(THFHA_V1._0.Model.State);
-            // 
-            // applicationLogsToolStripMenuItem
-            // 
-            this.applicationLogsToolStripMenuItem.Name = "applicationLogsToolStripMenuItem";
-            this.applicationLogsToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
-            this.applicationLogsToolStripMenuItem.Text = "Application Logs";
-            this.applicationLogsToolStripMenuItem.Click += new System.EventHandler(this.applicationLogsToolStripMenuItem_Click);
-            // 
-            // teamsLogsToolStripMenuItem
-            // 
-            this.teamsLogsToolStripMenuItem.Name = "teamsLogsToolStripMenuItem";
-            this.teamsLogsToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
-            this.teamsLogsToolStripMenuItem.Text = "Teams Logs";
-            this.teamsLogsToolStripMenuItem.Click += new System.EventHandler(this.teamsLogsToolStripMenuItem_Click);
             // 
             // THFHA
             // 
