@@ -7,8 +7,8 @@
     <Nullable>enable</Nullable>
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
-    <AssemblyVersion>1.0.0.395</AssemblyVersion>
-    <FileVersion>1.0.0.395</FileVersion>
+    <AssemblyVersion>1.0.0.417</AssemblyVersion>
+    <FileVersion>1.0.0.417</FileVersion>
     <PackageIcon>trans.png</PackageIcon>
     <RepositoryUrl>https://github.com/jimmyeao/THFHA-V1.0a</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
@@ -18,7 +18,18 @@
     <Description>THFHA (Teams Helper For Home Assistant) was originally designed to import Teams events into Home Assistant.
 Now, it is able to also directly send to MQTT, WLED, Philips HUE™ and our project, Hatcher. Other modules will be added from time to time.
 Please visit our github page for more details and instructions.</Description>
+    <ApplicationIcon>Resources\HA.ico</ApplicationIcon>
+    <StartupObject>THFHA_V1._0.Program</StartupObject>
+    <NoWin32Manifest>true</NoWin32Manifest>
   </PropertyGroup>
+
+  <ItemGroup>
+    <AdditionalFiles Remove="Properties\app.manifest" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Resources\HA.ico" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="MQTTnet" Version="4.1.4.563" />

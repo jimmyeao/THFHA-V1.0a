@@ -19,8 +19,8 @@ namespace THFHA_V1._0.apis
         private string name = "Hue";
         private Q42.HueApi.State? originalState;
         private Settings settings;
-        private bool staterecorded = false;
         private State stateInstance;
+        private bool staterecorded = false;
 
         #endregion Private Fields
 

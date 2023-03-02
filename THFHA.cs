@@ -1,8 +1,12 @@
-﻿using Serilog;
+﻿using MQTTnet.Internal;
+using Serilog;
 using System.Diagnostics;
+using System.Drawing;
 using System.Reflection;
+using System.Windows.Forms;
 using THFHA_V1._0.Model;
 using THFHA_V1._0.Views;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 
 namespace THFHA_V1._0
@@ -84,7 +88,191 @@ namespace THFHA_V1._0
             UpdateLabel(lbl_activity, state.Activity);
             UpdateLabel(lbl_camera, state.Camera);
             UpdateLabel(lbl_mute, state.Microphone);
+            UpdateStatusIcons(state.Status);
+            UpdateActivityIcons(state.Activity);
+            UpdateMuteStatus(state.Microphone);
+            // var icon = UpdateStatusIcon(state.Status);
+            // UpdateStatusIcons(icon);
+            // _ = UpdateMuteIcon();
+            // _ = UpdateActivityIcon(state.Activity);
 
+        }
+
+        private void UpdateStatusIcons(string status)
+        {
+            var icon = GetStatusIcon(status);
+            UpdateStatusIcon(icon);
+            UpdateNotifyMenuStatus(icon);
+        }
+        private void UpdateNotifyMenuStatus(Bitmap icon)
+        {
+            if (icon == Resource1.outofoffice)
+            {
+               // notifyMenuStatus.Image = Resource1.outofoffice;
+               // notifyMenuStatus.Text = "Offline";
+            }
+            else
+            {
+               // notifyMenuStatus.Image = icon;
+               // notifyMenuStatus.Text = state.Status;
+            }
+        }
+        public void UpdateMuteStatus(string micstatus)
+        {
+            if (pb_mute.InvokeRequired)
+            {
+                pb_mute.Invoke((MethodInvoker)delegate
+                {
+                    switch (micstatus)
+                    {
+                        case ("Mute On"):
+                            pb_mute.BackgroundImage = Resource1.mute;
+                            //toolTip3.SetToolTip(pb_mute, "Mute On");
+                            pb_mute.Refresh();
+                            break;
+                        case ("Mute Off"):
+                            pb_mute.BackgroundImage = Resource1.mic_icon;
+                            //toolTip3.SetToolTip(pb_mute, "Mute Off");
+                            pb_mute.Refresh();
+                            break;
+                    }
+                });
+            }
+            else
+            {
+                switch (micstatus)
+                {
+                    case ("Mute ON"):
+                        pb_mute.BackgroundImage = Resource1.mute;
+                        //toolTip3.SetToolTip(pb_mute, "Mute On");
+                        pb_mute.Refresh();
+                        break;
+                    case ("Mute Off"):
+                        pb_mute.BackgroundImage = Resource1.mic_icon;
+                        //toolTip3.SetToolTip(pb_mute, "Mute Off");
+                        pb_mute.Refresh();
+                        break;
+                }
+            }
+        }
+
+        private enum PresenceStatus
+        {
+            Away,
+            Available,
+            Busy,
+            DoNotDisturb,
+            OnThePhone,
+            BeRightBack,
+            OutOfOffice,
+            Offline,
+            Presenting,
+            Focusing,
+            InAMeeting
+        }
+        private Bitmap GetStatusIcon(string status)
+        {
+            status = status.Replace(" ", ""); // remove spaces from status
+
+            PresenceStatus presenceStatus;
+            if (!Enum.TryParse(status, true, out presenceStatus)) // ignore case when parsing
+            {
+                presenceStatus = PresenceStatus.Offline;
+            }
+            switch (presenceStatus)
+            {
+                case PresenceStatus.Away:
+                    return Resource1.Away;
+                case PresenceStatus.Available:
+                    return Resource1.available;
+                case PresenceStatus.Busy:
+                case PresenceStatus.OnThePhone:
+                case PresenceStatus.InAMeeting:
+                case PresenceStatus.Focusing:
+                    return Resource1.Busy;
+                case PresenceStatus.DoNotDisturb:
+                case PresenceStatus.Presenting:
+                    return Resource1.DND;
+                case PresenceStatus.BeRightBack:
+                    return Resource1.Away;
+                case PresenceStatus.OutOfOffice:
+                case PresenceStatus.Offline:
+                default:
+                    return Resource1.outofoffice;
+            }
+        }
+        private void UpdateStatusIcon(Bitmap icon)
+        {
+            if (pb_Status.InvokeRequired)
+            {
+                pb_Status.Invoke((MethodInvoker)delegate
+                {
+                    pb_Status.BackgroundImage = icon;
+                    //toolTip1.SetToolTip(pb_Status, state.Status);
+                });
+            }
+            else
+            {
+                pb_Status.BackgroundImage = icon;
+                //toolTip1.SetToolTip(pb_Status, state.Status);
+            }
+        }
+        private enum ActivityStatus
+        {
+            InACall,
+            OnThePhone,
+            Presenting,
+            NotInACall,
+            IncomingCall,
+            InAMeeting
+        }
+        public void UpdateActivityIcons(string activity)
+        {
+            var icon = GetActivityIcon(state.Activity);
+            UpdateActivityIcon(icon);
+            //UpdateNotifyMenuActivity(icon);
+        }
+        private Bitmap GetActivityIcon(string activity)
+        {
+            ActivityStatus activityStatus;
+            if (!Enum.TryParse(activity.Replace(" ", string.Empty), true, out activityStatus))
+            {
+                activityStatus = ActivityStatus.NotInACall;
+            }
+
+            switch (activityStatus)
+            {
+                case ActivityStatus.InACall:
+                case ActivityStatus.IncomingCall:
+                case ActivityStatus.OnThePhone:
+                    return Resource1.inacall;
+                case ActivityStatus.Presenting:
+                    return Resource1.presenting;
+                case ActivityStatus.InAMeeting:
+                    return Resource1.Busy;
+                case ActivityStatus.NotInACall:
+                default:
+                    return Resource1.notinacall;
+            }
+        }
+        private void UpdateActivityIcon(Bitmap icon)
+        {
+            if (pb_Activity.InvokeRequired)
+            {
+                pb_Activity.Invoke((MethodInvoker)delegate
+                {
+                    SetActivityIcon(icon);
+                });
+            }
+            else
+            {
+                SetActivityIcon(icon);
+            }
+        }
+        private void SetActivityIcon(Bitmap icon)
+        {
+            pb_Activity.BackgroundImage = icon;
+            //toolTip2.SetToolTip(pb_Activity, state.Activity);
         }
         private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
         {
