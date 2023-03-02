@@ -7,9 +7,7 @@ namespace THFHA_V1._0.Model
 {
     public class CustomLight
     {
-        public string Id { get; set; }
-        public string Name { get; set; }
-        // Other properties
+        #region Public Constructors
 
         public CustomLight(Light light)
         {
@@ -21,6 +19,18 @@ namespace THFHA_V1._0.Model
             }
         }
 
+        #endregion Public Constructors
+
+        #region Public Properties
+
+        public string Id { get; set; }
+        public string Name { get; set; }
+
+        #endregion Public Properties
+
+        #region Public Methods
+
+        // Other properties
         public Light ToLight()
         {
             return new Light()
@@ -30,6 +40,8 @@ namespace THFHA_V1._0.Model
                 // Other properties
             };
         }
+
+        #endregion Public Methods
     } //custom light class used for Hue lights
 
     public class Settings : INotifyPropertyChanged
@@ -38,32 +50,38 @@ namespace THFHA_V1._0.Model
 
         private static readonly Settings instance = new Settings();
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        private bool _autorun = false;
 
-        public event EventHandler<EventArgs> SettingsUpdated;
-
-        public delegate void SettingChangedEventHandler(object sender, SettingChangedEventArgs e);
-
-        public static event SettingChangedEventHandler SettingChanged;
+        private bool _runLogWatcherAtStart;
 
         private Settings()
         {
             Load();
         }
 
+        public delegate void SettingChangedEventHandler(object sender, SettingChangedEventArgs e);
+
+        public static event SettingChangedEventHandler SettingChanged;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public event EventHandler<EventArgs> SettingsUpdated;
+
         public static Settings Instance
         {
             get { return instance; }
         }
 
-        public class SettingChangedEventArgs : EventArgs
+        public bool Autorun
         {
-            public string SettingName { get; set; }
+            get { return _autorun; }
+            set { _autorun = value; OnPropertyChanged(nameof(Autorun)); }
+        }
 
-            public SettingChangedEventArgs(string settingName)
-            {
-                SettingName = settingName;
-            }
+        public bool RunLogWatcherAtStart
+        {
+            get { return _runLogWatcherAtStart; }
+            set { _runLogWatcherAtStart = value; OnPropertyChanged(nameof(RunLogWatcherAtStart)); }
         }
 
         protected void OnPropertyChanged(string propertyName)
@@ -75,28 +93,57 @@ namespace THFHA_V1._0.Model
             }
         }
 
-        private bool _runLogWatcherAtStart;
-
-        public bool RunLogWatcherAtStart
+        public class SettingChangedEventArgs : EventArgs
         {
-            get { return _runLogWatcherAtStart; }
-            set { _runLogWatcherAtStart = value; OnPropertyChanged(nameof(RunLogWatcherAtStart)); }
-        }
+            #region Public Constructors
 
-        private bool _autorun = false;
+            public SettingChangedEventArgs(string settingName)
+            {
+                SettingName = settingName;
+            }
 
-        public bool Autorun
-        {
-            get { return _autorun; }
-            set { _autorun = value; OnPropertyChanged(nameof(Autorun)); }
+            #endregion Public Constructors
+
+            #region Public Properties
+
+            public string SettingName { get; set; }
+
+            #endregion Public Properties
         }
 
         #endregion setup
 
         #region Homeassistant
 
+        private string _hatoken;
+
+        private string _haurl;
+
+        private bool _ishaModuleSettingsValid;
+
         // Home assistant
         private bool _useHA;
+
+        public string Hatoken
+        {
+            get { return _hatoken; }
+            set
+            {
+                _hatoken = value; OnPropertyChanged(nameof(Hatoken));
+            }
+        }
+
+        public string Haurl
+        {
+            get { return _haurl; }
+            set { _haurl = value; OnPropertyChanged(nameof(Haurl)); }
+        }
+
+        public bool IsHomeassistantModuleSettingsValid
+        {
+            get { return _ishaModuleSettingsValid; }
+            set { _ishaModuleSettingsValid = value; OnPropertyChanged(nameof(IsHomeassistantModuleSettingsValid)); }
+        }
 
         public bool UseHA
         {
@@ -109,39 +156,52 @@ namespace THFHA_V1._0.Model
             }
         }
 
-        private bool _ishaModuleSettingsValid;
-
-        public bool IsHomeassistantModuleSettingsValid
-        {
-            get { return _ishaModuleSettingsValid; }
-            set { _ishaModuleSettingsValid = value; OnPropertyChanged(nameof(IsHomeassistantModuleSettingsValid)); }
-        }
-
-        private string _hatoken;
-
-        public string Hatoken
-        {
-            get { return _hatoken; }
-            set
-            {
-                _hatoken = value; OnPropertyChanged(nameof(Hatoken));
-            }
-        }
-
-        private string _haurl;
-
-        public string Haurl
-        {
-            get { return _haurl; }
-            set { _haurl = value; OnPropertyChanged(nameof(Haurl)); }
-        }
-
         #endregion Homeassistant
 
         #region mqtt
 
+        private bool _ismqttModuleSettingsValid;
+
+        private string _mqttip;
+
+        private string _mqttpassword;
+
+        private string _mqtttopic;
+
+        private string _mqttusername;
+
         // MQTT
         private bool _useMQTT;
+
+        public bool IsMqttModuleSettingsValid
+        {
+            get { return _ismqttModuleSettingsValid; }
+            set { _ismqttModuleSettingsValid = value; OnPropertyChanged(nameof(IsMqttModuleSettingsValid)); }
+        }
+
+        public string Mqttip
+        {
+            get { return _mqttip; }
+            set { _mqttip = value; OnPropertyChanged(nameof(Mqttip)); }
+        }
+
+        public string Mqttpassword
+        {
+            get { return _mqttpassword; }
+            set { _mqttpassword = value; OnPropertyChanged(nameof(Mqttpassword)); }
+        }
+
+        public string Mqtttopic
+        {
+            get { return _mqtttopic; }
+            set { _mqtttopic = value; OnPropertyChanged(nameof(Mqtttopic)); }
+        }
+
+        public string Mqttusername
+        {
+            get { return _mqttusername; }
+            set { _mqttusername = value; OnPropertyChanged(nameof(Mqttusername)); }
+        }
 
         public bool UseMQTT
         {
@@ -154,52 +214,52 @@ namespace THFHA_V1._0.Model
             }
         }
 
-        private bool _ismqttModuleSettingsValid;
-
-        public bool IsMqttModuleSettingsValid
-        {
-            get { return _ismqttModuleSettingsValid; }
-            set { _ismqttModuleSettingsValid = value; OnPropertyChanged(nameof(IsMqttModuleSettingsValid)); }
-        }
-
-        private string _mqttip;
-
-        public string Mqttip
-        {
-            get { return _mqttip; }
-            set { _mqttip = value; OnPropertyChanged(nameof(Mqttip)); }
-        }
-
-        private string _mqttusername;
-
-        public string Mqttusername
-        {
-            get { return _mqttusername; }
-            set { _mqttusername = value; OnPropertyChanged(nameof(Mqttusername)); }
-        }
-
-        private string _mqttpassword;
-
-        public string Mqttpassword
-        {
-            get { return _mqttpassword; }
-            set { _mqttpassword = value; OnPropertyChanged(nameof(Mqttpassword)); }
-        }
-
-        private string _mqtttopic;
-
-        public string Mqtttopic
-        {
-            get { return _mqtttopic; }
-            set { _mqtttopic = value; OnPropertyChanged(nameof(Mqtttopic)); }
-        }
-
         #endregion mqtt
 
         #region Hue
 
+        private string _hueip;
+
+        private List<CustomLight> _HueLight = new List<CustomLight>();
+
+        private string _hueusername;
+
+        private bool _isHueModuleSettingsValid;
+
+        private string _selectedLightId;
+
         //Phillips Hue
         private bool _useHue;
+
+        public string Hueip
+        {
+            get { return _hueip; }
+            set { _hueip = value; OnPropertyChanged(nameof(Hueip)); }
+        }
+
+        public List<CustomLight> HueLight
+        {
+            get { return _HueLight; }
+            set { _HueLight = value; OnPropertyChanged(nameof(HueLight)); }
+        }
+
+        public string Hueusername
+        {
+            get { return _hueusername; }
+            set { _hueusername = value; OnPropertyChanged(nameof(Hueusername)); }
+        }
+
+        public bool IsHueModuleSettingsValid
+        {
+            get { return _isHueModuleSettingsValid; }
+            set { _isHueModuleSettingsValid = value; OnPropertyChanged(nameof(IsHueModuleSettingsValid)); }
+        }
+
+        public string SelectedLightId
+        {
+            get { return _selectedLightId; }
+            set { _selectedLightId = value; OnPropertyChanged(nameof(SelectedLightId)); }
+        }
 
         public bool UseHue
         {
@@ -212,52 +272,28 @@ namespace THFHA_V1._0.Model
             }
         }
 
-        private bool _isHueModuleSettingsValid;
-
-        public bool IsHueModuleSettingsValid
-        {
-            get { return _isHueModuleSettingsValid; }
-            set { _isHueModuleSettingsValid = value; OnPropertyChanged(nameof(IsHueModuleSettingsValid)); }
-        }
-
-        private string _hueip;
-
-        public string Hueip
-        {
-            get { return _hueip; }
-            set { _hueip = value; OnPropertyChanged(nameof(Hueip)); }
-        }
-
-        private string _hueusername;
-
-        public string Hueusername
-        {
-            get { return _hueusername; }
-            set { _hueusername = value; OnPropertyChanged(nameof(Hueusername)); }
-        }
-
-        private List<CustomLight> _HueLight = new List<CustomLight>();
-
-        public List<CustomLight> HueLight
-        {
-            get { return _HueLight; }
-            set { _HueLight = value; OnPropertyChanged(nameof(HueLight)); }
-        }
-
-        private string _selectedLightId;
-
-        public string SelectedLightId
-        {
-            get { return _selectedLightId; }
-            set { _selectedLightId = value; OnPropertyChanged(nameof(SelectedLightId)); }
-        }
-
         #endregion Hue
 
         #region WLED
 
+        private bool _isWledModuleSettingsValid;
+
         // WLED
         private bool _useWLED;
+
+        private string _WledDev = "";
+
+        private List<WLED> _wledDevices = new List<WLED>();
+
+        private string _wledip = "";
+
+        public bool IsWledModuleSettingsValid
+        {
+            get { return _isWledModuleSettingsValid; }
+            set { _isWledModuleSettingsValid = value; OnPropertyChanged(nameof(IsWledModuleSettingsValid)); }
+        }
+
+        public WLED SelectedWled { get; set; }
 
         public bool UseWLED
         {
@@ -270,32 +306,18 @@ namespace THFHA_V1._0.Model
             }
         }
 
-        private bool _isWledModuleSettingsValid;
-
-        public bool IsWledModuleSettingsValid
-        {
-            get { return _isWledModuleSettingsValid; }
-            set { _isWledModuleSettingsValid = value; OnPropertyChanged(nameof(IsWledModuleSettingsValid)); }
-        }
-
-        public WLED SelectedWled { get; set; } // Add this property to store the selected WLED light.
-        private List<WLED> _wledDevices = new List<WLED>();
-
-        public List<WLED> WledDevices
-        {
-            get { return _wledDevices; }
-            set { _wledDevices = value; OnPropertyChanged(nameof(WledDevices)); }
-        }
-
-        private string _WledDev = "";
-
         public string WledDev
         {
             get { return _WledDev; }
             set { _WledDev = value; OnPropertyChanged(nameof(WledDev)); }
         }
 
-        private string _wledip = "";
+        // Add this property to store the selected WLED light.
+        public List<WLED> WledDevices
+        {
+            get { return _wledDevices; }
+            set { _wledDevices = value; OnPropertyChanged(nameof(WledDevices)); }
+        }
 
         public string WLEDIP
         {
@@ -307,7 +329,21 @@ namespace THFHA_V1._0.Model
 
         #region Hatcher
 
+        private string _hatcherip;
+        private bool _isHatcherModuleSettingsValid;
         private bool _usehatcher;
+
+        public string Hatcherip
+        {
+            get { return _hatcherip; }
+            set { _hatcherip = value; OnPropertyChanged(nameof(Hatcherip)); }
+        }
+
+        public bool IsHatcherModuleSettingsValid
+        {
+            get { return _isHatcherModuleSettingsValid; }
+            set { _isHatcherModuleSettingsValid = value; OnPropertyChanged(nameof(IsHatcherModuleSettingsValid)); }
+        }
 
         public bool UseHatcher
         {
@@ -320,32 +356,32 @@ namespace THFHA_V1._0.Model
             }
         }
 
-        private bool _isHatcherModuleSettingsValid;
-
-        public bool IsHatcherModuleSettingsValid
-        {
-            get { return _isHatcherModuleSettingsValid; }
-            set { _isHatcherModuleSettingsValid = value; OnPropertyChanged(nameof(IsHatcherModuleSettingsValid)); }
-        }
-
-        private string _hatcherip;
-
-        public string Hatcherip
-        {
-            get { return _hatcherip; }
-            set { _hatcherip = value; OnPropertyChanged(nameof(Hatcherip)); }
-        }
-
         #endregion Hatcher
 
         #region operations
 
-        // public event PropertyChangedEventHandler PropertyChanged;
-  public void UpdateSettings()
+        public void Load()
         {
-            SettingsUpdated?.Invoke(this, EventArgs.Empty);
+            try
+            {
+                // Get the path to the local user data folder
+                string appDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+                string folderPath = Path.Combine(appDataFolder, "TeamsHelper");
+                string filePath = Path.Combine(folderPath, "settings.json");
+
+                // Load the settings from the file
+                if (File.Exists(filePath))
+                {
+                    string json = File.ReadAllText(filePath);
+                    JsonConvert.PopulateObject(json, this);
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error("Error loading settings: " + ex.Message);
+            }
         }
-       
+
         public void Save()
         {
             try
@@ -366,30 +402,14 @@ namespace THFHA_V1._0.Model
             }
             catch (Exception ex)
             {
-               Log.Error("Error saving settings: " + ex.Message);
+                Log.Error("Error saving settings: " + ex.Message);
             }
         }
 
-        public void Load()
+        // public event PropertyChangedEventHandler PropertyChanged;
+        public void UpdateSettings()
         {
-            try
-            {
-                // Get the path to the local user data folder
-                string appDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-                string folderPath = Path.Combine(appDataFolder, "TeamsHelper");
-                string filePath = Path.Combine(folderPath, "settings.json");
-
-                // Load the settings from the file
-                if (File.Exists(filePath))
-                {
-                    string json = File.ReadAllText(filePath);
-                    JsonConvert.PopulateObject(json, this);
-                }
-            }
-            catch (Exception ex)
-            {
-               Log.Error("Error loading settings: " + ex.Message);
-            }
+            SettingsUpdated?.Invoke(this, EventArgs.Empty);
         }
 
         #endregion operations

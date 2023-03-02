@@ -1,7 +1,5 @@
 ﻿using Serilog;
 using Serilog.Sinks.File;
-using System;
-using System.IO;
 using System.Text;
 
 namespace THFHA_V1._0.Model
