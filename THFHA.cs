@@ -23,27 +23,7 @@ namespace THFHA_V1._0
     
 
             // Initialize the IsEnabled property of each module based on the value stored in the Settings singleton
-            foreach (IModule module in this.modules)
-            {
-                switch (module.Name.ToLower())
-                {
-                    case "hue":
-                        module.IsEnabled = Settings.Instance.UseHue;
-                        break;
-                    case "homeassistant":
-                        module.IsEnabled = Settings.Instance.UseHA;
-                        break;
-                    case "mqtt":
-                        module.IsEnabled = Settings.Instance.UseMQTT;
-                        break;
-                    case "wled":
-                        module.IsEnabled = Settings.Instance.UseWLED;
-                        break;
-                    case "hatcher":
-                        module.IsEnabled = Settings.Instance.UseHatcher;
-                        break;
-                }
-            }
+           updatemodules();
 
             string _appDir = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
             string _logPath = _appDir + @"\Microsoft\Teams\";
@@ -70,26 +50,8 @@ namespace THFHA_V1._0
             }
 
         }
-
-        private void OnStateChanged(object sender, EventArgs e)
-        {
-            // Get the updated state values
-            Log.Debug("OnStateChange Trigerred!!!!!!!!!!!");
-            UpdateLabel(lbl_status, state.Status);
-            UpdateLabel(lbl_activity, state.Activity);
-            UpdateLabel(lbl_camera, state.Camera);
-            UpdateLabel(lbl_mute, state.Microphone);
-
-        }
-        private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            // open the settings form
-            // Create an instance of the SettingsForm
-            SettingsForm settingsForm = new SettingsForm(modules);
-
-            // Show the SettingsForm
-            settingsForm.ShowDialog();
-            foreach (IModule module in this.modules)
+        private void updatemodules()
+        {             foreach (IModule module in this.modules)
             {
                 switch (module.Name.ToLower())
                 {
@@ -110,6 +72,27 @@ namespace THFHA_V1._0
                         break;
                 }
             }
+        }
+
+        private void OnStateChanged(object sender, EventArgs e)
+        {
+            // Get the updated state values
+            Log.Debug("OnStateChange Trigerred!!!!!!!!!!!");
+            UpdateLabel(lbl_status, state.Status);
+            UpdateLabel(lbl_activity, state.Activity);
+            UpdateLabel(lbl_camera, state.Camera);
+            UpdateLabel(lbl_mute, state.Microphone);
+
+        }
+        private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // open the settings form
+            // Create an instance of the SettingsForm
+            SettingsForm settingsForm = new SettingsForm(modules);
+
+            // Show the SettingsForm
+            settingsForm.ShowDialog();
+            updatemodules();
             PopulateModulesList();
 
         }
