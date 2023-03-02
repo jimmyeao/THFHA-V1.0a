@@ -22,7 +22,7 @@ namespace THFHA_V1._0.Views
         public wledsettings()
         {
             InitializeComponent();
-            this.settings = Settings.Instance;
+            settings = Settings.Instance;
             listbox_wledlights.DataSource = null;
             listbox_wledlights.DataSource = _wledLights;
             // Load the selected item from the settings object and select it in the listbox.
@@ -31,7 +31,7 @@ namespace THFHA_V1._0.Views
                 listbox_wledlights.SelectedValue = _selectedWled.Ip + ":" + _selectedWled.Port;
             }
 
-            var selectedItem = this.settings.SelectedWled;
+            var selectedItem = settings.SelectedWled;
             if (settings.WledDevices != null)
             {
                 _wledLights = new BindingList<WLED>(settings.WledDevices); ;
@@ -117,7 +117,7 @@ namespace THFHA_V1._0.Views
                                             listbox_wledlights.DisplayMember = "Name";
 
                                             // Select the stored selected item in the listbox.
-                                            var selectedItem = this.settings.SelectedWled;
+                                            var selectedItem = settings.SelectedWled;
                                             if (selectedItem != null && selectedItem.Ip == wled.Ip && selectedItem.Port == wled.Port)
                                             {
                                                 listbox_wledlights.SelectedItem = wled;
@@ -137,10 +137,12 @@ namespace THFHA_V1._0.Views
                             {
                                 //wasn't a wled device
                                 Log.Error("Exception on Discovery of WLED lights {ex}", ex.Message.ToString());
+                                settings.IsWledModuleSettingsValid = false;
                             }
                         }
                     }
                     settings.WledDevices = WledLights;
+                    settings.IsWledModuleSettingsValid = true;
                     settings.Save();
 
                 }
@@ -164,8 +166,8 @@ namespace THFHA_V1._0.Views
         {
             if (listbox_wledlights.SelectedItem is WLED selectedWled)
             {
-                this.settings.SelectedWled = selectedWled;
-                this.settings.Save();
+                settings.SelectedWled = selectedWled;
+                settings.Save();
             }
             settings.WledDevices = WledLights;
             settings.Save();

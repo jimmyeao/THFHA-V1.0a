@@ -11,7 +11,7 @@ namespace THFHA_V1._0.Views
         public SettingsForm(List<IModule> modules)
         {
             InitializeComponent();
-            this.settings = Settings.Instance;
+            settings = Settings.Instance;
             this.modules = modules;
             cb_runLogWatcherAtStart.Checked = settings.RunLogWatcherAtStart;
             cb_usehue.Checked = settings.UseHue;
@@ -60,7 +60,7 @@ namespace THFHA_V1._0.Views
             }
 
             // Refresh the modules list in the THFHA form
-            if (this.Owner is THFHA thfha)
+            if (Owner is THFHA thfha)
             {
                 thfha.PopulateModulesList();
             }
@@ -70,7 +70,7 @@ namespace THFHA_V1._0.Views
 
         private void bt_hasettings_Click(object sender, EventArgs e)
         {
-            hasettings hasettings = new hasettings();
+            Homeassistantsettings hasettings = new Homeassistantsettings();
 
             // Show the SettingsForm
             hasettings.ShowDialog();

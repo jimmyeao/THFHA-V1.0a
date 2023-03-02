@@ -15,7 +15,7 @@ namespace THFHA_V1._0.Views
 
             InitializeComponent();
 
-            this.settings = Settings.Instance;
+            settings = Settings.Instance;
             tb_hueip.Text = settings.Hueip;
             // Set the selected item in the list box to the previously selected light
             if (!string.IsNullOrEmpty(settings.SelectedLightId))
@@ -46,9 +46,15 @@ namespace THFHA_V1._0.Views
                 //It will throw an LinkButtonNotPressedException if the user did not press the button
                 var result = MessageBox.Show("Please press the button on the hub before proceeding", "Press button on hub",
                     MessageBoxButtons.OKCancel);
+                cb_huelights.DataSource = null;
+                cb_huelights.Items.Clear();
+
+                cb_huelights.DisplayMember = "Name";
                 if (result == DialogResult.OK)
                     try
                     {
+
+
                         if (settings.HueLight != null)
                         {
                             settings.HueLight.Clear();
@@ -68,8 +74,12 @@ namespace THFHA_V1._0.Views
                             settings.HueLight.Add(new CustomLight(currentLight));
 
                             Log.Information("Added a Hue light called {light}", currentLight.Name);
+                            settings.IsHueModuleSettingsValid = true;
                         }
-                        PopulateListBox();
+                        if (cb_huelights.Items.Count == 0) // check if the list box is already populated
+                        {
+                            PopulateListBox();
+                        }
 
                         foreach (var light in lights)
                         {
@@ -85,8 +95,10 @@ namespace THFHA_V1._0.Views
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show("Hub Linking", "Linked failed with error " +ex.Message, MessageBoxButtons.OK);
+                        MessageBox.Show("Hub Linking", "Linked failed with error " + ex.Message, MessageBoxButtons.OK);
                         Log.Information("An error occurred linking Hue hub " + ex.Message);
+                        settings.IsHueModuleSettingsValid = false;
+                        settings.Save();
                     }
             }
             else

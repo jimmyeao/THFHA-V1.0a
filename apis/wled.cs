@@ -1,38 +1,62 @@
 ﻿using Newtonsoft.Json;
 using Serilog;
-using System.ComponentModel;
 using System.Dynamic;
-using System.Runtime;
 using System.Text;
 using System.Text.Json;
 using THFHA_V1._0.Model;
 using THFHA_V1._0.Views;
+
 namespace THFHA_V1._0.apis
 {
     public class WledModule : IModule
     {
-        private string name = "Wled";
-        private bool isEnabled = false;
-        private State stateInstance;
-        private Settings settings;
-        private bool _enabled = false;
-        public event EventHandler? StateChanged;
+        #region Private Fields
+
         private readonly SemaphoreSlim _colorLock;
         private readonly HttpClient _httpClient = new HttpClient();
-        private dynamic? _originalState;
-        private dynamic? _currentState;
-        private bool staterecorded = false;
         private readonly object _lockObject = new object();
+        private dynamic? _currentState;
+        private bool _enabled = false;
+        private dynamic? _originalState;
+        private bool isEnabled = false;
+        private string name = "Wled";
+        private Settings settings;
+        private State stateInstance;
+        private bool staterecorded = false;
 
-        public string Name
+        #endregion Private Fields
+
+        #region Public Constructors
+
+        public WledModule()
         {
-            get { return name; }
+            // This is the parameterless constructor that will be used by the ModuleManager class
+            settings = Settings.Instance;
+            _colorLock = new SemaphoreSlim(1);
         }
+
+        public WledModule(State state) : this()
+        {
+            stateInstance = state;
+            stateInstance.StateChanged += OnStateChanged;
+            // Initialize your module here
+        }
+
+        #endregion Public Constructors
+
+        #region Public Events
+
+        public event EventHandler? StateChanged;
+
+        #endregion Public Events
+
+        #region Public Properties
 
         public bool IsEnabled
         {
             get { return isEnabled; }
-            set { 
+            set
+            {
                 isEnabled = value;
                 if (!isEnabled)
                 {
@@ -47,144 +71,57 @@ namespace THFHA_V1._0.apis
                 }
             }
         }
-        public async void Start()
+
+        public string Name
         {
-            GetCurrentState(settings.SelectedWled.Ip);
-            //stateInstance = (State)sender;
-            StateChanged?.Invoke(this, EventArgs.Empty);
-            switch (stateInstance.Status)
-            {
-                case "Busy":
-                    await ChangeColor("255,0,0");
-                    break;
-                case "On the phone":
-                    await ChangeColor("255,0,0");
-                    break;
-                case "Do not disturb":
-                    await ChangeColor("255,0,0");
-                    break;
-                case "Away":
-                    await ChangeColor("255,255,0");
-                    break;
-                case "Be right back":
-                    await ChangeColor("255,255,0");
-                    break;
-                case "Available":
-                    await ChangeColor("0,255,0");
-                    break;
-                case "Offline":
-                    await ChangeColor("0,0,0");
-                    break;
-            }
+            get { return name; }
         }
+
         public string State
         {
             get { return stateInstance.ToString(); }
             set { /* You can leave this empty since the State property is read-only */ }
         }
 
-        public Form GetSettingsForm()
-        {
-            return new wledsettings(); // Replace with your module's settings form
-        }
+        #endregion Public Properties
 
-        public void UpdateSettings(bool isEnabled)
-        {
-            IsEnabled = isEnabled;
-        }
+        #region Public Methods
 
-        public WledModule()
+        public async Task ChangeColor(string newColor)
         {
-            // This is the parameterless constructor that will be used by the ModuleManager class
-            this.settings = Settings.Instance;
-            _colorLock = new SemaphoreSlim(1);
-        }
-
-        public WledModule(State state) : this()
-        {
-            stateInstance = state;
-            stateInstance.StateChanged += OnStateChanged;
-            // Initialize your module here
-        }
-        public void OnFormClosing()
-        {
-            // Handle the form closing event here
-            var isMonitoring = false;
-            Log.Debug("Stop monitoring requested");
-            if (IsEnabled)
-            {
-                OnStopMonitoringRequested();
-            }
-        }
-        private async void OnStateChanged(object sender, EventArgs e)
-        {
-            if (IsEnabled)
-            {
-                stateInstance = (State)sender;
-                StateChanged?.Invoke(this, EventArgs.Empty);
-                switch (stateInstance.Status)
-                {
-                    case "Busy":
-                        await ChangeColor("255,0,0");
-                        break;
-                    case "On the phone":
-                        await ChangeColor("255,0,0");
-                        break;
-                    case "Do not disturb":
-                        await ChangeColor("255,0,0");
-                        break;
-                    case "Away":
-                        await ChangeColor("255,255,0");
-                        break;
-                    case "Be right back":
-                        await ChangeColor("255,255,0");
-                        break;
-                    case "Available":
-                        await ChangeColor("0,255,0");
-                        break;
-                    case "Offline":
-                        await ChangeColor("0,0,0");
-                        break;
-                }
-            }
-        }
-        private void OnStopMonitoringRequested()
-        {
+            await _colorLock.WaitAsync();
             try
             {
-                // Stop monitoring here
-                var isMonitoring = false;
-                LoadState();
-                RestoreState(settings.SelectedWled.Ip, _originalState);
-            }catch(Exception ex)
-            {
-                Log.Error("Something went wrong stopping WLED");
+                // Creating a payload to send to the WLED light
+                var colorArray = newColor.Split(',').Select(x => int.Parse(x)).ToArray();
+                var payload = new { on = true, seg = new[] { new { col = new[] { colorArray } } } };
+                var jsonPayload = System.Text.Json.JsonSerializer.Serialize(payload, new JsonSerializerOptions());
+                var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
+                // Sending a PUT request to change the color of the WLED light
+                using var client = new HttpClient();
+                //TODO change below to use the ip instead of the .local name.
+                var response = await client.PutAsync($"http://{settings.SelectedWled.Ip}/json/state", content);
+                Log.Information("Changing state of {WledDev} to {jsonPayload}", settings.WledDev.ToString(), jsonPayload);
+                if (!response.IsSuccessStatusCode)
+                {
+                    var responseContent = await response.Content.ReadAsStringAsync();
+                    Log.Information("Error changing state of WLED light {responseContent}", responseContent.ToString());
+                }
             }
-
-
-        }
-        private void LoadState()
-        {
-            string filePath = Path.Combine(Environment.CurrentDirectory, "originalstate.json");
-
-            if (File.Exists(filePath))
+            catch (HttpRequestException e)
             {
-                string json = File.ReadAllText(filePath);
-                _originalState = JsonConvert.DeserializeObject<dynamic>(json);
-              
+                Log.Error("Error connecting to {WLEDDev}: {Message}", settings.WledDev.ToString(), e.Message.ToString());
             }
-            else
+            catch (FormatException e)
             {
-                _originalState = new ExpandoObject();
-                
+                Log.Error("Error parsing color value {messsage}", e.Message.ToString());
+            }
+            finally
+            {
+                _colorLock.Release();
             }
         }
-        private void SaveState()
-        {
-            string filePath = Path.Combine(Environment.CurrentDirectory, "originalstate.json");
-            string json = JsonConvert.SerializeObject(_currentState);
-            File.WriteAllText(filePath, json);
-        }
+
         public async Task<dynamic> GetCurrentState(string ip)
         {
             if (_currentState == null)
@@ -208,7 +145,6 @@ namespace THFHA_V1._0.apis
 
                     if (!staterecorded)
                     {
-
                         SaveState();
                         staterecorded = true;
                     }
@@ -223,17 +159,34 @@ namespace THFHA_V1._0.apis
 
             return _currentState;
         }
+
+        public Form GetSettingsForm()
+        {
+            return new wledsettings(); // Replace with your module's settings form
+        }
+
+        public void OnFormClosing()
+        {
+            // Handle the form closing event here
+            var isMonitoring = false;
+            Log.Debug("Stop monitoring requested");
+            if (IsEnabled)
+            {
+                OnStopMonitoringRequested();
+            }
+        }
+
         public async Task RestoreState(string ip, dynamic originalState)
         {
             lock (_lockObject)
             {
-                if (originalState == null)
+                if (_currentState == null)
                 {
                     Log.Warning("Unable to restore state: original state data is missing");
                     return;
                 }
 
-                var json = JsonConvert.SerializeObject(originalState);
+                var json = JsonConvert.SerializeObject(_currentState);
                 Log.Information("Restoring state of WLED light {wledDev}: {state}", settings.WledDev.ToString(), json);
                 var data = new StringContent(json, Encoding.UTF8, "application/json");
 
@@ -252,45 +205,133 @@ namespace THFHA_V1._0.apis
             }
         }
 
-        public async Task ChangeColor(string newColor)
+        public async void Start()
         {
-            
-                await _colorLock.WaitAsync();
-                try
-                {
-                    // Creating a payload to send to the WLED light
-                    var colorArray = newColor.Split(',').Select(x => int.Parse(x)).ToArray();
-                    var payload = new { on = true, seg = new[] { new { col = new[] { colorArray } } } };
-                    var jsonPayload = System.Text.Json.JsonSerializer.Serialize(payload, new JsonSerializerOptions());
-                    var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
-                    // Sending a PUT request to change the color of the WLED light
-                    using var client = new HttpClient();
-                    //TODO change below to use the ip instead of the .local name.
-                    var response = await client.PutAsync($"http://{settings.SelectedWled.Ip}/json/state", content);
-                    Log.Information("Changing state of {WledDev} to {jsonPayload}", settings.WledDev.ToString(), jsonPayload);
-                    if (!response.IsSuccessStatusCode)
-                    {
-                        var responseContent = await response.Content.ReadAsStringAsync();
-                        Log.Information("Error changing state of WLED light {responseContent}", responseContent.ToString());
-                    }
-                }
-                catch (HttpRequestException e)
-                {
+            _originalState = GetCurrentState(settings.SelectedWled.Ip);
+            //stateInstance = (State)sender;
+            StateChanged?.Invoke(this, EventArgs.Empty);
+            switch (stateInstance.Status)
+            {
+                case "Busy":
+                    await ChangeColor("255,0,0");
+                    break;
 
-                    Log.Error("Error connecting to {WLEDDev}: {Message}", settings.WledDev.ToString(), e.Message.ToString());
-                }
-                catch (FormatException e)
-                {
+                case "On the phone":
+                    await ChangeColor("255,0,0");
+                    break;
 
-                    Log.Error("Error parsing color value {messsage}", e.Message.ToString());
-                }
-                finally
-                {
-                    _colorLock.Release();
-                }
-            
+                case "Do not disturb":
+                    await ChangeColor("255,0,0");
+                    break;
+
+                case "Away":
+                    await ChangeColor("255,255,0");
+                    break;
+
+                case "Be right back":
+                    await ChangeColor("255,255,0");
+                    break;
+
+                case "Available":
+                    await ChangeColor("0,255,0");
+                    break;
+
+                case "Offline":
+                    await ChangeColor("0,0,0");
+                    break;
+            }
         }
 
-    }
+        public void UpdateSettings(bool isEnabled)
+        {
+            IsEnabled = isEnabled;
+        }
 
+        #endregion Public Methods
+
+        #region Private Methods
+
+        private void LoadState()
+        {
+            string filePath = Path.Combine(Environment.CurrentDirectory, "originalstate.json");
+
+            if (File.Exists(filePath))
+            {
+                string json = File.ReadAllText(filePath);
+                _originalState = JsonConvert.DeserializeObject<dynamic>(json);
+            }
+            else
+            {
+                _originalState = new ExpandoObject();
+            }
+        }
+
+        private async void OnStateChanged(object sender, EventArgs e)
+        {
+            if (!staterecorded)
+            {
+                _originalState = GetCurrentState(settings.SelectedWled.Ip);
+                staterecorded = true;
+            }
+            if (IsEnabled && THFHA.logWatcher?.IsRunning == true)
+            {
+                stateInstance = (State)sender;
+                StateChanged?.Invoke(this, EventArgs.Empty);
+                switch (stateInstance.Status)
+                {
+                    case "Busy":
+                        await ChangeColor("255,0,0");
+                        break;
+
+                    case "On the phone":
+                        await ChangeColor("255,0,0");
+                        break;
+
+                    case "Do not disturb":
+                        await ChangeColor("255,0,0");
+                        break;
+
+                    case "Away":
+                        await ChangeColor("255,255,0");
+                        break;
+
+                    case "Be right back":
+                        await ChangeColor("255,255,0");
+                        break;
+
+                    case "Available":
+                        await ChangeColor("0,255,0");
+                        break;
+
+                    case "Offline":
+                        await ChangeColor("0,0,0");
+                        break;
+                }
+            }
+        }
+
+        private void OnStopMonitoringRequested()
+        {
+            try
+            {
+                // Stop monitoring here
+                var isMonitoring = false;
+                LoadState();
+                RestoreState(settings.SelectedWled.Ip, _originalState);
+            }
+            catch (Exception ex)
+            {
+                Log.Error("Something went wrong stopping WLED");
+            }
+        }
+
+        private void SaveState()
+        {
+            string filePath = Path.Combine(Environment.CurrentDirectory, "originalstate.json");
+            string json = JsonConvert.SerializeObject(_currentState);
+            File.WriteAllText(filePath, json);
+        }
+
+        #endregion Private Methods
+    }
 }

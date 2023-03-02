@@ -11,7 +11,7 @@ namespace THFHA_V1._0.Views
         public mqttsettings()
         {
             InitializeComponent();
-            this.settings = Settings.Instance;
+            settings = Settings.Instance;
             tb_mqttip.Text = settings.Mqttip;
             tb_mqttuser.Text = settings.Mqttusername;
             tb_mqttpass.Text = settings.Mqttpassword;
@@ -26,6 +26,7 @@ namespace THFHA_V1._0.Views
                 var title = "IP Error";
                 var message = "Please enter a valid IP address.";
                 MessageBox.Show(message, title);
+                settings.IsMqttModuleSettingsValid = false;
                 return;
             }
 
@@ -49,7 +50,7 @@ namespace THFHA_V1._0.Views
                 var title = "Connection Successful";
                 var message = "Successfully connected to the MQTT server.";
                 MessageBox.Show(message, title);
-
+                settings.IsMqttModuleSettingsValid = true;
                 // Disconnect from the MQTT server.
                 await client.DisconnectAsync();
             }
@@ -57,6 +58,7 @@ namespace THFHA_V1._0.Views
             {
                 // Connection failed.
                 var title = "Connection Error";
+                settings.IsMqttModuleSettingsValid = false;
                 var message = $"Failed to connect to the MQTT server. Error: {ex.Message}";
                 MessageBox.Show(message, title);
             }
@@ -84,7 +86,7 @@ namespace THFHA_V1._0.Views
 
         private void mqtttopic_TextChanged(object sender, EventArgs e)
         {
-            settings.Mqtttopic= tb_mqtttopic.Text;
+            settings.Mqtttopic = tb_mqtttopic.Text;
             settings.Save();
         }
     }

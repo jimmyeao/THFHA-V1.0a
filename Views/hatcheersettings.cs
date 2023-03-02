@@ -7,21 +7,28 @@ namespace THFHA_V1._0.Views
 {
     public partial class hatchersettings : Form
     {
-        private Settings settings;                  //set up our settings
-        private static HttpClient? httpClient;      //set up for a http client
+        #region Private Fields
+
+        private static HttpClient? httpClient;
+        private Settings settings;
+
+        #endregion Private Fields
+
+        //set up our settings
+        //set up for a http client
+
+        #region Public Constructors
 
         public hatchersettings()
         {
             InitializeComponent();
-            this.settings = Settings.Instance;      //instantiate our settings
+            settings = Settings.Instance;      //instantiate our settings
             textBox1.Text = settings.Hatcherip;     //load the settings into the form
         }
 
-        private void textBox1_TextChanged(object sender, EventArgs e)
-        {
-            settings.Hatcherip = textBox1.Text;
-            settings.Save();
-        }
+        #endregion Public Constructors
+
+        #region Private Methods
 
         private async void btn_test_Click(object sender, EventArgs e)
         {
@@ -40,38 +47,37 @@ namespace THFHA_V1._0.Views
             try
             {
                 // Create a new TCP client and connect to the server on a separate thread
-                await Task.Run(() =>
+                await Task.Run(async () =>
                 {
-                    try
+                    using (TcpClient client = new TcpClient())
                     {
-                        using (TcpClient client = new TcpClient(ipAddress, port))
+                        var cancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(2));
+                        await client.ConnectAsync(ipAddress, port).WaitAsync(cancellationTokenSource.Token);
+                        if (client.Connected)
                         {
-                            // If the connection is successful, the server is running and listening
-
                             Log.Information("The server is running and listening on {0}:{1}", ipAddress, port);
                             var title = "Connection Success";
-                            var message = "The server is running and listening on "+ ipAddress+", " + port;
+                            var message = "The server is running and listening on " + ipAddress + ", " + port;
                             MessageBox.Show(message, title);
-                            toolStripStatusLabel1.Text= message;
+                            toolStripStatusLabel1.Text = message;
+                            settings.IsHatcherModuleSettingsValid = true;
                         }
-
-                    }
-                    catch (Exception ex)
-                    {
-                        // Display a user-friendly error message
-                        var title = "Connection Error";
-                        var message = "An error occurred while trying to connect to the server: " + ex.Message;
-                        MessageBox.Show(message, title);
-                        toolStripStatusLabel1.Text+= message;
-
-                        // Log the exception for debugging purposes
-                        Log.Error(ex, "An error occurred while trying to connect to the server.");
+                        else
+                        {
+                            // Display a user-friendly error message
+                            var title = "Connection Error";
+                            var message = "An error occurred while trying to connect to the server: ";
+                            MessageBox.Show(message, title);
+                            toolStripStatusLabel1.Text += message;
+                            settings.IsHatcherModuleSettingsValid = false;
+                            // Log the exception for debugging purposes
+                            Log.Error("An error occurred while trying to connect to the server.");
+                        }
                     }
                 });
 
                 // Close the connection
                 Log.Information("Connection closed.");
-
             }
             catch (Exception ex)
             {
@@ -83,10 +89,14 @@ namespace THFHA_V1._0.Views
                 // Log the exception for debugging purposes
                 Log.Error(ex, "An error occurred while trying to connect to the server.");
             }
-
         }
 
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+            settings.Hatcherip = textBox1.Text;
+            settings.Save();
+        }
 
-
+        #endregion Private Methods
     }
 }

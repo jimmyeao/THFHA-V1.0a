@@ -50,9 +50,10 @@ namespace THFHA_V1._0
             Log.Debug("State.StateChanged event subscribed");
 
             PopulateModulesList();
-            Settings.SettingChanged += Settings_SettingChanged; // Subscribe to the SettingChanged event
             if (settings.RunLogWatcherAtStart)
             {
+                Settings.SettingChanged += Settings_SettingChanged; // Subscribe to the SettingChanged event
+
                 StartLogWatcher();
                 btn_start.Enabled = false; btn_stop.Enabled = true;
             }
@@ -151,11 +152,12 @@ namespace THFHA_V1._0
             if (logWatcher != null)
             {
                 await logWatcher.Stop();
+                foreach (IModule module in modules)
+                {
+                    module.OnFormClosing();
+                }
             }
-            foreach (IModule module in modules)
-            {
-                module.OnFormClosing();
-            }
+
             statuslabel.Text = "Monitoring Stopped";
         }
         private void lbx_modules_DoubleClick(object sender, EventArgs e)
@@ -192,13 +194,23 @@ namespace THFHA_V1._0
             if (lbx_modules.SelectedIndex >= 0)
             {
                 IModule selectedModule = modules[lbx_modules.SelectedIndex];
+
+                // Check if the module settings are valid
+                string propertyName = "Is" + selectedModule.Name + "ModuleSettingsValid";
+                var moduleSettingsValidProp = typeof(Settings).GetProperty(propertyName);
+                if (moduleSettingsValidProp != null && !(bool)moduleSettingsValidProp.GetValue(Settings.Instance))
+                {
+                    MessageBox.Show(selectedModule.Name + " module settings are invalid. Please check the settings.", "Invalid settings", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
                 selectedModule.IsEnabled = true;
                 selectedModule.UpdateSettings(selectedModule.IsEnabled); // Update the settings based on the new state of the module
                 switch (selectedModule.Name.ToLower())
                 {
                     case "hue":
                         Settings.Instance.UseHue = selectedModule.IsEnabled;
-                        statuslabel.Text= selectedModule.Name+" Enabled";
+                        statuslabel.Text = selectedModule.Name + " Enabled";
                         break;
                     case "homeassistant":
                         Settings.Instance.UseHA = selectedModule.IsEnabled;
@@ -218,7 +230,7 @@ namespace THFHA_V1._0
                         break;
                 }
                 PopulateModulesList(); // Refresh the list to update the module status
-                settings.Save();    
+                settings.Save();
             }
         }
         private void disableModuleToolStripMenuItem_Click(object sender, EventArgs e)
@@ -273,12 +285,16 @@ namespace THFHA_V1._0
         }
         private void btn_start_Click(object sender, EventArgs e)
         {
+            Settings.SettingChanged += Settings_SettingChanged; // Subscribe to the SettingChanged event
+
             btn_start.Enabled = false; btn_stop.Enabled = true;
 
             _ = StartLogWatcher();
         }
         private void btn_stop_Click(object sender, EventArgs e)
         {
+            Settings.SettingChanged -= Settings_SettingChanged; // Subscribe to the SettingChanged event
+
             btn_start.Enabled = true; btn_stop.Enabled = false;
             _ = StopLogWatcher();
         }

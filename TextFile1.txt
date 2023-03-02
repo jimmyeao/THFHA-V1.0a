@@ -1,0 +1,12 @@
+﻿each module should have a tested=true false
+false will block it being enabled
+if its not enabled, dont allow ot to subscribe to state changes etc
+grey out enable buttons and right click enable option until tested = true
+
+hue				fixed
+wled			fixed
+mqtt			fixed
+hatcher			fixed
+homeassistant	fixed
+
+Stop monitoring doesnt actually stop monitoring not fixed

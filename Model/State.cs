@@ -1,34 +1,39 @@
 ﻿using Serilog;
+
 namespace THFHA_V1._0.Model
 {
     public class State
     {
+        #region Private Fields
+
+        private string _activity = "";
+
+        private string _camera = "";
+
+        private string _message = "";
+
+        private string _microphone = "";
+
+        // Define properties for the different components of the state
+        private string _status = "";
+
+        #endregion Private Fields
+
+        #region Public Delegates
+
         // Define a delegate for the event handler
         public delegate void StateChangedEventHandler(object sender, EventArgs e);
+
+        #endregion Public Delegates
+
+        #region Public Events
 
         // Define the event that will be triggered when the state changes
         public event StateChangedEventHandler? StateChanged;
 
-        // Define properties for the different components of the state
-        private string _status ="";
-        private string _activity = "";
-        private string _camera = "";
-        private string _microphone = "";
-        private string _message = "";
+        #endregion Public Events
 
-        public string Status
-        {
-            get => _status;
-            set
-            {
-                if (_status != value)
-                {
-                    _status = value;
-                    Log.Debug("State.Status changed to: " + value);
-                    StateChanged?.Invoke(this, EventArgs.Empty);
-                }
-            }
-        }
+        #region Public Properties
 
         public string Activity
         {
@@ -58,6 +63,12 @@ namespace THFHA_V1._0.Model
             }
         }
 
+        public string Message
+        {
+            get => _message;
+            set => _message = value;
+        }
+
         public string Microphone
         {
             get => _microphone;
@@ -72,10 +83,20 @@ namespace THFHA_V1._0.Model
             }
         }
 
-        public string Message
+        public string Status
         {
-            get => _message;
-            set => _message = value;
+            get => _status;
+            set
+            {
+                if (_status != value)
+                {
+                    _status = value;
+                    Log.Debug("State.Status changed to: " + value);
+                    StateChanged?.Invoke(this, EventArgs.Empty);
+                }
+            }
         }
+
+        #endregion Public Properties
     }
 }
