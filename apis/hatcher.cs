@@ -104,59 +104,64 @@ namespace THFHA_V1._0.apis
 
                 //_state.PropertyChanged += State_PropertyChanged;
 
+                string status = state.Status;
+                if (state.Activity == "On the phone")
+                {
+                    status = "On the Phone";
+                }
+
                 var uri = new Uri("http://" + settings.Hatcherip + ":5000/showimage");
 
-                Log.Information("Changing Hatcher state to {state} ", state.Status);
+                Log.Information("Changing Hatcher state to {state} ", status);
 
-                //List<KeyValuePair<string, string>> keyValues;
-                var keyValues = state.Status switch
+                var keyValues = status switch
                 {
                     "Available" => new List<KeyValuePair<string, string>>
-                    {
-                        new("image_type", "available"),
-                        new("text1", "Available")
-                    },
+            {
+                new("image_type", "available"),
+                new("text1", "Available")
+            },
                     "Busy" => new List<KeyValuePair<string, string>>
-                    {
-                        new("image_type", "busy"),
-                        new("text1", "Busy")
-                    },
+            {
+                new("image_type", "busy"),
+                new("text1", "Busy")
+            },
                     "Do not disturb" => new List<KeyValuePair<string, string>>
-                    {
-                        new("image_type", "dnd"),
-                        new("text1", "Do Not"),
-                        new("text2", "Disturb")
-                    },
+            {
+                new("image_type", "dnd"),
+                new("text1", "Do Not"),
+                new("text2", "Disturb")
+            },
                     "Offline" => new List<KeyValuePair<string, string>>
-                    {
-                        new("image_type", "offline"),
-                        new("text1", "Offline")
-                    },
+            {
+                new("image_type", "offline"),
+                new("text1", "Offline")
+            },
                     "On the Phone" => new List<KeyValuePair<string, string>>
-                    {
-                        new("image_type", "onthephone"),
-                        new("text1", "On The Phone")
-                    },
+            {
+                new("image_type", "onthephone"),
+                new("text1", "On The Phone")
+            },
                     "Be Right Back" => new List<KeyValuePair<string, string>>
-                    {
-                        new("image_type", "away"),
-                        new("text1", "Be Right Back")
-                    },
+            {
+                new("image_type", "away"),
+                new("text1", "Be Right Back")
+            },
                     "Away" => new List<KeyValuePair<string, string>>
-                    {
-                        new("image_type", "away"),
-                        new("text1", "Away")
-                    },
+            {
+                new("image_type", "away"),
+                new("text1", "Away")
+            },
                     ".." => new List<KeyValuePair<string, string>>
-                    {
-                        new("image_type", "offline"),
-                        new("text1", "Offline")
-                    },
+            {
+                new("image_type", "offline"),
+                new("text1", "Offline")
+            },
                     _ => new List<KeyValuePair<string, string>>
-                    {
-                        new("image_type", "offline"),
-                        new("text1", "Offline")
-                    }
+            {
+                new("image_type", "offline"),
+                new("text1", "Offline")
+            }
                 };
 
                 var content = new FormUrlEncodedContent(keyValues);
@@ -176,6 +181,7 @@ namespace THFHA_V1._0.apis
                 }
             }
         }
+
 
         public void Start()
         {
