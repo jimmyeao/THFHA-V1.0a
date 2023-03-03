@@ -105,7 +105,7 @@ namespace THFHA_V1._0.apis
                 //_state.PropertyChanged += State_PropertyChanged;
 
                 string status = state.Status;
-                if (state.Activity == "On the phone")
+                if (state.Activity == "On the phone" || state.Activity == "In a call")
                 {
                     status = "On the Phone";
                 }

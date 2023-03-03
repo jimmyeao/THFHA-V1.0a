@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SettingsForm));
             this.cb_useha = new System.Windows.Forms.CheckBox();
             this.cb_usehue = new System.Windows.Forms.CheckBox();
             this.cb_usemqtt = new System.Windows.Forms.CheckBox();
@@ -173,6 +174,7 @@
             this.Controls.Add(this.cb_usemqtt);
             this.Controls.Add(this.cb_usehue);
             this.Controls.Add(this.cb_useha);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "SettingsForm";
             this.Text = "SettingsForm";
             this.Load += new System.EventHandler(this.SettingsForm_Load);
