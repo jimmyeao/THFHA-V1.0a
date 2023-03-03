@@ -7,8 +7,8 @@
     <Nullable>enable</Nullable>
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
-    <AssemblyVersion>1.0.0.424</AssemblyVersion>
-    <FileVersion>1.0.0.424</FileVersion>
+    <AssemblyVersion>1.0.0.441</AssemblyVersion>
+    <FileVersion>1.0.0.441</FileVersion>
     <PackageIcon>trans.png</PackageIcon>
     <RepositoryUrl>https://github.com/jimmyeao/THFHA-V1.0a</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
@@ -32,6 +32,7 @@ Please visit our github page for more details and instructions.</Description>
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.Management.Infrastructure" Version="2.0.0" />
     <PackageReference Include="MQTTnet" Version="4.1.4.563" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
     <PackageReference Include="Q42.HueApi" Version="3.21.0" />
@@ -39,6 +40,8 @@ Please visit our github page for more details and instructions.</Description>
     <PackageReference Include="Serilog" Version="2.12.0" />
     <PackageReference Include="Serilog.Sinks.Debug" Version="2.0.0" />
     <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
+    <PackageReference Include="System.IO.Pipelines" Version="7.0.0" />
+    <PackageReference Include="System.Management" Version="7.0.0" />
     <PackageReference Include="WLED" Version="2.0.48" />
     <PackageReference Include="Zeroconf" Version="3.6.11" />
   </ItemGroup>
