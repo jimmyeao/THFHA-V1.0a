@@ -5,6 +5,7 @@ using System.Text;
 using System.Text.Json;
 using THFHA_V1._0.Model;
 using THFHA_V1._0.Views;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace THFHA_V1._0.apis
 {
@@ -281,14 +282,26 @@ namespace THFHA_V1._0.apis
                 if (IsEnabled && THFHA.logWatcher?.IsRunning == true)
                 {
                     stateInstance = (State)sender;
+                    var status = stateInstance.Status;
                     StateChanged?.Invoke(this, EventArgs.Empty);
-                    switch (stateInstance.Status)
+                    //if we are in a call we are always busy...
+                    //so we need to check the activity as well
+                    if (stateInstance.Activity == "On the phone" || stateInstance.Activity == "In a call")
+                    {
+                       status = "On the Phone";
+                    }
+                  
+                    
+                    switch (status)
                     {
                         case "Busy":
                             await ChangeColor("255,0,0");
                             break;
 
                         case "On the phone":
+                            await ChangeColor("255,0,0");
+                            break;
+                        case "On the Phone":
                             await ChangeColor("255,0,0");
                             break;
 
