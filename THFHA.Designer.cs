@@ -289,7 +289,7 @@
             this.lbl_blurred.Size = new System.Drawing.Size(50, 20);
             this.lbl_blurred.TabIndex = 30;
             this.lbl_blurred.Text = "label2";
-            this.lbl_blurred.Click += new System.EventHandler(this.lbl_apistataus_Click);
+
             // 
             // lbl_recording
             // 

@@ -748,9 +748,5 @@ namespace THFHA_V1._0
             }
         }
 
-        private void lbl_apistataus_Click(object sender, EventArgs e)
-        {
-
-        }
     }
 }
