@@ -168,38 +168,38 @@ namespace THFHA_V1._0.Model
                     Log.Error("Failed to read log file");
                 }
                 //Check camera
-                var userName = Environment.UserName;
-                var registryPath = @"Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\webcam\NonPackaged\";
-                RegistryKey registryKey = Registry.CurrentUser.OpenSubKey(registryPath);
-                if (registryKey != null)
-                {
-                    string[] subkeys = registryKey.GetSubKeyNames();
-                    foreach (var subkey in subkeys)
-                    {
-                        if (subkey.Contains($"C:#Users#{Environment.UserName}#AppData#Local#Microsoft#Teams#current#Teams.exe"))
-                        {
-                            using (RegistryKey nonPackagedKey = registryKey.OpenSubKey(subkey))
-                            {
-                                string lastUsedTimeStop = nonPackagedKey?.GetValue("LastUsedTimeStop")?.ToString();
-                                if (!string.IsNullOrEmpty(lastUsedTimeStop))
-                                {
-                                    state.Camera = lastUsedTimeStop == "0" ? "On" : "Off";
-                                }
-                            }
-                        }
-                    }
-                }
-                if (state.Activity != _activity)
-                {
-                    state.Activity = _activity;
-                    StateChanged?.Invoke(this, EventArgs.Empty);
-                }
+                //var userName = Environment.UserName;
+                //var registryPath = @"Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\webcam\NonPackaged\";
+                //RegistryKey registryKey = Registry.CurrentUser.OpenSubKey(registryPath);
+                //if (registryKey != null)
+                //{
+                //    string[] subkeys = registryKey.GetSubKeyNames();
+                //    foreach (var subkey in subkeys)
+                //    {
+                //        if (subkey.Contains($"C:#Users#{Environment.UserName}#AppData#Local#Microsoft#Teams#current#Teams.exe"))
+                //        {
+                //            using (RegistryKey nonPackagedKey = registryKey.OpenSubKey(subkey))
+                //            {
+                //                string lastUsedTimeStop = nonPackagedKey?.GetValue("LastUsedTimeStop")?.ToString();
+                //                if (!string.IsNullOrEmpty(lastUsedTimeStop))
+                //                {
+                //                    state.Camera = lastUsedTimeStop == "0" ? "On" : "Off";
+                //                }
+                //            }
+                //        }
+                //    }
+                //}
+                //if (state.Activity != _activity)
+                //{
+                //    state.Activity = _activity;
+                //    StateChanged?.Invoke(this, EventArgs.Empty);
+                //}
                 if (state.Status != _status)
                 {
                     state.Status = _status;
                     StateChanged?.Invoke(this, EventArgs.Empty);
                 }
-                if (state.Microphone != _mute) { state.Microphone = _mute; }
+                //if (state.Microphone != _mute) { state.Microphone = _mute; }
                 await Task.Delay(1000, cancellationToken); // Example delay
             }
         }

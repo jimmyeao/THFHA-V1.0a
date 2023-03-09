@@ -715,6 +715,29 @@ namespace THFHA_V1._0
                 meetingState["isInMeeting"] = meetingUpdate.MeetingState.IsInMeeting;
                 meetingState["isRecordingOn"] = meetingUpdate.MeetingState.IsRecordingOn;
                 meetingState["isBackgroundBlurred"] = meetingUpdate.MeetingState.IsBackgroundBlurred;
+                if (meetingUpdate.MeetingState.IsCameraOn)
+                {
+                    state.Camera = "On";
+                }else
+                {
+                    state.Camera = "Off";
+                }
+                if(meetingUpdate.MeetingState.IsInMeeting)
+                {
+                    state.Activity = "In a meeting";
+                }
+                else
+                {
+                    state.Activity = "Not in a Call";
+                }
+                if (meetingUpdate.MeetingState.IsMuted)
+                {
+                    state.Microphone = "Mute On";
+                }
+                else
+                {
+                    state.Microphone = "Mute Off";
+                }
             }
 
             // Update UI elements
