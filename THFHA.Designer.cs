@@ -54,8 +54,12 @@
             this.pb_Status = new System.Windows.Forms.PictureBox();
             this.pb_Activity = new System.Windows.Forms.PictureBox();
             this.pb_mute = new System.Windows.Forms.PictureBox();
-            this.button1 = new System.Windows.Forms.Button();
-            this.lbl_apistataus = new System.Windows.Forms.Label();
+            this.lbl_blurred = new System.Windows.Forms.Label();
+            this.lbl_recording = new System.Windows.Forms.Label();
+            this.lbl_hand = new System.Windows.Forms.Label();
+            this.lbl_muted = new System.Windows.Forms.Label();
+            this.lbl_cam = new System.Windows.Forms.Label();
+            this.lbl_meeting = new System.Windows.Forms.Label();
             this.menuStrip1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
@@ -73,7 +77,7 @@
             this.helpToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(585, 28);
+            this.menuStrip1.Size = new System.Drawing.Size(805, 28);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -129,7 +133,7 @@
             this.lbx_modules.ContextMenuStrip = this.contextMenuStrip1;
             this.lbx_modules.FormattingEnabled = true;
             this.lbx_modules.ItemHeight = 20;
-            this.lbx_modules.Location = new System.Drawing.Point(382, 65);
+            this.lbx_modules.Location = new System.Drawing.Point(602, 65);
             this.lbx_modules.Name = "lbx_modules";
             this.lbx_modules.Size = new System.Drawing.Size(191, 144);
             this.lbx_modules.TabIndex = 1;
@@ -163,7 +167,7 @@
             // 
             this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(382, 42);
+            this.label1.Location = new System.Drawing.Point(602, 42);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(132, 20);
             this.label1.TabIndex = 2;
@@ -177,7 +181,7 @@
             this.statuslabel});
             this.statusStrip1.Location = new System.Drawing.Point(0, 316);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(585, 26);
+            this.statusStrip1.Size = new System.Drawing.Size(805, 26);
             this.statusStrip1.TabIndex = 3;
             this.statusStrip1.Text = "statusStrip1";
             // 
@@ -277,32 +281,72 @@
             this.pb_mute.TabIndex = 28;
             this.pb_mute.TabStop = false;
             // 
-            // button1
+            // lbl_blurred
             // 
-            this.button1.Location = new System.Drawing.Point(409, 230);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(94, 29);
-            this.button1.TabIndex = 29;
-            this.button1.Text = "button1";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.lbl_blurred.AutoSize = true;
+            this.lbl_blurred.Location = new System.Drawing.Point(440, 79);
+            this.lbl_blurred.Name = "lbl_blurred";
+            this.lbl_blurred.Size = new System.Drawing.Size(50, 20);
+            this.lbl_blurred.TabIndex = 30;
+            this.lbl_blurred.Text = "label2";
+            this.lbl_blurred.Click += new System.EventHandler(this.lbl_apistataus_Click);
             // 
-            // lbl_apistataus
+            // lbl_recording
             // 
-            this.lbl_apistataus.AutoSize = true;
-            this.lbl_apistataus.Location = new System.Drawing.Point(379, 277);
-            this.lbl_apistataus.Name = "lbl_apistataus";
-            this.lbl_apistataus.Size = new System.Drawing.Size(50, 20);
-            this.lbl_apistataus.TabIndex = 30;
-            this.lbl_apistataus.Text = "label2";
+            this.lbl_recording.AutoSize = true;
+            this.lbl_recording.Location = new System.Drawing.Point(440, 116);
+            this.lbl_recording.Name = "lbl_recording";
+            this.lbl_recording.Size = new System.Drawing.Size(50, 20);
+            this.lbl_recording.TabIndex = 31;
+            this.lbl_recording.Text = "label2";
+            // 
+            // lbl_hand
+            // 
+            this.lbl_hand.AutoSize = true;
+            this.lbl_hand.Location = new System.Drawing.Point(440, 153);
+            this.lbl_hand.Name = "lbl_hand";
+            this.lbl_hand.Size = new System.Drawing.Size(50, 20);
+            this.lbl_hand.TabIndex = 32;
+            this.lbl_hand.Text = "label3";
+            // 
+            // lbl_muted
+            // 
+            this.lbl_muted.AutoSize = true;
+            this.lbl_muted.Location = new System.Drawing.Point(440, 190);
+            this.lbl_muted.Name = "lbl_muted";
+            this.lbl_muted.Size = new System.Drawing.Size(50, 20);
+            this.lbl_muted.TabIndex = 33;
+            this.lbl_muted.Text = "label4";
+            // 
+            // lbl_cam
+            // 
+            this.lbl_cam.AutoSize = true;
+            this.lbl_cam.Location = new System.Drawing.Point(440, 227);
+            this.lbl_cam.Name = "lbl_cam";
+            this.lbl_cam.Size = new System.Drawing.Size(50, 20);
+            this.lbl_cam.TabIndex = 34;
+            this.lbl_cam.Text = "label5";
+            // 
+            // lbl_meeting
+            // 
+            this.lbl_meeting.AutoSize = true;
+            this.lbl_meeting.Location = new System.Drawing.Point(440, 268);
+            this.lbl_meeting.Name = "lbl_meeting";
+            this.lbl_meeting.Size = new System.Drawing.Size(50, 20);
+            this.lbl_meeting.TabIndex = 35;
+            this.lbl_meeting.Text = "label6";
             // 
             // THFHA
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(120F, 120F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
-            this.ClientSize = new System.Drawing.Size(585, 342);
-            this.Controls.Add(this.lbl_apistataus);
-            this.Controls.Add(this.button1);
+            this.ClientSize = new System.Drawing.Size(805, 342);
+            this.Controls.Add(this.lbl_meeting);
+            this.Controls.Add(this.lbl_cam);
+            this.Controls.Add(this.lbl_muted);
+            this.Controls.Add(this.lbl_hand);
+            this.Controls.Add(this.lbl_recording);
+            this.Controls.Add(this.lbl_blurred);
             this.Controls.Add(this.pb_mute);
             this.Controls.Add(this.pb_Activity);
             this.Controls.Add(this.pb_Status);
@@ -362,7 +406,11 @@
         private PictureBox pb_Status;
         private PictureBox pb_Activity;
         private PictureBox pb_mute;
-        private Button button1;
-        private Label lbl_apistataus;
+        private Label lbl_blurred;
+        private Label lbl_recording;
+        private Label lbl_hand;
+        private Label lbl_muted;
+        private Label lbl_cam;
+        private Label lbl_meeting;
     }
 }

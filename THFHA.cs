@@ -712,7 +712,13 @@ namespace THFHA_V1._0
             }
 
             // Update UI elements
-            UpdateLabel(lbl_apistataus, messageReceived);
+            UpdateLabel(lbl_blurred, "Background blurred: "+(meetingState["isBackgroundBlurred"]).ToString());
+            UpdateLabel(lbl_recording, "Recording On: " + (meetingState["isRecordingOn"]).ToString());
+            UpdateLabel(lbl_hand, "Hand Raised: " + (meetingState["isHandRaised"]).ToString());
+            UpdateLabel(lbl_meeting, "In Meeting: " + (meetingState["isInMeeting"]).ToString());
+            UpdateLabel(lbl_cam, "Camera On: " + (meetingState["isCameraOn"]).ToString());
+            UpdateLabel(lbl_muted, "Mute On: " + (meetingState["isMuted"]).ToString());
+
             Log.Debug(meetingUpdate.ToString());
             Log.Debug(meetingState.ToString());
         }
@@ -738,6 +744,9 @@ namespace THFHA_V1._0
             }
         }
 
+        private void lbl_apistataus_Click(object sender, EventArgs e)
+        {
 
+        }
     }
 }
