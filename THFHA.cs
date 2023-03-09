@@ -4,6 +4,7 @@ using Serilog;
 using System.Diagnostics;
 using THFHA_V1._0.Model;
 using THFHA_V1._0.Views;
+using THFHA_V1._0.TeamsAPI;
 
 
 namespace THFHA_V1._0
@@ -19,7 +20,7 @@ namespace THFHA_V1._0
         #region Private Fields
 
         private readonly Dictionary<string, object> _meetingState;
-        private readonly WebSocketClient _webSocketClient;
+        private  WebSocketClient _webSocketClient;
         private List<IModule> modules;
         private Settings settings;
         private State state;
@@ -43,7 +44,7 @@ namespace THFHA_V1._0
             string _logPath = _appDir + @"\Microsoft\Teams\";
             string _logFile = _logPath + "logs.txt";
             string token = "286b3935-a0d9-4bb6-95b6-0820c6315b86";
-            state.StateChanged += OnStateChanged;
+            State.Instance.StateChanged += OnStateChanged;
             Log.Debug("State.StateChanged event subscribed");
 
             PopulateModulesList();
@@ -52,6 +53,12 @@ namespace THFHA_V1._0
                 Settings.SettingChanged += Settings_SettingChanged; // Subscribe to the SettingChanged event
 
                 StartLogWatcher();
+                if (settings.TeamsApi != "")
+                {
+                    _webSocketClient = new WebSocketClient(new Uri("ws://localhost:8124?token=" + settings.TeamsApi + "&protocol-version=1.0.0&manufacturer=Jimmyeao&device=THFHA&app=THFHA&app-version=1.0"), state);
+
+                    // _webSocketClient.MessageReceived += WebSocketClient_MessageReceived;
+                }
                 btn_start.Enabled = false; btn_stop.Enabled = true;
             }
             else
@@ -62,22 +69,14 @@ namespace THFHA_V1._0
                     //module.OnFormClosing();
                 }
             }
-            if (settings.TeamsApi != "")
-            {
-                _webSocketClient = new WebSocketClient(new Uri("ws://localhost:8124?token=" + settings.TeamsApi + "&protocol-version=1.0.0&manufacturer=Jimmyeao&device=THFHA&app=THFHA&app-version=1.0"), state);
+            //if (settings.TeamsApi != "")
+            //{
+            //    _webSocketClient = new WebSocketClient(new Uri("ws://localhost:8124?token=" + settings.TeamsApi + "&protocol-version=1.0.0&manufacturer=Jimmyeao&device=THFHA&app=THFHA&app-version=1.0"), state);
 
-               // _webSocketClient.MessageReceived += WebSocketClient_MessageReceived;
-            }
+            //   // _webSocketClient.MessageReceived += WebSocketClient_MessageReceived;
+            //}
 
-            _meetingState = new Dictionary<string, object>
-            {
-                { "isMuted", false },
-                { "isCameraOn", false },
-                { "isHandRaised", false },
-                { "isInMeeting", "Not in a meeting" },
-                { "isRecordingOn", false },
-                { "isBackgroundBlurred", false }
-            };
+
         }
 
         #endregion Public Constructors
@@ -140,7 +139,7 @@ namespace THFHA_V1._0
 
         public void UpdateActivityIcons(string activity)
         {
-            var icon = GetActivityIcon(state.Activity);
+            var icon = GetActivityIcon(State.Instance.Activity);
             UpdateActivityIcon(icon);
             //UpdateNotifyMenuActivity(icon);
         }
@@ -213,17 +212,28 @@ namespace THFHA_V1._0
 
         private void btn_start_Click(object sender, EventArgs e)
         {
+            // Initialize the state and settings objects
+            // Initialize the state and settings objects
+            State state = new State();
+            
+
             Settings.SettingChanged += Settings_SettingChanged; // Subscribe to the SettingChanged event
 
             btn_start.Enabled = false; btn_stop.Enabled = true;
+            if (settings.TeamsApi != "")
+            {
+                _webSocketClient = new WebSocketClient(new Uri("ws://localhost:8124?token=" + settings.TeamsApi + "&protocol-version=1.0.0&manufacturer=Jimmyeao&device=THFHA&app=THFHA&app-version=1.0"), state);
 
+               
+            }
             _ = StartLogWatcher();
         }
 
         private void btn_stop_Click(object sender, EventArgs e)
         {
             Settings.SettingChanged -= Settings_SettingChanged; // Subscribe to the SettingChanged event
-
+            _ = _webSocketClient.StopAsync();
+            btn_start.Enabled = true; btn_stop.Enabled = false;
             btn_start.Enabled = true; btn_stop.Enabled = false;
             _ = StopLogWatcher();
         }
@@ -432,7 +442,7 @@ namespace THFHA_V1._0
         {
             // Get the updated state values
             Log.Debug("OnStateChange Trigerred!!!!!!!!!!!");
-            UpdateAll();
+            BeginInvoke((MethodInvoker)delegate { UpdateAll(); });
 
             // var icon = UpdateStatusIcon(state.Status); UpdateStatusIcons(icon); _ =
             // UpdateMuteIcon(); _ = UpdateActivityIcon(state.Activity);
@@ -587,21 +597,39 @@ namespace THFHA_V1._0
 
         private async Task UpdateAll()
         {
-            UpdateLabel(lbl_status, state.Status);
-            UpdateLabel(lbl_activity, state.Activity);
-            UpdateLabel(lbl_camera, state.Camera);
-            UpdateLabel(lbl_mute, state.Microphone);
-            UpdateStatusIcons(state.Status);
-            UpdateActivityIcons(state.Activity);
-            UpdateMuteStatus(state.Microphone);
-            UpdateLabel(lbl_blurred, "Background: " + state.Blurred);
-            UpdateLabel(lbl_recording, "Recording: " + state.Recording);
-            UpdateLabel(lbl_hand, "Hand: " + state.Handup);
-            UpdateLabel(lbl_meeting, "Activity: " + state.Activity);
-            UpdateLabel(lbl_cam, "Camera: " + state.Camera);
-            UpdateLabel(lbl_muted, "Mute: " + state.Microphone);
+            UpdateLabel(lbl_status, State.Instance.Status);
+            UpdateLabel(lbl_activity, State.Instance.Activity);
+            UpdateLabel(lbl_camera, State.Instance.Camera);
+            UpdateLabel(lbl_mute, State.Instance.Microphone);
+            UpdateStatusIcons(State.Instance.Status);
+            UpdateActivityIcons(State.Instance.Activity);
+            UpdateMuteStatus(State.Instance.Microphone);
+            UpdateLabel(lbl_blurred, "Background: " + (string.IsNullOrEmpty(State.Instance.Blurred) ? "Not Configured" : State.Instance.Blurred));
+            UpdateLabel(lbl_recording, "Recording: " + (string.IsNullOrEmpty(State.Instance.Recording) ? "Not Configured" : State.Instance.Recording));
+            UpdateLabel(lbl_hand, "Hand: " + (string.IsNullOrEmpty(State.Instance.Handup) ? "Not Configured" : State.Instance.Handup));
+            UpdateLabel(lbl_meeting, "Activity: " + (string.IsNullOrEmpty(State.Instance.Activity) ? "Not Configured" : State.Instance.Activity));
+            UpdateLabel(lbl_cam, "Camera: " + (string.IsNullOrEmpty(State.Instance.Camera) ? "Not Configured" : State.Instance.Camera));
+            UpdateLabel(lbl_muted, "Mute: " + (string.IsNullOrEmpty(State.Instance.Microphone) ? "Not Configured" : State.Instance.Microphone));
+
         }
 
+        //private void UpdateLabel(Label label, string text)
+        //{
+        //    if (!label.IsHandleCreated || label.Disposing || label.IsDisposed)
+        //    {
+        //        // The label is not yet created or is disposed, so we can't update it.
+        //        return;
+        //    }
+
+        //    if (label.InvokeRequired)
+        //    {
+        //        label.Invoke((MethodInvoker)delegate { UpdateLabel(label, text); });
+        //    }
+        //    else
+        //    {
+        //        label.Text = text;
+        //    }
+        //}
         private void UpdateLabel(Label label, string text)
         {
             if (!label.IsHandleCreated || label.Disposing || label.IsDisposed)
@@ -610,16 +638,8 @@ namespace THFHA_V1._0
                 return;
             }
 
-            if (label.InvokeRequired)
-            {
-                label.Invoke((MethodInvoker)delegate { UpdateLabel(label, text); });
-            }
-            else
-            {
-                label.Text = text;
-            }
+            label.BeginInvoke((MethodInvoker)delegate { label.Text = text; });
         }
-
         private void updatemodules()
         {
             foreach (IModule module in this.modules)
@@ -687,26 +707,6 @@ namespace THFHA_V1._0
 
         #endregion Private Methods
 
-        #region api methods
 
-        private Dictionary<string, object> meetingState = new Dictionary<string, object>()
-        {
-            { "isMuted", false },
-            { "isCameraOn", false },
-            { "isHandRaised", false },
-            { "isInMeeting", "Not in a meeting" },
-            { "isRecordingOn", false },
-            { "isBackgroundBlurred", false },
-        };
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-        }
-
-
-       
-           
-        
-        #endregion
     }
 }

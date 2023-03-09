@@ -3,15 +3,16 @@ using Newtonsoft.Json;
 using Serilog;
 using System.Net.WebSockets;
 using System.Text;
+using THFHA_V1._0.Model;
 
-namespace THFHA_V1._0.Model
+namespace THFHA_V1._0.TeamsAPI
 {
     public class WebSocketClient
     {
         #region Private Fields
 
         private readonly ClientWebSocket _clientWebSocket;
-        private State state;
+        private readonly State _state;
 
         #endregion Private Fields
 
@@ -21,13 +22,25 @@ namespace THFHA_V1._0.Model
         public WebSocketClient(Uri uri, State state)
         {
             _clientWebSocket = new ClientWebSocket();
-            this.state = state;
+            _state = state;
             _ = ConnectAsync(uri);
 
             // Subscribe to the MessageReceived event
             MessageReceived += OnMessageReceived;
-        }
 
+        }
+        public async Task StopAsync(CancellationToken cancellationToken = default)
+        {
+            MessageReceived -= OnMessageReceived;
+            if (_clientWebSocket.State == WebSocketState.Open)
+            {
+                
+
+                await _clientWebSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Connection closed by client", cancellationToken);
+                Console.WriteLine("WebSocket connection closed");
+            }
+            
+        }
 
         #endregion Public Constructors
 
@@ -55,6 +68,7 @@ namespace THFHA_V1._0.Model
         {
             try
             {
+                MessageReceived += OnMessageReceived;
                 DateTimeOffset timestamp = DateTimeOffset.UtcNow;
                 long unixTimestamp = timestamp.ToUnixTimeMilliseconds();
                 await _clientWebSocket.ConnectAsync(uri, CancellationToken.None);
@@ -68,6 +82,7 @@ namespace THFHA_V1._0.Model
                 Log.Error("An error occurred: " + ex.Message);
                 Log.Error("Using URI: " + uri.ToString());
             }
+
 
             await ReceiveLoopAsync();
         }
@@ -83,12 +98,11 @@ namespace THFHA_V1._0.Model
 
         private async Task ReceiveLoopAsync(CancellationToken cancellationToken = default)
         {
-            
             const int bufferSize = 4096; // Starting buffer size
             byte[] buffer = new byte[bufferSize];
             int totalBytesReceived = 0;
 
-            while (_clientWebSocket.State == WebSocketState.Open)
+            while (_clientWebSocket.State == WebSocketState.Open && !cancellationToken.IsCancellationRequested)
             {
                 WebSocketReceiveResult result = await _clientWebSocket.ReceiveAsync(new ArraySegment<byte>(buffer, totalBytesReceived, buffer.Length - totalBytesReceived), cancellationToken);
                 totalBytesReceived += result.Count;
@@ -98,7 +112,10 @@ namespace THFHA_V1._0.Model
                     string messageReceived = Encoding.UTF8.GetString(buffer, 0, totalBytesReceived);
                     Console.WriteLine($"Message received: {messageReceived}");
 
-                    MessageReceived?.Invoke(this, messageReceived);
+                    if (!cancellationToken.IsCancellationRequested && !string.IsNullOrEmpty(messageReceived))
+                    {
+                        MessageReceived?.Invoke(this, messageReceived);
+                    }
 
                     // Reset buffer and totalBytesReceived for next message
                     buffer = new byte[bufferSize];
@@ -110,6 +127,7 @@ namespace THFHA_V1._0.Model
                 }
             }
         }
+
         private void OnMessageReceived(object sender, string message)
         {
         // Update the Message property of the State class
@@ -118,7 +136,8 @@ namespace THFHA_V1._0.Model
             Converters = new List<JsonConverter> { new MeetingUpdateConverter() }
         };
 
-        MeetingUpdate meetingUpdate = JsonConvert.DeserializeObject<MeetingUpdate>(message, settings);
+
+            MeetingUpdate meetingUpdate = JsonConvert.DeserializeObject<MeetingUpdate>(message, settings);
 
         // Update the meeting state dictionary
         if (meetingUpdate.MeetingState != null)
@@ -131,59 +150,58 @@ namespace THFHA_V1._0.Model
             meetingState["isBackgroundBlurred"] = meetingUpdate.MeetingState.IsBackgroundBlurred;
             if (meetingUpdate.MeetingState.IsCameraOn)
             {
-                state.Camera = "On";
+                    State.Instance.Camera = "On";
             }
             else
             {
-                state.Camera = "Off";
+                    State.Instance.Camera = "Off";
             }
             if (meetingUpdate.MeetingState.IsInMeeting)
             {
-                state.Activity = "In a meeting";
+                    State.Instance.Activity = "In a meeting";
             }
             else
             {
-                state.Activity = "Not in a Call";
+                    State.Instance.Activity = "Not in a Call";
             }
             if (meetingUpdate.MeetingState.IsMuted)
             {
-                state.Microphone = "On";
+                    State.Instance.Microphone = "On";
             }
             else
             {
-                state.Microphone = "Off";
+                    State.Instance.Microphone = "Off";
             }
             if (meetingUpdate.MeetingState.IsHandRaised)
                 {
-                state.Handup = "Raised";
+                    State.Instance.Handup = "Raised";
             }
             else
                 {
-                state.Handup = "Lowered";
+                    State.Instance.Handup = "Lowered";
             }
             if (meetingUpdate.MeetingState.IsRecordingOn)
-                {    
-                state.Recording = "On";
+                {
+                    State.Instance.Recording = "On";
             }
             else
-            { 
-                state.Recording = "Off";
+            {
+                    State.Instance.Recording = "Off";
             }
             if (meetingUpdate.MeetingState.IsBackgroundBlurred)
-              {   
-                state.Blurred = "Blurred";
+              {
+                    State.Instance.Blurred = "Blurred";
             }
             else
-              {   
-                state.Blurred = "Not Blurred";
+              {
+                    State.Instance.Blurred = "Not Blurred";
             }
 
             // need to edit state class to add handraised, recording, and backgroundblur
         }
 
             
-        Log.Debug(meetingUpdate.ToString());
-        Log.Debug(meetingState.ToString());
+
     }
 
 

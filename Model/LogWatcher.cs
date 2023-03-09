@@ -133,14 +133,16 @@ namespace THFHA_V1._0.Model
 
         private async Task ReadLogFileAsync(CancellationToken cancellationToken)
         {
-            while (!_cts.IsCancellationRequested)
+            StreamReader sr = null;
+            while (!cancellationToken.IsCancellationRequested)
             {
                 try
                 {
                     // open the file
                     using (FileStream fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-                    using (StreamReader sr = new StreamReader(fs, Encoding.UTF8))
+                    
                     {
+                        sr = new StreamReader(fs, Encoding.UTF8);
                         while (!sr.EndOfStream)
                         {
                             string line = sr.ReadLine();
@@ -167,37 +169,21 @@ namespace THFHA_V1._0.Model
                 {//fail!
                     Log.Error("Failed to read log file");
                 }
-                //Check camera
-                //var userName = Environment.UserName;
-                //var registryPath = @"Software\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\webcam\NonPackaged\";
-                //RegistryKey registryKey = Registry.CurrentUser.OpenSubKey(registryPath);
-                //if (registryKey != null)
-                //{
-                //    string[] subkeys = registryKey.GetSubKeyNames();
-                //    foreach (var subkey in subkeys)
-                //    {
-                //        if (subkey.Contains($"C:#Users#{Environment.UserName}#AppData#Local#Microsoft#Teams#current#Teams.exe"))
-                //        {
-                //            using (RegistryKey nonPackagedKey = registryKey.OpenSubKey(subkey))
-                //            {
-                //                string lastUsedTimeStop = nonPackagedKey?.GetValue("LastUsedTimeStop")?.ToString();
-                //                if (!string.IsNullOrEmpty(lastUsedTimeStop))
-                //                {
-                //                    state.Camera = lastUsedTimeStop == "0" ? "On" : "Off";
-                //                }
-                //            }
-                //        }
-                //    }
-                //}
-                //if (state.Activity != _activity)
-                //{
-                //    state.Activity = _activity;
-                //    StateChanged?.Invoke(this, EventArgs.Empty);
-                //}
-                if (state.Status != _status)
+                finally
                 {
-                    state.Status = _status;
+                    sr?.Dispose();
+                }
+
+                if (State.Instance.Status != _status)
+                {
+                    State.Instance.Status = _status;
                     StateChanged?.Invoke(this, EventArgs.Empty);
+                }
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    // Dispose of the StreamReader and exit the method
+                    sr.Dispose();
+                    return;
                 }
                 //if (state.Microphone != _mute) { state.Microphone = _mute; }
                 await Task.Delay(1000, cancellationToken); // Example delay

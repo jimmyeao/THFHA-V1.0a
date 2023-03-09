@@ -4,6 +4,9 @@ namespace THFHA_V1._0.Model
 {
     public class State
     {
+        private static readonly State _instance = new State();
+
+
         #region Private Fields
 
         private string _activity = "";
@@ -33,6 +36,10 @@ namespace THFHA_V1._0.Model
         #endregion Public Delegates
 
         #region Public Events
+        public static State Instance
+        {
+            get { return _instance; }
+        }
 
         // Define the event that will be triggered when the state changes
         public event StateChangedEventHandler? StateChanged;
@@ -140,6 +147,10 @@ namespace THFHA_V1._0.Model
                     StateChanged?.Invoke(this, EventArgs.Empty);
                 }
             }
+        }
+        public override string ToString()
+        {
+            return $"Status: {_status}, Activity: {_activity}";
         }
 
         #endregion Public Properties

@@ -1,4 +1,5 @@
 using Serilog;
+using THFHA_V1._0.apis;
 using THFHA_V1._0.Model;
 using THFHA_V1._0.Views;
 namespace THFHA_V1._0
@@ -12,7 +13,9 @@ namespace THFHA_V1._0
             SetProcessDPIAware();
             Application.SetCompatibleTextRenderingDefault(false);
             LoggingConfig.Configure();
-            var state = new State(); // create a new instance of State
+            
+            //var state = new State(); // create a new instance of State
+            State state = State.Instance;
             ModuleManager<IModule> moduleManager = new ModuleManager<IModule>(state);
             List<IModule> modules = moduleManager.Modules;
             SettingsForm settingsForm = new SettingsForm(modules);
@@ -20,6 +23,8 @@ namespace THFHA_V1._0
             var logWatcher = new LogWatcher(state);
             // create the THFHA form and pass the modules and state to it
             var thfha = new THFHA(modules, state);
+            HatcherModule hatcherModule = new HatcherModule(state);
+            HomeassistantModule homeassistantModule = new HomeassistantModule(state);
             Application.Run(thfha);
             Log.CloseAndFlush();
         }

@@ -19,10 +19,10 @@ namespace THFHA_V1._0.apis
 
         public HatcherModule()
         {
+
             // This is the parameterless constructor that will be used by the ModuleManager class
             settings = Settings.Instance;
         }
-
         public HatcherModule(State state) : this()
         {
             stateInstance = state;
@@ -30,6 +30,7 @@ namespace THFHA_V1._0.apis
 
             // Initialize your module here
         }
+
 
         #endregion Public Constructors
 
