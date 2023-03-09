@@ -60,6 +60,10 @@
             this.lbl_muted = new System.Windows.Forms.Label();
             this.lbl_cam = new System.Windows.Forms.Label();
             this.lbl_meeting = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
             this.menuStrip1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
@@ -77,7 +81,7 @@
             this.helpToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(805, 28);
+            this.menuStrip1.Size = new System.Drawing.Size(607, 28);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -133,7 +137,7 @@
             this.lbx_modules.ContextMenuStrip = this.contextMenuStrip1;
             this.lbx_modules.FormattingEnabled = true;
             this.lbx_modules.ItemHeight = 20;
-            this.lbx_modules.Location = new System.Drawing.Point(602, 65);
+            this.lbx_modules.Location = new System.Drawing.Point(404, 59);
             this.lbx_modules.Name = "lbx_modules";
             this.lbx_modules.Size = new System.Drawing.Size(191, 144);
             this.lbx_modules.TabIndex = 1;
@@ -167,7 +171,7 @@
             // 
             this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(602, 42);
+            this.label1.Location = new System.Drawing.Point(404, 36);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(132, 20);
             this.label1.TabIndex = 2;
@@ -179,9 +183,9 @@
             this.statusStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.statuslabel});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 316);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 352);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(805, 26);
+            this.statusStrip1.Size = new System.Drawing.Size(607, 26);
             this.statusStrip1.TabIndex = 3;
             this.statusStrip1.Text = "statusStrip1";
             // 
@@ -193,7 +197,7 @@
             // 
             // btn_start
             // 
-            this.btn_start.Location = new System.Drawing.Point(234, 238);
+            this.btn_start.Location = new System.Drawing.Point(228, 276);
             this.btn_start.Name = "btn_start";
             this.btn_start.Size = new System.Drawing.Size(94, 29);
             this.btn_start.TabIndex = 4;
@@ -203,7 +207,7 @@
             // 
             // btn_stop
             // 
-            this.btn_stop.Location = new System.Drawing.Point(234, 273);
+            this.btn_stop.Location = new System.Drawing.Point(228, 311);
             this.btn_stop.Name = "btn_stop";
             this.btn_stop.Size = new System.Drawing.Size(94, 29);
             this.btn_stop.TabIndex = 5;
@@ -214,7 +218,7 @@
             // lbl_status
             // 
             this.lbl_status.AutoSize = true;
-            this.lbl_status.Location = new System.Drawing.Point(40, 79);
+            this.lbl_status.Location = new System.Drawing.Point(99, 42);
             this.lbl_status.Name = "lbl_status";
             this.lbl_status.Size = new System.Drawing.Size(50, 20);
             this.lbl_status.TabIndex = 6;
@@ -223,7 +227,7 @@
             // lbl_activity
             // 
             this.lbl_activity.AutoSize = true;
-            this.lbl_activity.Location = new System.Drawing.Point(40, 116);
+            this.lbl_activity.Location = new System.Drawing.Point(99, 79);
             this.lbl_activity.Name = "lbl_activity";
             this.lbl_activity.Size = new System.Drawing.Size(50, 20);
             this.lbl_activity.TabIndex = 7;
@@ -232,7 +236,7 @@
             // lbl_mute
             // 
             this.lbl_mute.AutoSize = true;
-            this.lbl_mute.Location = new System.Drawing.Point(40, 153);
+            this.lbl_mute.Location = new System.Drawing.Point(99, 117);
             this.lbl_mute.Name = "lbl_mute";
             this.lbl_mute.Size = new System.Drawing.Size(50, 20);
             this.lbl_mute.TabIndex = 8;
@@ -241,7 +245,7 @@
             // lbl_camera
             // 
             this.lbl_camera.AutoSize = true;
-            this.lbl_camera.Location = new System.Drawing.Point(40, 190);
+            this.lbl_camera.Location = new System.Drawing.Point(99, 154);
             this.lbl_camera.Name = "lbl_camera";
             this.lbl_camera.Size = new System.Drawing.Size(50, 20);
             this.lbl_camera.TabIndex = 9;
@@ -255,7 +259,7 @@
             // 
             this.pb_Status.BackgroundImage = global::THFHA_V1._0.Resource1.available;
             this.pb_Status.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.pb_Status.Location = new System.Drawing.Point(15, 238);
+            this.pb_Status.Location = new System.Drawing.Point(9, 276);
             this.pb_Status.Name = "pb_Status";
             this.pb_Status.Size = new System.Drawing.Size(50, 50);
             this.pb_Status.TabIndex = 25;
@@ -265,7 +269,7 @@
             // 
             this.pb_Activity.BackgroundImage = global::THFHA_V1._0.Resource1.notinacall;
             this.pb_Activity.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.pb_Activity.Location = new System.Drawing.Point(85, 238);
+            this.pb_Activity.Location = new System.Drawing.Point(79, 276);
             this.pb_Activity.Name = "pb_Activity";
             this.pb_Activity.Size = new System.Drawing.Size(50, 50);
             this.pb_Activity.TabIndex = 26;
@@ -275,7 +279,7 @@
             // 
             this.pb_mute.BackgroundImage = global::THFHA_V1._0.Resource1.mic_icon;
             this.pb_mute.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.pb_mute.Location = new System.Drawing.Point(156, 238);
+            this.pb_mute.Location = new System.Drawing.Point(150, 276);
             this.pb_mute.Name = "pb_mute";
             this.pb_mute.Size = new System.Drawing.Size(50, 50);
             this.pb_mute.TabIndex = 28;
@@ -284,17 +288,16 @@
             // lbl_blurred
             // 
             this.lbl_blurred.AutoSize = true;
-            this.lbl_blurred.Location = new System.Drawing.Point(359, 79);
+            this.lbl_blurred.Location = new System.Drawing.Point(198, 42);
             this.lbl_blurred.Name = "lbl_blurred";
             this.lbl_blurred.Size = new System.Drawing.Size(50, 20);
             this.lbl_blurred.TabIndex = 30;
             this.lbl_blurred.Text = "label2";
-
             // 
             // lbl_recording
             // 
             this.lbl_recording.AutoSize = true;
-            this.lbl_recording.Location = new System.Drawing.Point(359, 116);
+            this.lbl_recording.Location = new System.Drawing.Point(198, 80);
             this.lbl_recording.Name = "lbl_recording";
             this.lbl_recording.Size = new System.Drawing.Size(50, 20);
             this.lbl_recording.TabIndex = 31;
@@ -303,7 +306,7 @@
             // lbl_hand
             // 
             this.lbl_hand.AutoSize = true;
-            this.lbl_hand.Location = new System.Drawing.Point(359, 153);
+            this.lbl_hand.Location = new System.Drawing.Point(198, 118);
             this.lbl_hand.Name = "lbl_hand";
             this.lbl_hand.Size = new System.Drawing.Size(50, 20);
             this.lbl_hand.TabIndex = 32;
@@ -312,7 +315,7 @@
             // lbl_muted
             // 
             this.lbl_muted.AutoSize = true;
-            this.lbl_muted.Location = new System.Drawing.Point(359, 190);
+            this.lbl_muted.Location = new System.Drawing.Point(198, 156);
             this.lbl_muted.Name = "lbl_muted";
             this.lbl_muted.Size = new System.Drawing.Size(50, 20);
             this.lbl_muted.TabIndex = 33;
@@ -321,7 +324,7 @@
             // lbl_cam
             // 
             this.lbl_cam.AutoSize = true;
-            this.lbl_cam.Location = new System.Drawing.Point(359, 227);
+            this.lbl_cam.Location = new System.Drawing.Point(198, 194);
             this.lbl_cam.Name = "lbl_cam";
             this.lbl_cam.Size = new System.Drawing.Size(50, 20);
             this.lbl_cam.TabIndex = 34;
@@ -330,17 +333,57 @@
             // lbl_meeting
             // 
             this.lbl_meeting.AutoSize = true;
-            this.lbl_meeting.Location = new System.Drawing.Point(359, 268);
+            this.lbl_meeting.Location = new System.Drawing.Point(198, 232);
             this.lbl_meeting.Name = "lbl_meeting";
             this.lbl_meeting.Size = new System.Drawing.Size(50, 20);
             this.lbl_meeting.TabIndex = 35;
             this.lbl_meeting.Text = "label6";
             // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(12, 154);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(60, 20);
+            this.label2.TabIndex = 36;
+            this.label2.Text = "Camera";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(12, 117);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(43, 20);
+            this.label3.TabIndex = 37;
+            this.label3.Text = "Mute";
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(12, 79);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(58, 20);
+            this.label4.TabIndex = 38;
+            this.label4.Text = "Activity";
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(12, 42);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(49, 20);
+            this.label5.TabIndex = 39;
+            this.label5.Text = "Status";
+            // 
             // THFHA
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(120F, 120F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
-            this.ClientSize = new System.Drawing.Size(805, 342);
+            this.ClientSize = new System.Drawing.Size(607, 378);
+            this.Controls.Add(this.label5);
+            this.Controls.Add(this.label4);
+            this.Controls.Add(this.label3);
+            this.Controls.Add(this.label2);
             this.Controls.Add(this.lbl_meeting);
             this.Controls.Add(this.lbl_cam);
             this.Controls.Add(this.lbl_muted);
@@ -412,5 +455,9 @@
         private Label lbl_muted;
         private Label lbl_cam;
         private Label lbl_meeting;
+        private Label label2;
+        private Label label3;
+        private Label label4;
+        private Label label5;
     }
 }
