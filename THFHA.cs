@@ -64,7 +64,7 @@ namespace THFHA_V1._0
             }
             if(settings.TeamsApi != "")
             {
-              _webSocketClient = new WebSocketClient(new Uri("ws://localhost:8124?token="+ settings.TeamsApi + "&protocol-version=1.0.0&manufacturer=MuteDeck&device=MuteDeck&app=MuteDeck&app-version=1.4"));
+              _webSocketClient = new WebSocketClient(new Uri("ws://localhost:8124?token="+ settings.TeamsApi + "&protocol-version=1.0.0&manufacturer=Jimmyeao&device=THFHA&app=THFHA&app-version=1.0"));
 
             _webSocketClient.MessageReceived += WebSocketClient_MessageReceived;
             }   
