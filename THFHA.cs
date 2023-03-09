@@ -52,6 +52,7 @@ namespace THFHA_V1._0
                 Settings.SettingChanged += Settings_SettingChanged; // Subscribe to the SettingChanged event
 
                 StartLogWatcher();
+
                 btn_start.Enabled = false; btn_stop.Enabled = true;
             }
             else

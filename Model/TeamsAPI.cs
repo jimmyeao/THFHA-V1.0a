@@ -45,9 +45,12 @@ namespace WebSocketClientExample
         {
             try
             {
+                DateTimeOffset timestamp = DateTimeOffset.UtcNow;
+                long unixTimestamp = timestamp.ToUnixTimeMilliseconds();
                 await _clientWebSocket.ConnectAsync(uri, CancellationToken.None);
                 Console.WriteLine("WebSocket connected");
-                string message = "{\"apiVersion\":\"1.0.0\",\"service\":\"query-meeting-state\",\"action\":\"query-meeting-state\",\"manufacturer\":\"Elgato\",\"device\":\"StreamDeck\",\"timestamp\":1675341655453}";
+                string message = "{\"apiVersion\":\"1.0.0\",\"service\":\"query-meeting-state\",\"action\":\"query-meeting-state\",\"manufacturer\":\"Jimmyeao\",\"device\":\"THFHA\",\"timestamp\":" + unixTimestamp.ToString() + "}";
+                //string message = "{\"apiVersion\":\"1.0.0\",\"service\":\"query-meeting-state\",\"action\":\"query-meeting-state\",\"manufacturer\":\"Jimmyeao\",\"device\":\"THFHA\",\"timestamp\":1675341655453}";
                 await SendMessageAsync(message);
             }
             catch (Exception ex)
@@ -59,18 +62,6 @@ namespace WebSocketClientExample
             await ReceiveLoopAsync();
         }
 
-        //private async Task ReceiveLoopAsync(CancellationToken cancellationToken = default)
-        //{
-        //    byte[] buffer = new byte[1024];
-        //    while (_clientWebSocket.State == WebSocketState.Open)
-        //    {
-        //        WebSocketReceiveResult result = await _clientWebSocket.ReceiveAsync(new ArraySegment<byte>(buffer), cancellationToken);
-        //        string messageReceived = Encoding.UTF8.GetString(buffer, 0, result.Count);
-        //        Console.WriteLine($"Message received: {messageReceived}");
-
-        //        MessageReceived?.Invoke(this, messageReceived);
-        //    }
-        //}
         private async Task ReceiveLoopAsync(CancellationToken cancellationToken = default)
         {
             const int bufferSize = 4096; // Starting buffer size
