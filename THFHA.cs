@@ -2,13 +2,15 @@
 using System.Diagnostics;
 using THFHA_V1._0.Model;
 using THFHA_V1._0.Views;
+using WebSocketClientExample;
+using System.Net.WebSockets;
 
 namespace THFHA_V1._0
 {
     public partial class THFHA : Form
     {
         #region Public Fields
-
+        private readonly WebSocketClient _webSocketClient;
         public static LogWatcher logWatcher;
 
         #endregion Public Fields
@@ -37,7 +39,7 @@ namespace THFHA_V1._0
             string _appDir = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
             string _logPath = _appDir + @"\Microsoft\Teams\";
             string _logFile = _logPath + "logs.txt";
-
+            string token = "286b3935-a0d9-4bb6-95b6-0820c6315b86";
             state.StateChanged += OnStateChanged;
             Log.Debug("State.StateChanged event subscribed");
 
@@ -57,6 +59,8 @@ namespace THFHA_V1._0
                     //module.OnFormClosing();
                 }
             }
+            _webSocketClient = new WebSocketClient(new Uri("ws://localhost:8124?token="+token+"&protocol-version=1.0.0&manufacturer=MuteDeck&device=MuteDeck&app=MuteDeck&app-version=1.4"));
+            _webSocketClient.MessageReceived += WebSocketClient_MessageReceived;
         }
 
         #endregion Public Constructors
@@ -658,5 +662,14 @@ namespace THFHA_V1._0
         }
 
         #endregion Private Methods
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+
+        }
+        private void WebSocketClient_MessageReceived(object sender, string e)
+        {
+            UpdateLabel(lbl_apistataus, e);
+        }
     }
 }

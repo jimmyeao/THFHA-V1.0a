@@ -54,6 +54,8 @@
             this.pb_Status = new System.Windows.Forms.PictureBox();
             this.pb_Activity = new System.Windows.Forms.PictureBox();
             this.pb_mute = new System.Windows.Forms.PictureBox();
+            this.button1 = new System.Windows.Forms.Button();
+            this.lbl_apistataus = new System.Windows.Forms.Label();
             this.menuStrip1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
@@ -71,7 +73,7 @@
             this.helpToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(385, 28);
+            this.menuStrip1.Size = new System.Drawing.Size(585, 28);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -127,7 +129,7 @@
             this.lbx_modules.ContextMenuStrip = this.contextMenuStrip1;
             this.lbx_modules.FormattingEnabled = true;
             this.lbx_modules.ItemHeight = 20;
-            this.lbx_modules.Location = new System.Drawing.Point(182, 65);
+            this.lbx_modules.Location = new System.Drawing.Point(382, 65);
             this.lbx_modules.Name = "lbx_modules";
             this.lbx_modules.Size = new System.Drawing.Size(191, 144);
             this.lbx_modules.TabIndex = 1;
@@ -161,7 +163,7 @@
             // 
             this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(182, 42);
+            this.label1.Location = new System.Drawing.Point(382, 42);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(132, 20);
             this.label1.TabIndex = 2;
@@ -175,7 +177,7 @@
             this.statuslabel});
             this.statusStrip1.Location = new System.Drawing.Point(0, 316);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(385, 26);
+            this.statusStrip1.Size = new System.Drawing.Size(585, 26);
             this.statusStrip1.TabIndex = 3;
             this.statusStrip1.Text = "statusStrip1";
             // 
@@ -275,11 +277,32 @@
             this.pb_mute.TabIndex = 28;
             this.pb_mute.TabStop = false;
             // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(409, 230);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(94, 29);
+            this.button1.TabIndex = 29;
+            this.button1.Text = "button1";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // lbl_apistataus
+            // 
+            this.lbl_apistataus.AutoSize = true;
+            this.lbl_apistataus.Location = new System.Drawing.Point(379, 277);
+            this.lbl_apistataus.Name = "lbl_apistataus";
+            this.lbl_apistataus.Size = new System.Drawing.Size(50, 20);
+            this.lbl_apistataus.TabIndex = 30;
+            this.lbl_apistataus.Text = "label2";
+            // 
             // THFHA
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(120F, 120F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
-            this.ClientSize = new System.Drawing.Size(385, 342);
+            this.ClientSize = new System.Drawing.Size(585, 342);
+            this.Controls.Add(this.lbl_apistataus);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.pb_mute);
             this.Controls.Add(this.pb_Activity);
             this.Controls.Add(this.pb_Status);
@@ -339,5 +362,7 @@
         private PictureBox pb_Status;
         private PictureBox pb_Activity;
         private PictureBox pb_mute;
+        private Button button1;
+        private Label lbl_apistataus;
     }
 }
