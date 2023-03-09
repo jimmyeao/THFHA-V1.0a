@@ -359,13 +359,16 @@ namespace THFHA_V1._0.Model
         #endregion Hatcher
 
         #region Teams
+
         private string _temasapikey;
+
         public string TeamsApi
         {
             get { return _temasapikey; }
             set { _temasapikey = value; OnPropertyChanged(nameof(TeamsApi)); }
         }
-        #endregion
+
+        #endregion Teams
 
         #region operations
 

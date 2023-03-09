@@ -1,11 +1,10 @@
-﻿using Serilog;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using Serilog;
 using System.Diagnostics;
 using THFHA_V1._0.Model;
 using THFHA_V1._0.Views;
 using WebSocketClientExample;
-using Newtonsoft.Json;
-using System.Net.WebSockets;
-using Newtonsoft.Json.Linq;
 
 namespace THFHA_V1._0
 {
@@ -19,11 +18,12 @@ namespace THFHA_V1._0
 
         #region Private Fields
 
+        private readonly Dictionary<string, object> _meetingState;
+        private readonly WebSocketClient _webSocketClient;
         private List<IModule> modules;
         private Settings settings;
         private State state;
-        private readonly WebSocketClient _webSocketClient;
-        private readonly Dictionary<string, object> _meetingState;
+
         #endregion Private Fields
 
         #region Public Constructors
@@ -62,13 +62,12 @@ namespace THFHA_V1._0
                     //module.OnFormClosing();
                 }
             }
-            if(settings.TeamsApi != "")
+            if (settings.TeamsApi != "")
             {
-              _webSocketClient = new WebSocketClient(new Uri("ws://localhost:8124?token="+ settings.TeamsApi + "&protocol-version=1.0.0&manufacturer=Jimmyeao&device=THFHA&app=THFHA&app-version=1.0"));
+                _webSocketClient = new WebSocketClient(new Uri("ws://localhost:8124?token=" + settings.TeamsApi + "&protocol-version=1.0.0&manufacturer=Jimmyeao&device=THFHA&app=THFHA&app-version=1.0"));
 
-            _webSocketClient.MessageReceived += WebSocketClient_MessageReceived;
-            }   
-            
+                _webSocketClient.MessageReceived += WebSocketClient_MessageReceived;
+            }
 
             _meetingState = new Dictionary<string, object>
             {
@@ -434,7 +433,7 @@ namespace THFHA_V1._0
             // Get the updated state values
             Log.Debug("OnStateChange Trigerred!!!!!!!!!!!");
             UpdateAll();
-            
+
             // var icon = UpdateStatusIcon(state.Status); UpdateStatusIcons(icon); _ =
             // UpdateMuteIcon(); _ = UpdateActivityIcon(state.Activity);
         }
@@ -507,16 +506,6 @@ namespace THFHA_V1._0
                     module.Start();
                 }
             }
-        }
-        private async Task UpdateAll()
-        {
-            UpdateLabel(lbl_status, state.Status);
-            UpdateLabel(lbl_activity, state.Activity);
-            UpdateLabel(lbl_camera, state.Camera);
-            UpdateLabel(lbl_mute, state.Microphone);
-            UpdateStatusIcons(state.Status);
-            UpdateActivityIcons(state.Activity);
-            UpdateMuteStatus(state.Microphone);
         }
 
         private async Task StopLogWatcher()
@@ -594,6 +583,17 @@ namespace THFHA_V1._0
             {
                 SetActivityIcon(icon);
             }
+        }
+
+        private async Task UpdateAll()
+        {
+            UpdateLabel(lbl_status, state.Status);
+            UpdateLabel(lbl_activity, state.Activity);
+            UpdateLabel(lbl_camera, state.Camera);
+            UpdateLabel(lbl_mute, state.Microphone);
+            UpdateStatusIcons(state.Status);
+            UpdateActivityIcons(state.Activity);
+            UpdateMuteStatus(state.Microphone);
         }
 
         private void UpdateLabel(Label label, string text)
@@ -681,10 +681,8 @@ namespace THFHA_V1._0
 
         #endregion Private Methods
 
-        private void button1_Click(object sender, EventArgs e)
-        {
+        #region api methods
 
-        }
         private Dictionary<string, object> meetingState = new Dictionary<string, object>()
         {
             { "isMuted", false },
@@ -694,6 +692,11 @@ namespace THFHA_V1._0
             { "isRecordingOn", false },
             { "isBackgroundBlurred", false },
         };
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+        }
+
         private void WebSocketClient_MessageReceived(object sender, string messageReceived)
         {
             var settings = new JsonSerializerSettings
@@ -702,7 +705,6 @@ namespace THFHA_V1._0
             };
 
             MeetingUpdate meetingUpdate = JsonConvert.DeserializeObject<MeetingUpdate>(messageReceived, settings);
-
 
             // Update the meeting state dictionary
             if (meetingUpdate.MeetingState != null)
@@ -716,7 +718,7 @@ namespace THFHA_V1._0
             }
 
             // Update UI elements
-            UpdateLabel(lbl_blurred, "Background blurred: "+(meetingState["isBackgroundBlurred"]).ToString());
+            UpdateLabel(lbl_blurred, "Background blurred: " + (meetingState["isBackgroundBlurred"]).ToString());
             UpdateLabel(lbl_recording, "Recording On: " + (meetingState["isRecordingOn"]).ToString());
             UpdateLabel(lbl_hand, "Hand Raised: " + (meetingState["isHandRaised"]).ToString());
             UpdateLabel(lbl_meeting, "In Meeting: " + (meetingState["isInMeeting"]).ToString());
@@ -726,8 +728,11 @@ namespace THFHA_V1._0
             Log.Debug(meetingUpdate.ToString());
             Log.Debug(meetingState.ToString());
         }
+
         public class MeetingUpdateConverter : JsonConverter<MeetingUpdate>
         {
+            #region Public Methods
+
             public override MeetingUpdate ReadJson(JsonReader reader, Type objectType, MeetingUpdate existingValue, bool hasExistingValue, JsonSerializer serializer)
             {
                 JObject jsonObject = JObject.Load(reader);
@@ -746,7 +751,9 @@ namespace THFHA_V1._0
             {
                 throw new NotImplementedException();
             }
-        }
 
+            #endregion Public Methods
+        }
+        #endregion
     }
 }

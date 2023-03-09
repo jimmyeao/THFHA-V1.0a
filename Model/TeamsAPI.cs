@@ -1,22 +1,45 @@
-﻿using System;
+﻿using Serilog;
 using System.Net.WebSockets;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using Serilog;
 
 namespace WebSocketClientExample
 {
     public class WebSocketClient
     {
-        public event EventHandler<string> MessageReceived;
+        #region Private Fields
+
         private readonly ClientWebSocket _clientWebSocket;
+
+        #endregion Private Fields
+
+        #region Public Constructors
 
         public WebSocketClient(Uri uri)
         {
             _clientWebSocket = new ClientWebSocket();
             _ = ConnectAsync(uri);
         }
+
+        #endregion Public Constructors
+
+        #region Public Events
+
+        public event EventHandler<string> MessageReceived;
+
+        #endregion Public Events
+
+        #region Public Methods
+
+        public async Task SendMessageAsync(string message, CancellationToken cancellationToken = default)
+        {
+            byte[] messageBytes = Encoding.UTF8.GetBytes(message);
+            await _clientWebSocket.SendAsync(new ArraySegment<byte>(messageBytes), WebSocketMessageType.Text, true, cancellationToken);
+            Console.WriteLine($"Message sent: {message}");
+        }
+
+        #endregion Public Methods
+
+        #region Private Methods
 
         private async Task ConnectAsync(Uri uri)
         {
@@ -30,17 +53,10 @@ namespace WebSocketClientExample
             catch (Exception ex)
             {
                 Log.Error("An error occurred: " + ex.Message);
-                Log.Error("Using URI: "+uri.ToString());
+                Log.Error("Using URI: " + uri.ToString());
             }
 
             await ReceiveLoopAsync();
-        }
-
-        public async Task SendMessageAsync(string message, CancellationToken cancellationToken = default)
-        {
-            byte[] messageBytes = Encoding.UTF8.GetBytes(message);
-            await _clientWebSocket.SendAsync(new ArraySegment<byte>(messageBytes), WebSocketMessageType.Text, true, cancellationToken);
-            Console.WriteLine($"Message sent: {message}");
         }
 
         //private async Task ReceiveLoopAsync(CancellationToken cancellationToken = default)
@@ -84,6 +100,6 @@ namespace WebSocketClientExample
             }
         }
 
-
+        #endregion Private Methods
     }
 }

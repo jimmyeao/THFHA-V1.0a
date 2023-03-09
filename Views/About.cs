@@ -3,7 +3,7 @@ using System.Reflection;
 
 namespace THFHA_V1._0.Views
 {
-    partial class About : Form
+    internal partial class About : Form
     {
         public About()
         {
@@ -15,7 +15,6 @@ namespace THFHA_V1._0.Views
 
             this.labelCompanyName.Text = AssemblyCompany;
             this.textBoxDescription.Text = AssemblyDescription;
-
         }
 
         #region Assembly Attribute Accessors
@@ -96,7 +95,8 @@ namespace THFHA_V1._0.Views
                 return ((AssemblyCompanyAttribute)attributes[0]).Company;
             }
         }
-        #endregion
+
+        #endregion Assembly Attribute Accessors
 
         private void okButton_Click(object sender, EventArgs e)
         {
