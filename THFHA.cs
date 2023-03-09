@@ -597,39 +597,61 @@ namespace THFHA_V1._0
 
         private async Task UpdateAll()
         {
-            UpdateLabel(lbl_status, State.Instance.Status);
-            UpdateLabel(lbl_activity, State.Instance.Activity);
-            UpdateLabel(lbl_camera, State.Instance.Camera);
-            UpdateLabel(lbl_mute, State.Instance.Microphone);
-            UpdateStatusIcons(State.Instance.Status);
-            UpdateActivityIcons(State.Instance.Activity);
-            UpdateMuteStatus(State.Instance.Microphone);
-            UpdateLabel(lbl_blurred, "Background: " + (string.IsNullOrEmpty(State.Instance.Blurred) ? "Not Configured" : State.Instance.Blurred));
-            UpdateLabel(lbl_recording, "Recording: " + (string.IsNullOrEmpty(State.Instance.Recording) ? "Not Configured" : State.Instance.Recording));
-            UpdateLabel(lbl_hand, "Hand: " + (string.IsNullOrEmpty(State.Instance.Handup) ? "Not Configured" : State.Instance.Handup));
-            UpdateLabel(lbl_meeting, "Activity: " + (string.IsNullOrEmpty(State.Instance.Activity) ? "Not Configured" : State.Instance.Activity));
-            UpdateLabel(lbl_cam, "Camera: " + (string.IsNullOrEmpty(State.Instance.Camera) ? "Not Configured" : State.Instance.Camera));
-            UpdateLabel(lbl_muted, "Mute: " + (string.IsNullOrEmpty(State.Instance.Microphone) ? "Not Configured" : State.Instance.Microphone));
+            if (lbl_status.Text != State.Instance.Status)
+            {
+                UpdateLabel(lbl_status, State.Instance.Status);
+            }
 
+            if (lbl_activity.Text != State.Instance.Activity)
+            {
+                UpdateLabel(lbl_activity, State.Instance.Activity);
+                UpdateActivityIcons(State.Instance.Activity);
+            }
+
+            if (lbl_camera.Text != State.Instance.Camera)
+            {
+                UpdateLabel(lbl_camera, State.Instance.Camera);
+            }
+
+            if (lbl_mute.Text != State.Instance.Microphone)
+            {
+                UpdateLabel(lbl_mute, State.Instance.Microphone);
+                UpdateMuteStatus(State.Instance.Microphone);
+            }
+
+            if (lbl_blurred.Text != ("Background: " + (string.IsNullOrEmpty(State.Instance.Blurred) ? "Not Configured" : State.Instance.Blurred)))
+            {
+                UpdateLabel(lbl_blurred, "Background: " + (string.IsNullOrEmpty(State.Instance.Blurred) ? "Not Configured" : State.Instance.Blurred));
+            }
+
+            if (lbl_recording.Text != ("Recording: " + (string.IsNullOrEmpty(State.Instance.Recording) ? "Not Configured" : State.Instance.Recording)))
+            {
+                UpdateLabel(lbl_recording, "Recording: " + (string.IsNullOrEmpty(State.Instance.Recording) ? "Not Configured" : State.Instance.Recording));
+            }
+
+            if (lbl_hand.Text != ("Hand: " + (string.IsNullOrEmpty(State.Instance.Handup) ? "Not Configured" : State.Instance.Handup)))
+            {
+                UpdateLabel(lbl_hand, "Hand: " + (string.IsNullOrEmpty(State.Instance.Handup) ? "Not Configured" : State.Instance.Handup));
+            }
+
+            if (lbl_meeting.Text != ("Activity: " + (string.IsNullOrEmpty(State.Instance.Activity) ? "Not Configured" : State.Instance.Activity)))
+            {
+                UpdateLabel(lbl_meeting, "Activity: " + (string.IsNullOrEmpty(State.Instance.Activity) ? "Not Configured" : State.Instance.Activity));
+            }
+
+            if (lbl_cam.Text != ("Camera: " + (string.IsNullOrEmpty(State.Instance.Camera) ? "Not Configured" : State.Instance.Camera)))
+            {
+                UpdateLabel(lbl_cam, "Camera: " + (string.IsNullOrEmpty(State.Instance.Camera) ? "Not Configured" : State.Instance.Camera));
+            }
+
+            if (lbl_muted.Text != ("Mute: " + (string.IsNullOrEmpty(State.Instance.Microphone) ? "Not Configured" : State.Instance.Microphone)))
+            {
+                UpdateLabel(lbl_muted, "Mute: " + (string.IsNullOrEmpty(State.Instance.Microphone) ? "Not Configured" : State.Instance.Microphone));
+            }
         }
 
-        //private void UpdateLabel(Label label, string text)
-        //{
-        //    if (!label.IsHandleCreated || label.Disposing || label.IsDisposed)
-        //    {
-        //        // The label is not yet created or is disposed, so we can't update it.
-        //        return;
-        //    }
 
-        //    if (label.InvokeRequired)
-        //    {
-        //        label.Invoke((MethodInvoker)delegate { UpdateLabel(label, text); });
-        //    }
-        //    else
-        //    {
-        //        label.Text = text;
-        //    }
-        //}
+
         private void UpdateLabel(Label label, string text)
         {
             if (!label.IsHandleCreated || label.Disposing || label.IsDisposed)
