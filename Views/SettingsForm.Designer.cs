@@ -40,6 +40,8 @@
             this.cb_runLogWatcherAtStart = new System.Windows.Forms.CheckBox();
             this.btn_hatchersettings = new System.Windows.Forms.Button();
             this.cb_hatchersettings = new System.Windows.Forms.CheckBox();
+            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // cb_useha
@@ -129,7 +131,7 @@
             // cb_runLogWatcherAtStart
             // 
             this.cb_runLogWatcherAtStart.AutoSize = true;
-            this.cb_runLogWatcherAtStart.Location = new System.Drawing.Point(40, 215);
+            this.cb_runLogWatcherAtStart.Location = new System.Drawing.Point(40, 260);
             this.cb_runLogWatcherAtStart.Name = "cb_runLogWatcherAtStart";
             this.cb_runLogWatcherAtStart.Size = new System.Drawing.Size(136, 24);
             this.cb_runLogWatcherAtStart.TabIndex = 3;
@@ -158,11 +160,30 @@
             this.cb_hatchersettings.UseVisualStyleBackColor = true;
             this.cb_hatchersettings.CheckedChanged += new System.EventHandler(this.cb_hatchersettings_CheckedChanged);
             // 
+            // textBox1
+            // 
+            this.textBox1.Location = new System.Drawing.Point(149, 222);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(223, 27);
+            this.textBox1.TabIndex = 7;
+            this.textBox1.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(40, 225);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(77, 20);
+            this.label1.TabIndex = 8;
+            this.label1.Text = "Teams API";
+            // 
             // SettingsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(120F, 120F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
-            this.ClientSize = new System.Drawing.Size(392, 251);
+            this.ClientSize = new System.Drawing.Size(392, 296);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.textBox1);
             this.Controls.Add(this.cb_hatchersettings);
             this.Controls.Add(this.btn_hatchersettings);
             this.Controls.Add(this.button3);
@@ -196,5 +217,7 @@
         private CheckBox cb_runLogWatcherAtStart;
         private Button btn_hatchersettings;
         private CheckBox cb_hatchersettings;
+        private TextBox textBox1;
+        private Label label1;
     }
 }

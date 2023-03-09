@@ -62,9 +62,13 @@ namespace THFHA_V1._0
                     //module.OnFormClosing();
                 }
             }
-            _webSocketClient = new WebSocketClient(new Uri("ws://localhost:8124?token=286b3935-a0d9-4bb6-95b6-0820c6315b86&protocol-version=1.0.0&manufacturer=MuteDeck&device=MuteDeck&app=MuteDeck&app-version=1.4"));
+            if(settings.TeamsApi != "")
+            {
+              _webSocketClient = new WebSocketClient(new Uri("ws://localhost:8124?token="+ settings.TeamsApi + "&protocol-version=1.0.0&manufacturer=MuteDeck&device=MuteDeck&app=MuteDeck&app-version=1.4"));
 
             _webSocketClient.MessageReceived += WebSocketClient_MessageReceived;
+            }   
+            
 
             _meetingState = new Dictionary<string, object>
             {

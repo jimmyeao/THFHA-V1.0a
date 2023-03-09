@@ -284,7 +284,7 @@
             // lbl_blurred
             // 
             this.lbl_blurred.AutoSize = true;
-            this.lbl_blurred.Location = new System.Drawing.Point(440, 79);
+            this.lbl_blurred.Location = new System.Drawing.Point(359, 79);
             this.lbl_blurred.Name = "lbl_blurred";
             this.lbl_blurred.Size = new System.Drawing.Size(50, 20);
             this.lbl_blurred.TabIndex = 30;
@@ -294,7 +294,7 @@
             // lbl_recording
             // 
             this.lbl_recording.AutoSize = true;
-            this.lbl_recording.Location = new System.Drawing.Point(440, 116);
+            this.lbl_recording.Location = new System.Drawing.Point(359, 116);
             this.lbl_recording.Name = "lbl_recording";
             this.lbl_recording.Size = new System.Drawing.Size(50, 20);
             this.lbl_recording.TabIndex = 31;
@@ -303,7 +303,7 @@
             // lbl_hand
             // 
             this.lbl_hand.AutoSize = true;
-            this.lbl_hand.Location = new System.Drawing.Point(440, 153);
+            this.lbl_hand.Location = new System.Drawing.Point(359, 153);
             this.lbl_hand.Name = "lbl_hand";
             this.lbl_hand.Size = new System.Drawing.Size(50, 20);
             this.lbl_hand.TabIndex = 32;
@@ -312,7 +312,7 @@
             // lbl_muted
             // 
             this.lbl_muted.AutoSize = true;
-            this.lbl_muted.Location = new System.Drawing.Point(440, 190);
+            this.lbl_muted.Location = new System.Drawing.Point(359, 190);
             this.lbl_muted.Name = "lbl_muted";
             this.lbl_muted.Size = new System.Drawing.Size(50, 20);
             this.lbl_muted.TabIndex = 33;
@@ -321,7 +321,7 @@
             // lbl_cam
             // 
             this.lbl_cam.AutoSize = true;
-            this.lbl_cam.Location = new System.Drawing.Point(440, 227);
+            this.lbl_cam.Location = new System.Drawing.Point(359, 227);
             this.lbl_cam.Name = "lbl_cam";
             this.lbl_cam.Size = new System.Drawing.Size(50, 20);
             this.lbl_cam.TabIndex = 34;
@@ -330,7 +330,7 @@
             // lbl_meeting
             // 
             this.lbl_meeting.AutoSize = true;
-            this.lbl_meeting.Location = new System.Drawing.Point(440, 268);
+            this.lbl_meeting.Location = new System.Drawing.Point(359, 268);
             this.lbl_meeting.Name = "lbl_meeting";
             this.lbl_meeting.Size = new System.Drawing.Size(50, 20);
             this.lbl_meeting.TabIndex = 35;

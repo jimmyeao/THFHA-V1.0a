@@ -19,6 +19,11 @@ namespace THFHA_V1._0.Views
             cb_usemqtt.Checked = settings.UseMQTT;
             cb_hatchersettings.Checked = settings.UseHatcher;
             cb_usewled.Checked = settings.UseWLED;
+            if(settings.TeamsApi != "")
+            {
+                textBox1.Text = settings.TeamsApi;
+            }
+            
             if (settings.Haurl == "" || settings.Hatoken == "")
             {
                 cb_useha.Checked = false;
@@ -264,6 +269,12 @@ namespace THFHA_V1._0.Views
             {
                 cb_usewled.Enabled = true;
             }
+        }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+            settings.TeamsApi = textBox1.Text;
+            settings.Save();
         }
     }
 }
