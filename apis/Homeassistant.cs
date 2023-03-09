@@ -473,6 +473,7 @@ namespace THFHA_V1._0.apis
                 {
                     await UpdateEntity("sensor.thfha_microphone", stateInstance.Microphone, "mdi:microphone-off");
                 }
+                
 
                 oldstattus = stateInstance.Status;
                 oldact = stateInstance.Activity;

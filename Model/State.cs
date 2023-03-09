@@ -14,6 +14,12 @@ namespace THFHA_V1._0.Model
 
         private string _microphone = "";
 
+        private string _blurred = "";
+
+        private string _handup;
+
+        private string _recording;
+
         // Define properties for the different components of the state
         private string _status = "";
 
@@ -77,6 +83,45 @@ namespace THFHA_V1._0.Model
                 if (_microphone != value)
                 {
                     _microphone = value;
+                    Log.Debug("State.Microphone changed to: " + value);
+                    StateChanged?.Invoke(this, EventArgs.Empty);
+                }
+            }
+        }
+        public string Blurred
+        {
+            get => _blurred;
+            set
+            {
+                if (_blurred != value)
+                {
+                    _blurred = value;
+                    Log.Debug("State.Microphone changed to: " + value);
+                    StateChanged?.Invoke(this, EventArgs.Empty);
+                }
+            }
+        }
+        public string Handup
+        {
+            get => _handup;
+            set
+            {
+                if (_handup != value)
+                {
+                    _handup = value;
+                    Log.Debug("State.Microphone changed to: " + value);
+                    StateChanged?.Invoke(this, EventArgs.Empty);
+                }
+            }
+        }
+        public string Recording
+        {
+            get => _recording;
+            set
+            {
+                if (_recording != value)
+                {
+                    _recording = value;
                     Log.Debug("State.Microphone changed to: " + value);
                     StateChanged?.Invoke(this, EventArgs.Empty);
                 }

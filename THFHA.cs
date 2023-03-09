@@ -4,7 +4,7 @@ using Serilog;
 using System.Diagnostics;
 using THFHA_V1._0.Model;
 using THFHA_V1._0.Views;
-using WebSocketClientExample;
+
 
 namespace THFHA_V1._0
 {
@@ -52,7 +52,6 @@ namespace THFHA_V1._0
                 Settings.SettingChanged += Settings_SettingChanged; // Subscribe to the SettingChanged event
 
                 StartLogWatcher();
-
                 btn_start.Enabled = false; btn_stop.Enabled = true;
             }
             else
@@ -65,9 +64,9 @@ namespace THFHA_V1._0
             }
             if (settings.TeamsApi != "")
             {
-                _webSocketClient = new WebSocketClient(new Uri("ws://localhost:8124?token=" + settings.TeamsApi + "&protocol-version=1.0.0&manufacturer=Jimmyeao&device=THFHA&app=THFHA&app-version=1.0"));
+                _webSocketClient = new WebSocketClient(new Uri("ws://localhost:8124?token=" + settings.TeamsApi + "&protocol-version=1.0.0&manufacturer=Jimmyeao&device=THFHA&app=THFHA&app-version=1.0"), state);
 
-                _webSocketClient.MessageReceived += WebSocketClient_MessageReceived;
+               // _webSocketClient.MessageReceived += WebSocketClient_MessageReceived;
             }
 
             _meetingState = new Dictionary<string, object>
@@ -154,13 +153,13 @@ namespace THFHA_V1._0
                 {
                     switch (micstatus)
                     {
-                        case ("Mute On"):
+                        case ("On"):
                             pb_mute.BackgroundImage = Resource1.mute;
                             //toolTip3.SetToolTip(pb_mute, "Mute On");
                             pb_mute.Refresh();
                             break;
 
-                        case ("Mute Off"):
+                        case ("Off"):
                             pb_mute.BackgroundImage = Resource1.mic_icon;
                             //toolTip3.SetToolTip(pb_mute, "Mute Off");
                             pb_mute.Refresh();
@@ -172,13 +171,13 @@ namespace THFHA_V1._0
             {
                 switch (micstatus)
                 {
-                    case ("Mute ON"):
+                    case ("On"):
                         pb_mute.BackgroundImage = Resource1.mute;
                         //toolTip3.SetToolTip(pb_mute, "Mute On");
                         pb_mute.Refresh();
                         break;
 
-                    case ("Mute Off"):
+                    case ("Off"):
                         pb_mute.BackgroundImage = Resource1.mic_icon;
                         //toolTip3.SetToolTip(pb_mute, "Mute Off");
                         pb_mute.Refresh();
@@ -595,6 +594,12 @@ namespace THFHA_V1._0
             UpdateStatusIcons(state.Status);
             UpdateActivityIcons(state.Activity);
             UpdateMuteStatus(state.Microphone);
+            UpdateLabel(lbl_blurred, "Background: " + state.Blurred);
+            UpdateLabel(lbl_recording, "Recording: " + state.Recording);
+            UpdateLabel(lbl_hand, "Hand: " + state.Handup);
+            UpdateLabel(lbl_meeting, "Activity: " + state.Activity);
+            UpdateLabel(lbl_cam, "Camera: " + state.Camera);
+            UpdateLabel(lbl_muted, "Mute: " + state.Microphone);
         }
 
         private void UpdateLabel(Label label, string text)
@@ -698,86 +703,10 @@ namespace THFHA_V1._0
         {
         }
 
-        private void WebSocketClient_MessageReceived(object sender, string messageReceived)
-        {
-            var settings = new JsonSerializerSettings
-            {
-                Converters = new List<JsonConverter> { new MeetingUpdateConverter() }
-            };
 
-            MeetingUpdate meetingUpdate = JsonConvert.DeserializeObject<MeetingUpdate>(messageReceived, settings);
-
-            // Update the meeting state dictionary
-            if (meetingUpdate.MeetingState != null)
-            {
-                meetingState["isMuted"] = meetingUpdate.MeetingState.IsMuted;
-                meetingState["isCameraOn"] = meetingUpdate.MeetingState.IsCameraOn;
-                meetingState["isHandRaised"] = meetingUpdate.MeetingState.IsHandRaised;
-                meetingState["isInMeeting"] = meetingUpdate.MeetingState.IsInMeeting;
-                meetingState["isRecordingOn"] = meetingUpdate.MeetingState.IsRecordingOn;
-                meetingState["isBackgroundBlurred"] = meetingUpdate.MeetingState.IsBackgroundBlurred;
-                if (meetingUpdate.MeetingState.IsCameraOn)
-                {
-                    state.Camera = "On";
-                }else
-                {
-                    state.Camera = "Off";
-                }
-                if(meetingUpdate.MeetingState.IsInMeeting)
-                {
-                    state.Activity = "In a meeting";
-                }
-                else
-                {
-                    state.Activity = "Not in a Call";
-                }
-                if (meetingUpdate.MeetingState.IsMuted)
-                {
-                    state.Microphone = "Mute On";
-                }
-                else
-                {
-                    state.Microphone = "Mute Off";
-                }
-            }
-
-            // Update UI elements
-            UpdateLabel(lbl_blurred, "Background blurred: " + (meetingState["isBackgroundBlurred"]).ToString());
-            UpdateLabel(lbl_recording, "Recording On: " + (meetingState["isRecordingOn"]).ToString());
-            UpdateLabel(lbl_hand, "Hand Raised: " + (meetingState["isHandRaised"]).ToString());
-            UpdateLabel(lbl_meeting, "In Meeting: " + (meetingState["isInMeeting"]).ToString());
-            UpdateLabel(lbl_cam, "Camera On: " + (meetingState["isCameraOn"]).ToString());
-            UpdateLabel(lbl_muted, "Mute On: " + (meetingState["isMuted"]).ToString());
-
-            Log.Debug(meetingUpdate.ToString());
-            Log.Debug(meetingState.ToString());
-        }
-
-        public class MeetingUpdateConverter : JsonConverter<MeetingUpdate>
-        {
-            #region Public Methods
-
-            public override MeetingUpdate ReadJson(JsonReader reader, Type objectType, MeetingUpdate existingValue, bool hasExistingValue, JsonSerializer serializer)
-            {
-                JObject jsonObject = JObject.Load(reader);
-
-                var meetingState = jsonObject["meetingUpdate"]["meetingState"].ToObject<MeetingState>();
-                var meetingPermissions = jsonObject["meetingUpdate"]["meetingPermissions"].ToObject<MeetingPermissions>();
-
-                return new MeetingUpdate
-                {
-                    MeetingState = meetingState,
-                    MeetingPermissions = meetingPermissions
-                };
-            }
-
-            public override void WriteJson(JsonWriter writer, MeetingUpdate value, JsonSerializer serializer)
-            {
-                throw new NotImplementedException();
-            }
-
-            #endregion Public Methods
-        }
+       
+           
+        
         #endregion
     }
 }
