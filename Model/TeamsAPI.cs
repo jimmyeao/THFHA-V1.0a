@@ -43,17 +43,47 @@ namespace WebSocketClientExample
             Console.WriteLine($"Message sent: {message}");
         }
 
+        //private async Task ReceiveLoopAsync(CancellationToken cancellationToken = default)
+        //{
+        //    byte[] buffer = new byte[1024];
+        //    while (_clientWebSocket.State == WebSocketState.Open)
+        //    {
+        //        WebSocketReceiveResult result = await _clientWebSocket.ReceiveAsync(new ArraySegment<byte>(buffer), cancellationToken);
+        //        string messageReceived = Encoding.UTF8.GetString(buffer, 0, result.Count);
+        //        Console.WriteLine($"Message received: {messageReceived}");
+
+        //        MessageReceived?.Invoke(this, messageReceived);
+        //    }
+        //}
         private async Task ReceiveLoopAsync(CancellationToken cancellationToken = default)
         {
-            byte[] buffer = new byte[1024];
+            const int bufferSize = 4096; // Starting buffer size
+            byte[] buffer = new byte[bufferSize];
+            int totalBytesReceived = 0;
+
             while (_clientWebSocket.State == WebSocketState.Open)
             {
-                WebSocketReceiveResult result = await _clientWebSocket.ReceiveAsync(new ArraySegment<byte>(buffer), cancellationToken);
-                string messageReceived = Encoding.UTF8.GetString(buffer, 0, result.Count);
-                Console.WriteLine($"Message received: {messageReceived}");
+                WebSocketReceiveResult result = await _clientWebSocket.ReceiveAsync(new ArraySegment<byte>(buffer, totalBytesReceived, buffer.Length - totalBytesReceived), cancellationToken);
+                totalBytesReceived += result.Count;
 
-                MessageReceived?.Invoke(this, messageReceived);
+                if (result.EndOfMessage)
+                {
+                    string messageReceived = Encoding.UTF8.GetString(buffer, 0, totalBytesReceived);
+                    Console.WriteLine($"Message received: {messageReceived}");
+
+                    MessageReceived?.Invoke(this, messageReceived);
+
+                    // Reset buffer and totalBytesReceived for next message
+                    buffer = new byte[bufferSize];
+                    totalBytesReceived = 0;
+                }
+                else if (totalBytesReceived == buffer.Length) // Resize buffer if it's too small
+                {
+                    Array.Resize(ref buffer, buffer.Length + bufferSize);
+                }
             }
         }
+
+
     }
 }

@@ -3,14 +3,16 @@ using System.Diagnostics;
 using THFHA_V1._0.Model;
 using THFHA_V1._0.Views;
 using WebSocketClientExample;
+using Newtonsoft.Json;
 using System.Net.WebSockets;
+using Newtonsoft.Json.Linq;
 
 namespace THFHA_V1._0
 {
     public partial class THFHA : Form
     {
         #region Public Fields
-        private readonly WebSocketClient _webSocketClient;
+
         public static LogWatcher logWatcher;
 
         #endregion Public Fields
@@ -20,7 +22,8 @@ namespace THFHA_V1._0
         private List<IModule> modules;
         private Settings settings;
         private State state;
-
+        private readonly WebSocketClient _webSocketClient;
+        private readonly Dictionary<string, object> _meetingState;
         #endregion Private Fields
 
         #region Public Constructors
@@ -59,8 +62,19 @@ namespace THFHA_V1._0
                     //module.OnFormClosing();
                 }
             }
-            _webSocketClient = new WebSocketClient(new Uri("ws://localhost:8124?token="+token+"&protocol-version=1.0.0&manufacturer=MuteDeck&device=MuteDeck&app=MuteDeck&app-version=1.4"));
+            _webSocketClient = new WebSocketClient(new Uri("ws://localhost:8124?token=286b3935-a0d9-4bb6-95b6-0820c6315b86&protocol-version=1.0.0&manufacturer=MuteDeck&device=MuteDeck&app=MuteDeck&app-version=1.4"));
+
             _webSocketClient.MessageReceived += WebSocketClient_MessageReceived;
+
+            _meetingState = new Dictionary<string, object>
+            {
+                { "isMuted", false },
+                { "isCameraOn", false },
+                { "isHandRaised", false },
+                { "isInMeeting", "Not in a meeting" },
+                { "isRecordingOn", false },
+                { "isBackgroundBlurred", false }
+            };
         }
 
         #endregion Public Constructors
@@ -667,9 +681,63 @@ namespace THFHA_V1._0
         {
 
         }
-        private void WebSocketClient_MessageReceived(object sender, string e)
+        private Dictionary<string, object> meetingState = new Dictionary<string, object>()
         {
-            UpdateLabel(lbl_apistataus, e);
+            { "isMuted", false },
+            { "isCameraOn", false },
+            { "isHandRaised", false },
+            { "isInMeeting", "Not in a meeting" },
+            { "isRecordingOn", false },
+            { "isBackgroundBlurred", false },
+        };
+        private void WebSocketClient_MessageReceived(object sender, string messageReceived)
+        {
+            var settings = new JsonSerializerSettings
+            {
+                Converters = new List<JsonConverter> { new MeetingUpdateConverter() }
+            };
+
+            MeetingUpdate meetingUpdate = JsonConvert.DeserializeObject<MeetingUpdate>(messageReceived, settings);
+
+
+            // Update the meeting state dictionary
+            if (meetingUpdate.MeetingState != null)
+            {
+                meetingState["isMuted"] = meetingUpdate.MeetingState.IsMuted;
+                meetingState["isCameraOn"] = meetingUpdate.MeetingState.IsCameraOn;
+                meetingState["isHandRaised"] = meetingUpdate.MeetingState.IsHandRaised;
+                meetingState["isInMeeting"] = meetingUpdate.MeetingState.IsInMeeting;
+                meetingState["isRecordingOn"] = meetingUpdate.MeetingState.IsRecordingOn;
+                meetingState["isBackgroundBlurred"] = meetingUpdate.MeetingState.IsBackgroundBlurred;
+            }
+
+            // Update UI elements
+            UpdateLabel(lbl_apistataus, messageReceived);
+            Log.Debug(meetingUpdate.ToString());
+            Log.Debug(meetingState.ToString());
         }
+        public class MeetingUpdateConverter : JsonConverter<MeetingUpdate>
+        {
+            public override MeetingUpdate ReadJson(JsonReader reader, Type objectType, MeetingUpdate existingValue, bool hasExistingValue, JsonSerializer serializer)
+            {
+                JObject jsonObject = JObject.Load(reader);
+
+                var meetingState = jsonObject["meetingUpdate"]["meetingState"].ToObject<MeetingState>();
+                var meetingPermissions = jsonObject["meetingUpdate"]["meetingPermissions"].ToObject<MeetingPermissions>();
+
+                return new MeetingUpdate
+                {
+                    MeetingState = meetingState,
+                    MeetingPermissions = meetingPermissions
+                };
+            }
+
+            public override void WriteJson(JsonWriter writer, MeetingUpdate value, JsonSerializer serializer)
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+
     }
 }
