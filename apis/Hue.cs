@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿
+using Newtonsoft.Json;
 using Q42.HueApi;
 using Q42.HueApi.ColorConverters;
 using Q42.HueApi.ColorConverters.Original;
@@ -7,6 +8,7 @@ using Serilog;
 using THFHA_V1._0.Model;
 using THFHA_V1._0.Views;
 using State = THFHA_V1._0.Model.State;
+
 
 namespace THFHA_V1._0.apis
 {
@@ -43,13 +45,14 @@ namespace THFHA_V1._0.apis
             ILocalHueClient localClient = new LocalHueClient(settings.Hueip);
             localClient.Initialize(settings.Hueusername);
             client = localClient;
-            stateInstance = new State(); // Initialize stateInstance here
-            stateInstance.StateChanged += OnStateChanged;
+             // Initialize stateInstance here
+            
         }
 
         public HueModule(State state) : this()
         {
             stateInstance = state;
+            stateInstance.StateChanged += OnStateChanged;
             //stateInstance.StateChanged += OnStateChanged;
             // Initialize your module here
         }
@@ -144,7 +147,7 @@ namespace THFHA_V1._0.apis
 
         private RGBColor GetRGBColorForState(State state)
         {
-            return state.Status switch
+            return stateInstance.Status switch
             {
                 "Busy" => new RGBColor("ff0000"),
                 "On the Phone" => new RGBColor("ff0000"),
@@ -158,7 +161,7 @@ namespace THFHA_V1._0.apis
                 "Be Right Back" => new RGBColor("ffff00"),
                 ".." => new RGBColor("000000"),
                 "" => new RGBColor("000000"),
-                _ => throw new ArgumentException($"Invalid state: {state.Status}")
+                _ => throw new ArgumentException($"Invalid state: {stateInstance.Status}")
             };
         }
 
@@ -264,7 +267,7 @@ namespace THFHA_V1._0.apis
                 var command = new LightCommand { On = true }.SetColor(color);
                 await client.SendCommandAsync(command, new List<string> { settings.SelectedLightId });
 
-                Log.Information("Hue Light set to {status}", state.Status);
+                Log.Information("Hue Light set to {status}", stateInstance.Status);
             }
         }
 

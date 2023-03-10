@@ -186,7 +186,7 @@ namespace THFHA_V1._0.Model
                     return;
                 }
                 //if (state.Microphone != _mute) { state.Microphone = _mute; }
-                await Task.Delay(1000, cancellationToken); // Example delay
+                await Task.Delay(1500, cancellationToken); // Example delay
             }
         }
 

@@ -25,6 +25,7 @@ namespace THFHA_V1._0
             var thfha = new THFHA(modules, state);
             HatcherModule hatcherModule = new HatcherModule(state);
             HomeassistantModule homeassistantModule = new HomeassistantModule(state);
+            HueModule hueModule = new HueModule(state);
             Application.Run(thfha);
             Log.CloseAndFlush();
         }

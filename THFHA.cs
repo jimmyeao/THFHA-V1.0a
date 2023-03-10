@@ -648,6 +648,7 @@ namespace THFHA_V1._0
             {
                 UpdateLabel(lbl_muted, "Mute: " + (string.IsNullOrEmpty(State.Instance.Microphone) ? "Not Configured" : State.Instance.Microphone));
             }
+            UpdateStatusIcons(State.Instance.Status);
         }
 
 
