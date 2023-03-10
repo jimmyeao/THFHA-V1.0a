@@ -1,11 +1,8 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using Serilog;
+﻿using Serilog;
 using System.Diagnostics;
 using THFHA_V1._0.Model;
-using THFHA_V1._0.Views;
 using THFHA_V1._0.TeamsAPI;
-
+using THFHA_V1._0.Views;
 
 namespace THFHA_V1._0
 {
@@ -20,8 +17,13 @@ namespace THFHA_V1._0
         #region Private Fields
 
         private readonly Dictionary<string, object> _meetingState;
-        private  WebSocketClient _webSocketClient;
+        private WebSocketClient _webSocketClient;
         private List<IModule> modules;
+        private ContextMenuStrip notifyContextMenuStrip = new();
+        private ToolStripMenuItem notifyMenuActivity = new();
+        private ToolStripMenuItem notifyMenuExit = new();
+        private ToolStripMenuItem notifyMenuShow = new();
+        private ToolStripMenuItem notifyMenuStatus = new();
         private Settings settings;
         private State state;
 
@@ -43,7 +45,7 @@ namespace THFHA_V1._0
             string _appDir = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
             string _logPath = _appDir + @"\Microsoft\Teams\";
             string _logFile = _logPath + "logs.txt";
-            string token = "286b3935-a0d9-4bb6-95b6-0820c6315b86";
+            this.Resize += new EventHandler(Form1_Resize);
             State.Instance.StateChanged += OnStateChanged;
             Log.Debug("State.StateChanged event subscribed");
 
@@ -67,16 +69,17 @@ namespace THFHA_V1._0
                 foreach (IModule module in modules)
                 {
                     //module.OnFormClosing();
+
+                    //this does nothing. yet.
                 }
             }
-            //if (settings.TeamsApi != "")
-            //{
-            //    _webSocketClient = new WebSocketClient(new Uri("ws://localhost:8124?token=" + settings.TeamsApi + "&protocol-version=1.0.0&manufacturer=Jimmyeao&device=THFHA&app=THFHA&app-version=1.0"), state);
+            DisplayNotifyIcon();
 
-            //   // _webSocketClient.MessageReceived += WebSocketClient_MessageReceived;
-            //}
-
-
+            if (settings.RunMinimised)
+            {
+                WindowState = FormWindowState.Minimized;
+                ShowInTaskbar = false;
+            }
         }
 
         #endregion Public Constructors
@@ -212,10 +215,8 @@ namespace THFHA_V1._0
 
         private void btn_start_Click(object sender, EventArgs e)
         {
-            // Initialize the state and settings objects
-            // Initialize the state and settings objects
+            // Initialize the state and settings objects Initialize the state and settings objects
             State state = new State();
-            
 
             Settings.SettingChanged += Settings_SettingChanged; // Subscribe to the SettingChanged event
 
@@ -223,8 +224,6 @@ namespace THFHA_V1._0
             if (settings.TeamsApi != "")
             {
                 _webSocketClient = new WebSocketClient(new Uri("ws://localhost:8124?token=" + settings.TeamsApi + "&protocol-version=1.0.0&manufacturer=Jimmyeao&device=THFHA&app=THFHA&app-version=1.0"), state);
-
-               
             }
             _ = StartLogWatcher();
         }
@@ -278,6 +277,29 @@ namespace THFHA_V1._0
             }
         }
 
+        private void DisplayNotifyIcon()
+        {
+            notifyIcon1.ContextMenuStrip = notifyContextMenuStrip;
+            notifyMenuShow.Text = "TMFHA";
+            notifyMenuShow.Image = Resource1.download;
+            notifyMenuShow.Click += new EventHandler(notifyIcon1_ShowClick);
+            notifyMenuStatus.Text = State.Instance.Status;
+            notifyMenuStatus.Image = Resource1.outofoffice;
+            notifyMenuActivity.Text = State.Instance.Activity;
+            notifyMenuActivity.Image = Resource1.outofoffice;
+            notifyMenuExit.Text = "Exit";
+            notifyMenuExit.Click += new EventHandler(notifyIcon1_ExitClick);
+
+            notifyContextMenuStrip.Items.AddRange(new ToolStripMenuItem[] { notifyMenuShow, notifyMenuStatus, notifyMenuActivity, notifyMenuExit });
+
+            notifyIcon1.Visible = true;
+            //Updateactivityicons(State.Instance.Activity);
+            //Updatestatusicons(State.Instance.Status);
+
+            //notifyIcon1.BalloonTipText = "Waiting...";
+            //notifyIcon1.ShowBalloonTip(1000);
+        }
+
         private void enableModuleToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (lbx_modules.SelectedIndex >= 0)
@@ -325,6 +347,14 @@ namespace THFHA_V1._0
                 PopulateModulesList(); // Refresh the list to update the module status
                 settings.Save();
             }
+        }
+
+        private void Form1_Resize(object? sender, EventArgs e)
+        {
+            //if the form is minimized
+            //hide it from the task bar
+            //and show the system tray icon (represented by the NotifyIcon control)
+            if (this.WindowState == FormWindowState.Minimized) this.ShowInTaskbar = false;
         }
 
         private Bitmap GetActivityIcon(string activity)
@@ -438,6 +468,28 @@ namespace THFHA_V1._0
             }
         }
 
+        private void notifyIcon_Restore()
+        {
+            Show();
+            this.WindowState = FormWindowState.Normal;
+            this.ShowInTaskbar = true;
+        }
+
+        private void notifyIcon1_ExitClick(object? sender, EventArgs e)
+        {
+            Application.Exit();
+        }
+
+        private void notifyIcon1_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            notifyIcon_Restore();
+        }
+
+        private void notifyIcon1_ShowClick(object? sender, EventArgs e)
+        {
+            notifyIcon_Restore();
+        }
+
         private void OnStateChanged(object sender, EventArgs e)
         {
             // Get the updated state values
@@ -516,7 +568,7 @@ namespace THFHA_V1._0
                     module.Start();
                 }
             }
-        } 
+        }
 
         private async Task StopLogWatcher()
         {
@@ -593,6 +645,7 @@ namespace THFHA_V1._0
             {
                 SetActivityIcon(icon);
             }
+            UpdateNotifyMenuActivity(icon);
         }
 
         private async Task UpdateAll()
@@ -661,6 +714,7 @@ namespace THFHA_V1._0
 
             label.BeginInvoke((MethodInvoker)delegate { label.Text = text; });
         }
+
         private void updatemodules()
         {
             foreach (IModule module in this.modules)
@@ -690,15 +744,29 @@ namespace THFHA_V1._0
             }
         }
 
+        private void UpdateNotifyMenuActivity(Bitmap icon)
+        {
+            if (icon == Resource1.notinacall)
+            {
+                notifyMenuActivity.Image = Resource1.notinacall;
+                notifyMenuActivity.Text = "Not In a Call";
+            }
+            else
+            {
+                notifyMenuActivity.Image = icon;
+                notifyMenuActivity.Text = State.Instance.Activity;
+            }
+        }
+
         private void UpdateNotifyMenuStatus(Bitmap icon)
         {
             if (icon == Resource1.outofoffice)
             {
-                // notifyMenuStatus.Image = Resource1.outofoffice; notifyMenuStatus.Text = "Offline";
+                notifyMenuStatus.Image = Resource1.outofoffice; notifyMenuStatus.Text = "Offline";
             }
             else
             {
-                // notifyMenuStatus.Image = icon; notifyMenuStatus.Text = state.Status;
+                notifyMenuStatus.Image = icon; notifyMenuStatus.Text = State.Instance.Status;
             }
         }
 
@@ -727,7 +795,5 @@ namespace THFHA_V1._0
         }
 
         #endregion Private Methods
-
-
     }
 }

@@ -26,6 +26,7 @@ namespace THFHA_V1._0.Views
             cb_usemqtt.Checked = settings.UseMQTT;
             cb_hatchersettings.Checked = settings.UseHatcher;
             cb_usewled.Checked = settings.UseWLED;
+            cb_min.Checked = settings.RunMinimised;
             if (settings.TeamsApi != "")
             {
                 textBox1.Text = settings.TeamsApi;
@@ -275,6 +276,12 @@ namespace THFHA_V1._0.Views
         }
 
         #endregion checkboxes
+
+        private void cb_min_CheckedChanged(object sender, EventArgs e)
+        {
+            settings.RunMinimised = cb_min.Checked;
+            settings.Save();
+        }
 
         private void textBox1_TextChanged(object sender, EventArgs e)
         {

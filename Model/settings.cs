@@ -54,6 +54,8 @@ namespace THFHA_V1._0.Model
 
         private bool _runLogWatcherAtStart;
 
+        private bool _runminimised = false;
+
         private Settings()
         {
             Load();
@@ -82,6 +84,12 @@ namespace THFHA_V1._0.Model
         {
             get { return _runLogWatcherAtStart; }
             set { _runLogWatcherAtStart = value; OnPropertyChanged(nameof(RunLogWatcherAtStart)); }
+        }
+
+        public bool RunMinimised
+        {
+            get { return _runminimised; }
+            set { _runminimised = value; OnPropertyChanged(nameof(RunMinimised)); }
         }
 
         protected void OnPropertyChanged(string propertyName)
