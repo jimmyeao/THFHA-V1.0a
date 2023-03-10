@@ -518,7 +518,6 @@ namespace THFHA_V1._0.apis
                 {
                     await UpdateEntity("sensor.thfha_recording", stateInstance.Recording, "mdi:record");
                 }
-                
 
                 oldstattus = stateInstance.Status;
                 oldact = stateInstance.Activity;

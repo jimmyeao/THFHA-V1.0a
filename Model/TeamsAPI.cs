@@ -1,5 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Serilog;
 using System.Net.WebSockets;
 using System.Text;
@@ -18,7 +18,6 @@ namespace THFHA_V1._0.TeamsAPI
 
         #region Public Constructors
 
-
         public WebSocketClient(Uri uri, State state)
         {
             _clientWebSocket = new ClientWebSocket();
@@ -27,19 +26,16 @@ namespace THFHA_V1._0.TeamsAPI
 
             // Subscribe to the MessageReceived event
             MessageReceived += OnMessageReceived;
-
         }
+
         public async Task StopAsync(CancellationToken cancellationToken = default)
         {
             MessageReceived -= OnMessageReceived;
             if (_clientWebSocket.State == WebSocketState.Open)
             {
-                
-
                 await _clientWebSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Connection closed by client", cancellationToken);
                 Console.WriteLine("WebSocket connection closed");
             }
-            
         }
 
         #endregion Public Constructors
@@ -47,7 +43,7 @@ namespace THFHA_V1._0.TeamsAPI
         #region Public Events
 
         public event EventHandler<string> MessageReceived;
-        
+
         #endregion Public Events
 
         #region Public Methods
@@ -63,6 +59,15 @@ namespace THFHA_V1._0.TeamsAPI
 
         #region Private Methods
 
+        private Dictionary<string, object> meetingState = new Dictionary<string, object>()
+        {
+            { "isMuted", false },
+            { "isCameraOn", false },
+            { "isHandRaised", false },
+            { "isInMeeting", "Not in a meeting" },
+            { "isRecordingOn", false },
+            { "isBackgroundBlurred", false },
+        };
 
         private async Task ConnectAsync(Uri uri)
         {
@@ -83,18 +88,80 @@ namespace THFHA_V1._0.TeamsAPI
                 Log.Error("Using URI: " + uri.ToString());
             }
 
-
             await ReceiveLoopAsync();
         }
-        private Dictionary<string, object> meetingState = new Dictionary<string, object>()
+
+        private void OnMessageReceived(object sender, string message)
         {
-            { "isMuted", false },
-            { "isCameraOn", false },
-            { "isHandRaised", false },
-            { "isInMeeting", "Not in a meeting" },
-            { "isRecordingOn", false },
-            { "isBackgroundBlurred", false },
-        };
+            // Update the Message property of the State class
+            var settings = new JsonSerializerSettings
+            {
+                Converters = new List<JsonConverter> { new MeetingUpdateConverter() }
+            };
+
+            MeetingUpdate meetingUpdate = JsonConvert.DeserializeObject<MeetingUpdate>(message, settings);
+
+            // Update the meeting state dictionary
+            if (meetingUpdate.MeetingState != null)
+            {
+                meetingState["isMuted"] = meetingUpdate.MeetingState.IsMuted;
+                meetingState["isCameraOn"] = meetingUpdate.MeetingState.IsCameraOn;
+                meetingState["isHandRaised"] = meetingUpdate.MeetingState.IsHandRaised;
+                meetingState["isInMeeting"] = meetingUpdate.MeetingState.IsInMeeting;
+                meetingState["isRecordingOn"] = meetingUpdate.MeetingState.IsRecordingOn;
+                meetingState["isBackgroundBlurred"] = meetingUpdate.MeetingState.IsBackgroundBlurred;
+                if (meetingUpdate.MeetingState.IsCameraOn)
+                {
+                    State.Instance.Camera = "On";
+                }
+                else
+                {
+                    State.Instance.Camera = "Off";
+                }
+                if (meetingUpdate.MeetingState.IsInMeeting)
+                {
+                    State.Instance.Activity = "In a meeting";
+                }
+                else
+                {
+                    State.Instance.Activity = "Not in a Call";
+                }
+                if (meetingUpdate.MeetingState.IsMuted)
+                {
+                    State.Instance.Microphone = "On";
+                }
+                else
+                {
+                    State.Instance.Microphone = "Off";
+                }
+                if (meetingUpdate.MeetingState.IsHandRaised)
+                {
+                    State.Instance.Handup = "Raised";
+                }
+                else
+                {
+                    State.Instance.Handup = "Lowered";
+                }
+                if (meetingUpdate.MeetingState.IsRecordingOn)
+                {
+                    State.Instance.Recording = "On";
+                }
+                else
+                {
+                    State.Instance.Recording = "Off";
+                }
+                if (meetingUpdate.MeetingState.IsBackgroundBlurred)
+                {
+                    State.Instance.Blurred = "Blurred";
+                }
+                else
+                {
+                    State.Instance.Blurred = "Not Blurred";
+                }
+
+                // need to edit state class to add handraised, recording, and backgroundblur
+            }
+        }
 
         private async Task ReceiveLoopAsync(CancellationToken cancellationToken = default)
         {
@@ -127,83 +194,6 @@ namespace THFHA_V1._0.TeamsAPI
                 }
             }
         }
-
-        private void OnMessageReceived(object sender, string message)
-        {
-        // Update the Message property of the State class
-        var settings = new JsonSerializerSettings
-        {
-            Converters = new List<JsonConverter> { new MeetingUpdateConverter() }
-        };
-
-
-            MeetingUpdate meetingUpdate = JsonConvert.DeserializeObject<MeetingUpdate>(message, settings);
-
-        // Update the meeting state dictionary
-        if (meetingUpdate.MeetingState != null)
-        {
-            meetingState["isMuted"] = meetingUpdate.MeetingState.IsMuted;
-            meetingState["isCameraOn"] = meetingUpdate.MeetingState.IsCameraOn;
-            meetingState["isHandRaised"] = meetingUpdate.MeetingState.IsHandRaised;
-            meetingState["isInMeeting"] = meetingUpdate.MeetingState.IsInMeeting;
-            meetingState["isRecordingOn"] = meetingUpdate.MeetingState.IsRecordingOn;
-            meetingState["isBackgroundBlurred"] = meetingUpdate.MeetingState.IsBackgroundBlurred;
-            if (meetingUpdate.MeetingState.IsCameraOn)
-            {
-                    State.Instance.Camera = "On";
-            }
-            else
-            {
-                    State.Instance.Camera = "Off";
-            }
-            if (meetingUpdate.MeetingState.IsInMeeting)
-            {
-                    State.Instance.Activity = "In a meeting";
-            }
-            else
-            {
-                    State.Instance.Activity = "Not in a Call";
-            }
-            if (meetingUpdate.MeetingState.IsMuted)
-            {
-                    State.Instance.Microphone = "On";
-            }
-            else
-            {
-                    State.Instance.Microphone = "Off";
-            }
-            if (meetingUpdate.MeetingState.IsHandRaised)
-                {
-                    State.Instance.Handup = "Raised";
-            }
-            else
-                {
-                    State.Instance.Handup = "Lowered";
-            }
-            if (meetingUpdate.MeetingState.IsRecordingOn)
-                {
-                    State.Instance.Recording = "On";
-            }
-            else
-            {
-                    State.Instance.Recording = "Off";
-            }
-            if (meetingUpdate.MeetingState.IsBackgroundBlurred)
-              {
-                    State.Instance.Blurred = "Blurred";
-            }
-            else
-              {
-                    State.Instance.Blurred = "Not Blurred";
-            }
-
-            // need to edit state class to add handraised, recording, and backgroundblur
-        }
-
-            
-
-    }
-
 
         public class MeetingUpdateConverter : JsonConverter<MeetingUpdate>
         {

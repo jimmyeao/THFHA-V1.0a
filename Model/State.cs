@@ -4,23 +4,25 @@ namespace THFHA_V1._0.Model
 {
     public class State
     {
+        #region Private Fields
+
         private static readonly State _instance = new State();
+
+        #endregion Private Fields
+
 
 
         #region Private Fields
 
         private string _activity = "";
 
+        private string _blurred = "";
         private string _camera = "";
 
+        private string _handup;
         private string _message = "";
 
         private string _microphone = "";
-
-        private string _blurred = "";
-
-        private string _handup;
-
         private string _recording;
 
         // Define properties for the different components of the state
@@ -36,13 +38,14 @@ namespace THFHA_V1._0.Model
         #endregion Public Delegates
 
         #region Public Events
+
+        // Define the event that will be triggered when the state changes
+        public event StateChangedEventHandler? StateChanged;
+
         public static State Instance
         {
             get { return _instance; }
         }
-
-        // Define the event that will be triggered when the state changes
-        public event StateChangedEventHandler? StateChanged;
 
         #endregion Public Events
 
@@ -62,6 +65,20 @@ namespace THFHA_V1._0.Model
             }
         }
 
+        public string Blurred
+        {
+            get => _blurred;
+            set
+            {
+                if (_blurred != value)
+                {
+                    _blurred = value;
+                    Log.Debug("State.Microphone changed to: " + value);
+                    StateChanged?.Invoke(this, EventArgs.Empty);
+                }
+            }
+        }
+
         public string Camera
         {
             get => _camera;
@@ -71,6 +88,20 @@ namespace THFHA_V1._0.Model
                 {
                     _camera = value;
                     Log.Debug("State.Camera changed to: " + value);
+                    StateChanged?.Invoke(this, EventArgs.Empty);
+                }
+            }
+        }
+
+        public string Handup
+        {
+            get => _handup;
+            set
+            {
+                if (_handup != value)
+                {
+                    _handup = value;
+                    Log.Debug("State.Microphone changed to: " + value);
                     StateChanged?.Invoke(this, EventArgs.Empty);
                 }
             }
@@ -95,32 +126,7 @@ namespace THFHA_V1._0.Model
                 }
             }
         }
-        public string Blurred
-        {
-            get => _blurred;
-            set
-            {
-                if (_blurred != value)
-                {
-                    _blurred = value;
-                    Log.Debug("State.Microphone changed to: " + value);
-                    StateChanged?.Invoke(this, EventArgs.Empty);
-                }
-            }
-        }
-        public string Handup
-        {
-            get => _handup;
-            set
-            {
-                if (_handup != value)
-                {
-                    _handup = value;
-                    Log.Debug("State.Microphone changed to: " + value);
-                    StateChanged?.Invoke(this, EventArgs.Empty);
-                }
-            }
-        }
+
         public string Recording
         {
             get => _recording;
@@ -148,6 +154,7 @@ namespace THFHA_V1._0.Model
                 }
             }
         }
+
         public override string ToString()
         {
             return $"Status: {_status}, Activity: {_activity}";

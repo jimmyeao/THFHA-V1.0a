@@ -1,5 +1,4 @@
-﻿
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Q42.HueApi;
 using Q42.HueApi.ColorConverters;
 using Q42.HueApi.ColorConverters.Original;
@@ -8,7 +7,6 @@ using Serilog;
 using THFHA_V1._0.Model;
 using THFHA_V1._0.Views;
 using State = THFHA_V1._0.Model.State;
-
 
 namespace THFHA_V1._0.apis
 {
@@ -45,8 +43,7 @@ namespace THFHA_V1._0.apis
             ILocalHueClient localClient = new LocalHueClient(settings.Hueip);
             localClient.Initialize(settings.Hueusername);
             client = localClient;
-             // Initialize stateInstance here
-            
+            // Initialize stateInstance here
         }
 
         public HueModule(State state) : this()

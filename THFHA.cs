@@ -516,7 +516,7 @@ namespace THFHA_V1._0
                     module.Start();
                 }
             }
-        }
+        } 
 
         private async Task StopLogWatcher()
         {

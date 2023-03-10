@@ -6,8 +6,15 @@ namespace THFHA_V1._0.Views
 {
     public partial class SettingsForm : Form
     {
+        #region Private Fields
+
         private List<IModule> modules;
         private Settings settings;
+
+        #endregion Private Fields
+
+        #region Public Constructors
+
         public SettingsForm(List<IModule> modules)
         {
             InitializeComponent();
@@ -19,11 +26,11 @@ namespace THFHA_V1._0.Views
             cb_usemqtt.Checked = settings.UseMQTT;
             cb_hatchersettings.Checked = settings.UseHatcher;
             cb_usewled.Checked = settings.UseWLED;
-            if(settings.TeamsApi != "")
+            if (settings.TeamsApi != "")
             {
                 textBox1.Text = settings.TeamsApi;
             }
-            
+
             if (settings.Haurl == "" || settings.Hatoken == "")
             {
                 cb_useha.Checked = false;
@@ -37,6 +44,55 @@ namespace THFHA_V1._0.Views
             // Subscribe to the SettingChanged event
             Settings.SettingChanged += SettingsForm_Settings_SettingChanged;
         }
+
+        #endregion Public Constructors
+
+        #region Private Methods
+
+        private void SettingsForm_Load(object sender, EventArgs e)
+        {
+            if (!settings.IsHueModuleSettingsValid)
+            {
+                cb_usehue.Enabled = false; cb_usehue.Checked = false;
+            }
+            else
+            {
+                cb_usehue.Enabled = true;
+            }
+            if (!settings.IsHomeassistantModuleSettingsValid)
+            {
+                cb_useha.Enabled = false; cb_useha.Checked = false;
+            }
+            else
+            {
+                cb_useha.Enabled = true;
+            }
+            if (!settings.IsHatcherModuleSettingsValid)
+            {
+                cb_hatchersettings.Enabled = false; cb_hatchersettings.Checked = false;
+            }
+            else
+            {
+                cb_hatchersettings.Enabled = true;
+            }
+            if (!settings.IsMqttModuleSettingsValid)
+            {
+                cb_usemqtt.Enabled = false; cb_usemqtt.Checked = false;
+            }
+            else
+            {
+                cb_usemqtt.Enabled = true;
+            }
+            if (!settings.IsWledModuleSettingsValid)
+            {
+                cb_usewled.Enabled = false; cb_usewled.Checked = false;
+            }
+            else
+            {
+                cb_usewled.Enabled = true;
+            }
+        }
+
         private void SettingsForm_Settings_SettingChanged(object sender, SettingChangedEventArgs e)
         {
             // Update the module status based on the changed setting
@@ -71,6 +127,8 @@ namespace THFHA_V1._0.Views
             }
         }
 
+        #endregion Private Methods
+
         #region buttons
 
         private void bt_hasettings_Click(object sender, EventArgs e)
@@ -81,12 +139,10 @@ namespace THFHA_V1._0.Views
             hasettings.ShowDialog();
             if (settings.IsHomeassistantModuleSettingsValid)
             {
-
                 cb_useha.Enabled = true;
             }
             else
             {
-
                 cb_useha.Enabled = false;
             }
         }
@@ -137,8 +193,8 @@ namespace THFHA_V1._0.Views
             {
                 cb_usewled.Enabled = false;
             }
-
         }
+
         private void btn_hatchersettings_Click(object sender, EventArgs e)
         {
             hatchersettings hatchersettings = new hatchersettings();
@@ -152,8 +208,28 @@ namespace THFHA_V1._0.Views
                 cb_hatchersettings.Enabled = false;
             }
         }
-        #endregion
+
+        #endregion buttons
+
         #region checkboxes
+
+        private void cb_hatchersettings_CheckedChanged(object sender, EventArgs e)
+        {
+            settings.UseHatcher = cb_hatchersettings.Checked;
+            settings.Save();
+            HatcherModule hatcherModule = modules.Find(module => module.Name == "Hatcher") as HatcherModule;
+            if (hatcherModule != null)
+            {
+                hatcherModule.IsEnabled = cb_hatchersettings.Checked;
+            }
+        }
+
+        private void cb_runLogWatcherAtStart_CheckedChanged(object sender, EventArgs e)
+        {
+            settings.RunLogWatcherAtStart = cb_runLogWatcherAtStart.Checked;
+            settings.Save();
+        }
+
         private void cb_useha_CheckedChanged(object sender, EventArgs e)
         {
             settings.UseHA = cb_useha.Checked;
@@ -163,7 +239,6 @@ namespace THFHA_V1._0.Views
             {
                 haModule.IsEnabled = cb_useha.Checked;
             }
-
         }
 
         private void cb_usehue_CheckedChanged(object sender, EventArgs e)
@@ -196,80 +271,10 @@ namespace THFHA_V1._0.Views
             if (wledModule != null)
             {
                 wledModule.IsEnabled = cb_usewled.Checked;
-
             }
         }
 
-        private void cb_runLogWatcherAtStart_CheckedChanged(object sender, EventArgs e)
-        {
-
-            settings.RunLogWatcherAtStart = cb_runLogWatcherAtStart.Checked;
-            settings.Save();
-
-        }
-
-
-
-        private void cb_hatchersettings_CheckedChanged(object sender, EventArgs e)
-        {
-            settings.UseHatcher = cb_hatchersettings.Checked;
-            settings.Save();
-            HatcherModule hatcherModule = modules.Find(module => module.Name == "Hatcher") as HatcherModule;
-            if (hatcherModule != null)
-            {
-                hatcherModule.IsEnabled = cb_hatchersettings.Checked;
-            }
-        }
-        #endregion
-
-        private void SettingsForm_Load(object sender, EventArgs e)
-        {
-            if (!settings.IsHueModuleSettingsValid)
-            {
-                cb_usehue.Enabled = false; cb_usehue.Checked = false;
-
-            }
-            else
-            {
-                cb_usehue.Enabled = true;
-            }
-            if (!settings.IsHomeassistantModuleSettingsValid)
-            {
-                cb_useha.Enabled = false; cb_useha.Checked = false;
-
-            }
-            else
-            {
-                cb_useha.Enabled = true;
-            }
-            if (!settings.IsHatcherModuleSettingsValid)
-            {
-                cb_hatchersettings.Enabled = false; cb_hatchersettings.Checked = false;
-
-            }
-            else
-            {
-                cb_hatchersettings.Enabled = true;
-            }
-            if (!settings.IsMqttModuleSettingsValid)
-            {
-                cb_usemqtt.Enabled = false; cb_usemqtt.Checked = false;
-
-            }
-            else
-            {
-                cb_usemqtt.Enabled = true;
-            }
-            if (!settings.IsWledModuleSettingsValid)
-            {
-                cb_usewled.Enabled = false; cb_usewled.Checked = false;
-
-            }
-            else
-            {
-                cb_usewled.Enabled = true;
-            }
-        }
+        #endregion checkboxes
 
         private void textBox1_TextChanged(object sender, EventArgs e)
         {

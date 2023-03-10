@@ -408,15 +408,18 @@ namespace THFHA_V1._0.apis
                     case "microphone":
                         Icon = micicon;
                         break;
+
                     case "blurred":
                         Icon = blurredicon;
                         break;
+
                     case "recording":
                         Icon = recordicon;
                         break;
+
                     case "handup":
                         Icon = handicon;
-                        break;  
+                        break;
 
                     default:
                         Icon = "mdi:eye";

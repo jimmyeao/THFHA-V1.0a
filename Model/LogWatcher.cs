@@ -1,5 +1,4 @@
-﻿using Microsoft.Win32;
-using Serilog;
+﻿using Serilog;
 using System.Text;
 
 namespace THFHA_V1._0.Model
@@ -140,7 +139,7 @@ namespace THFHA_V1._0.Model
                 {
                     // open the file
                     using (FileStream fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-                    
+
                     {
                         sr = new StreamReader(fs, Encoding.UTF8);
                         while (!sr.EndOfStream)

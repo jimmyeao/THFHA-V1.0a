@@ -2,18 +2,21 @@ using Serilog;
 using THFHA_V1._0.apis;
 using THFHA_V1._0.Model;
 using THFHA_V1._0.Views;
+
 namespace THFHA_V1._0
 {
     public static class Program
     {
+        #region Private Methods
+
         [STAThread]
-        static void Main()
+        private static void Main()
         {
             Application.EnableVisualStyles();
             SetProcessDPIAware();
             Application.SetCompatibleTextRenderingDefault(false);
             LoggingConfig.Configure();
-            
+
             //var state = new State(); // create a new instance of State
             State state = State.Instance;
             ModuleManager<IModule> moduleManager = new ModuleManager<IModule>(state);
@@ -29,7 +32,10 @@ namespace THFHA_V1._0
             Application.Run(thfha);
             Log.CloseAndFlush();
         }
+
         [System.Runtime.InteropServices.DllImport("user32.dll")]
         private static extern bool SetProcessDPIAware();
+
+        #endregion Private Methods
     }
 }
