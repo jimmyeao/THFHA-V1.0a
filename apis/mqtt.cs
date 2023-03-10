@@ -541,6 +541,18 @@ namespace THFHA_V1._0.apis
                 microphone = new
                 {
                     value = state.Microphone,
+                },
+                blurred = new
+                {
+                    value = state.Blurred,
+                },
+                recording = new
+                {
+                    value = state.Recording,
+                },
+                handup = new
+                {
+                    value = state.Handup,
                 }
             };
 
