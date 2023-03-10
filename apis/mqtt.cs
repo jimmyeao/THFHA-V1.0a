@@ -249,7 +249,7 @@ namespace THFHA_V1._0.apis
 
             //teamslient, teams status, teams activity, teams camera
 
-            List<String> Sensors = new List<string>() { "client", "status", "activity", "camera", "microphone" };
+            List<String> Sensors = new List<string>() { "client", "status", "activity", "camera", "microphone", "blurred", "recording", "handup" };
 
             foreach (var sensor in Sensors)
             {
@@ -257,6 +257,9 @@ namespace THFHA_V1._0.apis
                 var activityicon = "";
                 var camicon = "";
                 var micicon = "";
+                var blurredicon = "";
+                var recordicon = "";
+                var handicon = "";
 
                 switch (state.Status)
                 {
@@ -307,7 +310,7 @@ namespace THFHA_V1._0.apis
                         break;
 
                     case "In a meeting":
-                        activityicon = "mdi:acc";
+                        activityicon = "mdi:phone-in-talk-outline";
                         break;
 
                     case "In A Conference Call":
@@ -346,6 +349,30 @@ namespace THFHA_V1._0.apis
                 {
                     micicon = "mdi:microphone";
                 }
+                if (state.Blurred == "Blurred")
+                {
+                    blurredicon = "mdi:blur";
+                }
+                else
+                {
+                    blurredicon = "mdi:blur-off";
+                }
+                if (state.Recording == "On")
+                {
+                    recordicon = "mdi:record-rec";
+                }
+                else
+                {
+                    recordicon = "mdi:record";
+                }
+                if (state.Handup == "Raised")
+                {
+                    handicon = "hand-back-left";
+                }
+                else
+                {
+                    handicon = "mdi:hand-back-left-off";
+                }
                 string Sensor = sensor;
                 string SensorName = (settings.Mqtttopic + " " + Sensor).Replace(" ", "_");
                 string ConfigSensorID = SensorName.ToLower().Replace(" ", "_");
@@ -381,6 +408,15 @@ namespace THFHA_V1._0.apis
                     case "microphone":
                         Icon = micicon;
                         break;
+                    case "blurred":
+                        Icon = blurredicon;
+                        break;
+                    case "recording":
+                        Icon = recordicon;
+                        break;
+                    case "handup":
+                        Icon = handicon;
+                        break;  
 
                     default:
                         Icon = "mdi:eye";
@@ -430,6 +466,9 @@ namespace THFHA_V1._0.apis
             var activityicon = "";
             var camicon = "";
             var micicon = "";
+            var blurredicon = "";
+            var recordicon = "";
+            var handicon = "";
 
             var statusIcon = GetStatusIcon(state.Status);
             var activityIcon = GetActivityIcon(state.Activity);
@@ -449,6 +488,30 @@ namespace THFHA_V1._0.apis
             else
             {
                 micicon = "mdi:microphone-off";
+            }
+            if (state.Blurred == "Blurred")
+            {
+                blurredicon = "mdi:blur";
+            }
+            else
+            {
+                blurredicon = "mdi:blur-off";
+            }
+            if (state.Recording == "On")
+            {
+                recordicon = "mdi:record-rec";
+            }
+            else
+            {
+                recordicon = "mdi:record";
+            }
+            if (state.Handup == "Raised")
+            {
+                handicon = "hand-back-left";
+            }
+            else
+            {
+                handicon = "mdi:hand-back-left-off";
             }
             string StateTopicID = settings.Mqtttopic.ToLower().Replace(" ", "_") + "_teams_monitor";
             string StateTopic = "homeassistant/sensor/" + StateTopicID + "/state";

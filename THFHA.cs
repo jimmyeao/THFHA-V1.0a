@@ -651,8 +651,6 @@ namespace THFHA_V1._0
             UpdateStatusIcons(State.Instance.Status);
         }
 
-
-
         private void UpdateLabel(Label label, string text)
         {
             if (!label.IsHandleCreated || label.Disposing || label.IsDisposed)
