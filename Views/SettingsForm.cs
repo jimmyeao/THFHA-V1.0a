@@ -40,7 +40,7 @@ namespace THFHA_V1._0.Views
         private void SettingsForm_Settings_SettingChanged(object sender, SettingChangedEventArgs e)
         {
             // Update the module status based on the changed setting
-            HueModule hueModule = modules.Find(module => module.Name == "hue") as HueModule;
+            HueModule hueModule = modules.Find(module => module.Name == "Hue") as HueModule;
             if (hueModule != null && e.SettingName == nameof(Settings.UseHue))
             {
                 hueModule.IsEnabled = settings.UseHue;
