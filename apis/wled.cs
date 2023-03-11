@@ -15,9 +15,9 @@ namespace THFHA_V1._0.apis
         private readonly SemaphoreSlim _colorLock;
         private readonly HttpClient _httpClient = new HttpClient();
         private readonly object _lockObject = new object();
-        private dynamic? _currentState;
+        private dynamic _currentState = new ExpandoObject();
         private bool _enabled = false;
-        private dynamic? _originalState;
+        private dynamic _originalState = new ExpandoObject();
         private bool isEnabled = false;
         private string name = "Wled";
         private Settings settings;
@@ -126,15 +126,12 @@ namespace THFHA_V1._0.apis
         {
             if (_currentState == null)
             {
-                Log.Information("Saving state of WLED light {wledDev}", settings.SelectedWled.ToString);
-
                 try
                 {
                     var response = await _httpClient.GetAsync($"http://{settings.SelectedWled.Ip}/json/state");
+                    response.EnsureSuccessStatusCode();
                     var json = await response.Content.ReadAsStringAsync();
-
                     Log.Information("Current state of WLED light {wledDev}: {state}", settings.WledDev.ToString(), json);
-
                     _currentState = JsonConvert.DeserializeObject<dynamic>(json);
 
                     if (_currentState == null)
@@ -151,9 +148,17 @@ namespace THFHA_V1._0.apis
 
                     return _currentState;
                 }
+                catch (HttpRequestException e)
+                {
+                    Log.Error("Error connecting to {WLEDDev}: {Message}", settings.WledDev.ToString(), e.Message);
+                }
+                catch (System.Text.Json.JsonException e)
+                {
+                    Log.Error("Error deserializing JSON response: {Message}", e.Message);
+                }
                 catch (Exception ex)
                 {
-                    Log.Error("Error Connecting to WLED light {name} with exception {ex}", settings.WledDev, ex.Message);
+                    Log.Error("Error getting current state: {Message}", ex.Message);
                 }
             }
 
@@ -178,30 +183,25 @@ namespace THFHA_V1._0.apis
 
         public async Task RestoreState(string ip, dynamic originalState)
         {
-            lock (_lockObject)
+            try
             {
-                if (_currentState == null)
-                {
-                    Log.Warning("Unable to restore state: original state data is missing");
-                    return;
-                }
-
-                var json = JsonConvert.SerializeObject(_currentState);
+                var json = JsonConvert.SerializeObject(originalState);
                 Log.Information("Restoring state of WLED light {wledDev}: {state}", settings.WledDev.ToString(), json);
                 var data = new StringContent(json, Encoding.UTF8, "application/json");
 
-                try
-                {
-                    using var client = new HttpClient();
-                    var response = client.PutAsync($"http://{settings.SelectedWled.Ip}/json/state", data).GetAwaiter().GetResult();
-                    response.EnsureSuccessStatusCode();
-                    Log.Information($"{response.StatusCode}");
-                    _enabled = false;
-                }
-                catch (Exception ex)
-                {
-                    Log.Error("Error Connecting to WLED light {name} with exception {ex}", settings.WledDev, ex.Message);
-                }
+                using var client = new HttpClient();
+                var response = await client.PutAsync($"http://{ip}/json/state", data);
+                response.EnsureSuccessStatusCode();
+                Log.Information($"{response.StatusCode}");
+                _enabled = false;
+            }
+            catch (HttpRequestException e)
+            {
+                Log.Error("Error connecting to {WLEDDev}: {Message}", settings.WledDev.ToString(), e.Message);
+            }
+            catch (Exception ex)
+            {
+                Log.Error("Error restoring state: {Message}", ex.Message);
             }
         }
 
