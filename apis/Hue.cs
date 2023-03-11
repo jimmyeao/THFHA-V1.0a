@@ -114,12 +114,13 @@ namespace THFHA_V1._0.apis
         public void OnFormClosing()
         {
             // Handle the form closing event here
-            var isMonitoring = false;
-            Log.Debug("Stop monitoring requested");
             if (IsEnabled)
             {
                 OnStopMonitoringRequested();
             }
+            var isMonitoring = false;
+            Log.Debug("Stop monitoring requested");
+
         }
 
         public void Start()
@@ -198,13 +199,14 @@ namespace THFHA_V1._0.apis
 
         private Q42.HueApi.State? LoadOriginalState()
         {
-            if (File.Exists("originalState.json"))
+            string appDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            string folderPath = Path.Combine(appDataFolder, "TeamsHelper");
+            string filePath = Path.Combine(folderPath, "huesettings.json");
+            if (File.Exists(filePath))
             {
                 try
                 {
-                    string appDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-                    string folderPath = Path.Combine(appDataFolder, "TeamsHelper");
-                    string filePath = Path.Combine(folderPath, "huesettings.json");
+
                     var json = File.ReadAllText(filePath);
                     var state = JsonConvert.DeserializeObject<Q42.HueApi.State>(json);
                     Log.Information("Original state loaded from file.");
