@@ -124,7 +124,7 @@ namespace THFHA_V1._0.apis
 
         public async Task<dynamic> GetCurrentState(string ip)
         {
-            if (_currentState == null)
+            if (staterecorded == false)
             {
                 try
                 {
@@ -256,7 +256,10 @@ namespace THFHA_V1._0.apis
 
         private void LoadState()
         {
-            string filePath = Path.Combine(Environment.CurrentDirectory, "originalstate.json");
+            string appDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            string folderPath = Path.Combine(appDataFolder, "TeamsHelper");
+            string filePath = Path.Combine(folderPath, "wledstate.json");
+
 
             if (File.Exists(filePath))
             {
@@ -348,7 +351,14 @@ namespace THFHA_V1._0.apis
 
         private void SaveState()
         {
-            string filePath = Path.Combine(Environment.CurrentDirectory, "originalstate.json");
+            // Get the path to the local user data folder
+            string appDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            string folderPath = Path.Combine(appDataFolder, "TeamsHelper");
+            string filePath = Path.Combine(folderPath, "wledstate.json");
+
+            // Create the folder if it doesn't exist
+            Directory.CreateDirectory(folderPath);
+
             string json = JsonConvert.SerializeObject(_currentState);
             File.WriteAllText(filePath, json);
         }

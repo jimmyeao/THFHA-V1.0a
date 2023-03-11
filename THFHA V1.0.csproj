@@ -23,6 +23,10 @@ Please visit our github page for more details and instructions.</Description>
     <NoWin32Manifest>true</NoWin32Manifest>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <Optimize>False</Optimize>
+  </PropertyGroup>
+
   <ItemGroup>
     <AdditionalFiles Remove="Properties\app.manifest" />
   </ItemGroup>
