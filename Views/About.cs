@@ -3,8 +3,10 @@ using System.Reflection;
 
 namespace THFHA_V1._0.Views
 {
-    partial class About : Form
+    internal partial class About : Form
     {
+        #region Public Constructors
+
         public About()
         {
             InitializeComponent();
@@ -15,33 +17,35 @@ namespace THFHA_V1._0.Views
 
             this.labelCompanyName.Text = AssemblyCompany;
             this.textBoxDescription.Text = AssemblyDescription;
-
         }
+
+        #endregion Public Constructors
 
         #region Assembly Attribute Accessors
 
-        public string AssemblyTitle
+        public string AssemblyCompany
         {
             get
             {
-                object[] attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyTitleAttribute), false);
-                if (attributes.Length > 0)
+                object[] attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyCompanyAttribute), false);
+                if (attributes.Length == 0)
                 {
-                    AssemblyTitleAttribute titleAttribute = (AssemblyTitleAttribute)attributes[0];
-                    if (titleAttribute.Title != "")
-                    {
-                        return titleAttribute.Title;
-                    }
+                    return "";
                 }
-                return System.IO.Path.GetFileNameWithoutExtension(Assembly.GetExecutingAssembly().CodeBase);
+                return ((AssemblyCompanyAttribute)attributes[0]).Company;
             }
         }
 
-        public string AssemblyVersion
+        public string AssemblyCopyright
         {
             get
             {
-                return Assembly.GetExecutingAssembly().GetName().Version.ToString();
+                object[] attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyCopyrightAttribute), false);
+                if (attributes.Length == 0)
+                {
+                    return "";
+                }
+                return ((AssemblyCopyrightAttribute)attributes[0]).Copyright;
             }
         }
 
@@ -71,37 +75,34 @@ namespace THFHA_V1._0.Views
             }
         }
 
-        public string AssemblyCopyright
+        public string AssemblyTitle
         {
             get
             {
-                object[] attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyCopyrightAttribute), false);
-                if (attributes.Length == 0)
+                object[] attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyTitleAttribute), false);
+                if (attributes.Length > 0)
                 {
-                    return "";
+                    AssemblyTitleAttribute titleAttribute = (AssemblyTitleAttribute)attributes[0];
+                    if (titleAttribute.Title != "")
+                    {
+                        return titleAttribute.Title;
+                    }
                 }
-                return ((AssemblyCopyrightAttribute)attributes[0]).Copyright;
+                return System.IO.Path.GetFileNameWithoutExtension(Assembly.GetExecutingAssembly().CodeBase);
             }
         }
 
-        public string AssemblyCompany
+        public string AssemblyVersion
         {
             get
             {
-                object[] attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyCompanyAttribute), false);
-                if (attributes.Length == 0)
-                {
-                    return "";
-                }
-                return ((AssemblyCompanyAttribute)attributes[0]).Company;
+                return Assembly.GetExecutingAssembly().GetName().Version.ToString();
             }
         }
-        #endregion
 
-        private void okButton_Click(object sender, EventArgs e)
-        {
-            this.Close();
-        }
+        #endregion Assembly Attribute Accessors
+
+        #region Private Methods
 
         private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
@@ -121,5 +122,12 @@ namespace THFHA_V1._0.Views
                 }
             }
         }
+
+        private void okButton_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+
+        #endregion Private Methods
     }
 }

@@ -11,13 +11,13 @@ namespace THFHA_V1._0.Views
     {
         private Settings settings;
         private static HttpClient? httpClient;
+
         public Homeassistantsettings()
         {
             InitializeComponent();
             settings = Settings.Instance;
             richTextBox1.Text = settings.Hatoken;
             tb_haurl.Text = settings.Haurl;
-
         }
 
         private void richTextBox1_KeyDown(object sender, KeyEventArgs e)
@@ -46,9 +46,9 @@ namespace THFHA_V1._0.Views
         {
             await CheckHa();
         }
+
         private async void GetHAConfig()
         {
-
             var wsURL = settings.Haurl;
             if (wsURL.StartsWith("https"))
             {
@@ -69,7 +69,6 @@ namespace THFHA_V1._0.Views
             {
                 Log.Error(ex, "Error connecting to Home Assistant");
             }
-
 
             var receiveBuffer = new ArraySegment<byte>(new byte[1024]);
             while (client.State == WebSocketState.Open)
@@ -94,6 +93,7 @@ namespace THFHA_V1._0.Views
             }
             client.Dispose();
         }
+
         private async Task CheckHa()
         {
             string message = "";
@@ -140,7 +140,6 @@ namespace THFHA_V1._0.Views
                     // Rethrow any other exception.
                     else
                     {
-
                         httpClient.Dispose();
                         throw ex;
                     }
@@ -180,7 +179,6 @@ namespace THFHA_V1._0.Views
         {
             // chek settings are still valid
             await CheckHa();
-
         }
     }
 }

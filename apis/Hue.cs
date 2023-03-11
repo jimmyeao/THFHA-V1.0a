@@ -43,13 +43,13 @@ namespace THFHA_V1._0.apis
             ILocalHueClient localClient = new LocalHueClient(settings.Hueip);
             localClient.Initialize(settings.Hueusername);
             client = localClient;
-            stateInstance = new State(); // Initialize stateInstance here
-            stateInstance.StateChanged += OnStateChanged;
+            // Initialize stateInstance here
         }
 
         public HueModule(State state) : this()
         {
             stateInstance = state;
+            stateInstance.StateChanged += OnStateChanged;
             //stateInstance.StateChanged += OnStateChanged;
             // Initialize your module here
         }
@@ -114,12 +114,13 @@ namespace THFHA_V1._0.apis
         public void OnFormClosing()
         {
             // Handle the form closing event here
-            var isMonitoring = false;
-            Log.Debug("Stop monitoring requested");
             if (IsEnabled)
             {
                 OnStopMonitoringRequested();
             }
+            var isMonitoring = false;
+            Log.Debug("Stop monitoring requested");
+
         }
 
         public void Start()
@@ -144,13 +145,13 @@ namespace THFHA_V1._0.apis
 
         private RGBColor GetRGBColorForState(State state)
         {
-            return state.Status switch
+            return stateInstance.Status switch
             {
                 "Busy" => new RGBColor("ff0000"),
                 "On the Phone" => new RGBColor("ff0000"),
                 "Do not disturb" => new RGBColor("ff0000"),
-                "Away" => new RGBColor("ffff00"),
-                "Be right back" => new RGBColor("ffff00"),
+                "Away" => new RGBColor("dc8f34"),
+                "Be right back" => new RGBColor("dc8f34"),
                 "Available" => new RGBColor("00ff00"),
                 "Offline" => new RGBColor("000000"),
                 "In a meeting" => new RGBColor("ff0000"),
@@ -158,7 +159,7 @@ namespace THFHA_V1._0.apis
                 "Be Right Back" => new RGBColor("ffff00"),
                 ".." => new RGBColor("000000"),
                 "" => new RGBColor("000000"),
-                _ => throw new ArgumentException($"Invalid state: {state.Status}")
+                _ => throw new ArgumentException($"Invalid state: {stateInstance.Status}")
             };
         }
 
@@ -181,8 +182,15 @@ namespace THFHA_V1._0.apis
                     originalState = light.State;
 
                     // Save the original state to a file
+                    // Get the path to the local user data folder
+                    string appDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+                    string folderPath = Path.Combine(appDataFolder, "TeamsHelper");
+                    string filePath = Path.Combine(folderPath, "huesettings.json");
+
+                    // Create the folder if it doesn't exist
+                    Directory.CreateDirectory(folderPath);
                     var json = JsonConvert.SerializeObject(originalState);
-                    File.WriteAllText("originalState.json", json);
+                    File.WriteAllText(filePath, json);
                     Log.Information("Original state saved to file.");
                     staterecorded = true;
                 }
@@ -191,11 +199,15 @@ namespace THFHA_V1._0.apis
 
         private Q42.HueApi.State? LoadOriginalState()
         {
-            if (File.Exists("originalState.json"))
+            string appDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            string folderPath = Path.Combine(appDataFolder, "TeamsHelper");
+            string filePath = Path.Combine(folderPath, "huesettings.json");
+            if (File.Exists(filePath))
             {
                 try
                 {
-                    var json = File.ReadAllText("originalState.json");
+
+                    var json = File.ReadAllText(filePath);
                     var state = JsonConvert.DeserializeObject<Q42.HueApi.State>(json);
                     Log.Information("Original state loaded from file.");
                     return state;
@@ -239,7 +251,8 @@ namespace THFHA_V1._0.apis
                     On = originalState.On,
                     Brightness = originalState.Brightness,
                     Hue = originalState.Hue,
-                    Saturation = originalState.Saturation
+                    Saturation = originalState.Saturation,
+                    ColorCoordinates = originalState.ColorCoordinates
                 };
                 try
                 {
@@ -264,7 +277,7 @@ namespace THFHA_V1._0.apis
                 var command = new LightCommand { On = true }.SetColor(color);
                 await client.SendCommandAsync(command, new List<string> { settings.SelectedLightId });
 
-                Log.Information("Hue Light set to {status}", state.Status);
+                Log.Information("Hue Light set to {status}", stateInstance.Status);
             }
         }
 

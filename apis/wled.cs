@@ -5,7 +5,6 @@ using System.Text;
 using System.Text.Json;
 using THFHA_V1._0.Model;
 using THFHA_V1._0.Views;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace THFHA_V1._0.apis
 {
@@ -16,9 +15,9 @@ namespace THFHA_V1._0.apis
         private readonly SemaphoreSlim _colorLock;
         private readonly HttpClient _httpClient = new HttpClient();
         private readonly object _lockObject = new object();
-        private dynamic? _currentState;
+        private dynamic _currentState = new ExpandoObject();
         private bool _enabled = false;
-        private dynamic? _originalState;
+        private dynamic _originalState = new ExpandoObject();
         private bool isEnabled = false;
         private string name = "Wled";
         private Settings settings;
@@ -125,17 +124,14 @@ namespace THFHA_V1._0.apis
 
         public async Task<dynamic> GetCurrentState(string ip)
         {
-            if (_currentState == null)
+            if (staterecorded == false)
             {
-                Log.Information("Saving state of WLED light {wledDev}", settings.SelectedWled.ToString);
-
                 try
                 {
                     var response = await _httpClient.GetAsync($"http://{settings.SelectedWled.Ip}/json/state");
+                    response.EnsureSuccessStatusCode();
                     var json = await response.Content.ReadAsStringAsync();
-
                     Log.Information("Current state of WLED light {wledDev}: {state}", settings.WledDev.ToString(), json);
-
                     _currentState = JsonConvert.DeserializeObject<dynamic>(json);
 
                     if (_currentState == null)
@@ -152,9 +148,17 @@ namespace THFHA_V1._0.apis
 
                     return _currentState;
                 }
+                catch (HttpRequestException e)
+                {
+                    Log.Error("Error connecting to {WLEDDev}: {Message}", settings.WledDev.ToString(), e.Message);
+                }
+                catch (System.Text.Json.JsonException e)
+                {
+                    Log.Error("Error deserializing JSON response: {Message}", e.Message);
+                }
                 catch (Exception ex)
                 {
-                    Log.Error("Error Connecting to WLED light {name} with exception {ex}", settings.WledDev, ex.Message);
+                    Log.Error("Error getting current state: {Message}", ex.Message);
                 }
             }
 
@@ -168,6 +172,7 @@ namespace THFHA_V1._0.apis
 
         public void OnFormClosing()
         {
+            RestoreState();
             // Handle the form closing event here
             var isMonitoring = false;
             Log.Debug("Stop monitoring requested");
@@ -177,32 +182,28 @@ namespace THFHA_V1._0.apis
             }
         }
 
-        public async Task RestoreState(string ip, dynamic originalState)
+        public async Task RestoreState()
         {
-            lock (_lockObject)
+            try
             {
-                if (_currentState == null)
-                {
-                    Log.Warning("Unable to restore state: original state data is missing");
-                    return;
-                }
-
-                var json = JsonConvert.SerializeObject(_currentState);
+                LoadState();
+                var json = JsonConvert.SerializeObject(_originalState);
                 Log.Information("Restoring state of WLED light {wledDev}: {state}", settings.WledDev.ToString(), json);
                 var data = new StringContent(json, Encoding.UTF8, "application/json");
 
-                try
-                {
-                    using var client = new HttpClient();
-                    var response = client.PutAsync($"http://{settings.SelectedWled.Ip}/json/state", data).GetAwaiter().GetResult();
-                    response.EnsureSuccessStatusCode();
-                    Log.Information($"{response.StatusCode}");
-                    _enabled = false;
-                }
-                catch (Exception ex)
-                {
-                    Log.Error("Error Connecting to WLED light {name} with exception {ex}", settings.WledDev, ex.Message);
-                }
+                using var client = new HttpClient();
+                var response = await client.PutAsync($"http://{settings.SelectedWled.Ip}/json/state", data);
+                response.EnsureSuccessStatusCode();
+                Log.Information($"{response.StatusCode}");
+                _enabled = false;
+            }
+            catch (HttpRequestException e)
+            {
+                Log.Error("Error connecting to {WLEDDev}: {Message}", settings.WledDev.ToString(), e.Message);
+            }
+            catch (Exception ex)
+            {
+                Log.Error("Error restoring state: {Message}", ex.Message);
             }
         }
 
@@ -257,7 +258,10 @@ namespace THFHA_V1._0.apis
 
         private void LoadState()
         {
-            string filePath = Path.Combine(Environment.CurrentDirectory, "originalstate.json");
+            string appDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            string folderPath = Path.Combine(appDataFolder, "TeamsHelper");
+            string filePath = Path.Combine(folderPath, "wledstate.json");
+
 
             if (File.Exists(filePath))
             {
@@ -288,10 +292,9 @@ namespace THFHA_V1._0.apis
                     //so we need to check the activity as well
                     if (stateInstance.Activity == "On the phone" || stateInstance.Activity == "In a call")
                     {
-                       status = "On the Phone";
+                        status = "On the Phone";
                     }
-                  
-                    
+
                     switch (status)
                     {
                         case "Busy":
@@ -301,6 +304,7 @@ namespace THFHA_V1._0.apis
                         case "On the phone":
                             await ChangeColor("255,0,0");
                             break;
+
                         case "On the Phone":
                             await ChangeColor("255,0,0");
                             break;
@@ -338,7 +342,7 @@ namespace THFHA_V1._0.apis
                     // Stop monitoring here
                     var isMonitoring = false;
                     LoadState();
-                    RestoreState(settings.SelectedWled.Ip, _originalState);
+                    _=RestoreState();
                 }
                 catch (Exception ex)
                 {
@@ -349,7 +353,14 @@ namespace THFHA_V1._0.apis
 
         private void SaveState()
         {
-            string filePath = Path.Combine(Environment.CurrentDirectory, "originalstate.json");
+            // Get the path to the local user data folder
+            string appDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            string folderPath = Path.Combine(appDataFolder, "TeamsHelper");
+            string filePath = Path.Combine(folderPath, "wledstate.json");
+
+            // Create the folder if it doesn't exist
+            Directory.CreateDirectory(folderPath);
+
             string json = JsonConvert.SerializeObject(_currentState);
             File.WriteAllText(filePath, json);
         }

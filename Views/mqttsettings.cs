@@ -7,7 +7,14 @@ namespace THFHA_V1._0.Views
 {
     public partial class mqttsettings : Form
     {
+        #region Private Fields
+
         private Settings settings;
+
+        #endregion Private Fields
+
+        #region Public Constructors
+
         public mqttsettings()
         {
             InitializeComponent();
@@ -17,6 +24,10 @@ namespace THFHA_V1._0.Views
             tb_mqttpass.Text = settings.Mqttpassword;
             tb_mqtttopic.Text = settings.Mqtttopic;
         }
+
+        #endregion Public Constructors
+
+        #region Private Methods
 
         private async void buttontest_Click(object sender, EventArgs e)
         {
@@ -64,17 +75,9 @@ namespace THFHA_V1._0.Views
             }
         }
 
-
         private void mqttip_TextChanged(object sender, EventArgs e)
         {
-
             settings.Mqttip = tb_mqttip.Text;
-            settings.Save();
-        }
-
-        private void mqttuser_TextChanged(object sender, EventArgs e)
-        {
-            settings.Mqttusername = tb_mqttuser.Text;
             settings.Save();
         }
 
@@ -89,5 +92,13 @@ namespace THFHA_V1._0.Views
             settings.Mqtttopic = tb_mqtttopic.Text;
             settings.Save();
         }
+
+        private void mqttuser_TextChanged(object sender, EventArgs e)
+        {
+            settings.Mqttusername = tb_mqttuser.Text;
+            settings.Save();
+        }
+
+        #endregion Private Methods
     }
 }

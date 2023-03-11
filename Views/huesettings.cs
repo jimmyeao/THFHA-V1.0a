@@ -8,11 +8,16 @@ namespace THFHA_V1._0.Views
 {
     public partial class huesettings : Form
     {
+        #region Private Fields
+
         private Settings settings;
+
+        #endregion Private Fields
+
+        #region Public Constructors
 
         public huesettings()
         {
-
             InitializeComponent();
 
             settings = Settings.Instance;
@@ -31,10 +36,11 @@ namespace THFHA_V1._0.Views
             }
             // Wire up the SelectedIndexChanged event handler for the list box
             cb_huelights.SelectedIndexChanged += cb_huelights_SelectedIndexChanged;
-
-
         }
 
+        #endregion Public Constructors
+
+        #region Public Methods
 
         public async void LinkHub()
         {
@@ -53,8 +59,6 @@ namespace THFHA_V1._0.Views
                 if (result == DialogResult.OK)
                     try
                     {
-
-
                         if (settings.HueLight != null)
                         {
                             settings.HueLight.Clear();
@@ -109,19 +113,9 @@ namespace THFHA_V1._0.Views
             }
         }
 
-        private void tb_hueip_TextChanged(object sender, EventArgs e)
-        {
-            settings.Hueip = tb_hueip.Text;
-            settings.Save();
+        #endregion Public Methods
 
-        }
-        private void PopulateListBox()
-        {
-            cb_huelights.Items.Clear();
-            cb_huelights.DataSource = settings.HueLight;
-            cb_huelights.DisplayMember = "Name";
-        }
-
+        #region Private Methods
 
         private void btn_link_Click(object sender, EventArgs e)
         {
@@ -165,7 +159,21 @@ namespace THFHA_V1._0.Views
                 settings.UseHue = false;
                 settings.Save();
             }
-
         }
+
+        private void PopulateListBox()
+        {
+            cb_huelights.Items.Clear();
+            cb_huelights.DataSource = settings.HueLight;
+            cb_huelights.DisplayMember = "Name";
+        }
+
+        private void tb_hueip_TextChanged(object sender, EventArgs e)
+        {
+            settings.Hueip = tb_hueip.Text;
+            settings.Save();
+        }
+
+        #endregion Private Methods
     }
 }

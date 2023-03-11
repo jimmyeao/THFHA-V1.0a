@@ -7,17 +7,18 @@ using Zeroconf;
 
 namespace THFHA_V1._0.Views
 {
-
-
-
     public partial class wledsettings : Form
     {
-        private Settings settings;
+        #region Private Fields
+
         private WLED _selectedWled;
-        private bool isDiscovering = false;
-        public event EventHandler<WLED>? DeviceDiscovered;
         private BindingList<WLED> _wledLights = new BindingList<WLED>();
-        public List<WLED> WledLights { get { return _wledLights.OfType<WLED>().ToList(); } }
+        private bool isDiscovering = false;
+        private Settings settings;
+
+        #endregion Private Fields
+
+        #region Public Constructors
 
         public wledsettings()
         {
@@ -50,8 +51,24 @@ namespace THFHA_V1._0.Views
                     }
                 }
             }
-
         }
+
+        #endregion Public Constructors
+
+        #region Public Events
+
+        public event EventHandler<WLED>? DeviceDiscovered;
+
+        #endregion Public Events
+
+        #region Public Properties
+
+        public List<WLED> WledLights
+        { get { return _wledLights.OfType<WLED>().ToList(); } }
+
+        #endregion Public Properties
+
+        #region Private Methods
 
         private async void btn_discover_Click(object sender, EventArgs e)
         {
@@ -111,7 +128,8 @@ namespace THFHA_V1._0.Views
                                             _wledLights.Add(wled);
                                             _wledLights = new BindingList<WLED>(_wledLights.OrderBy(wled => wled.Name).Distinct().ToList());
 
-                                            // Update the DataSource property of the listbox control to reflect the changes in the _wledLights list.
+                                            // Update the DataSource property of the listbox control
+                                            // to reflect the changes in the _wledLights list.
                                             listbox_wledlights.DataSource = null;
                                             listbox_wledlights.DataSource = _wledLights;
                                             listbox_wledlights.DisplayMember = "Name";
@@ -145,7 +163,6 @@ namespace THFHA_V1._0.Views
                     settings.WledDevices = WledLights;
                     settings.IsWledModuleSettingsValid = true;
                     settings.Save();
-
                 }
                 catch (Exception ex)
                 {
@@ -163,6 +180,12 @@ namespace THFHA_V1._0.Views
             }
         }
 
+        private void btn_stop_Click(object sender, EventArgs e)
+        {
+            isDiscovering = false;
+            toolStripStatusLabel1.Text = "Stopped Discovering Lights";
+        }
+
         private void listbox_wledlights_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (listbox_wledlights.SelectedItem is WLED selectedWled)
@@ -174,10 +197,6 @@ namespace THFHA_V1._0.Views
             settings.Save();
         }
 
-        private void btn_stop_Click(object sender, EventArgs e)
-        {
-            isDiscovering = false;
-            toolStripStatusLabel1.Text = "Stopped Discovering Lights";
-        }
+        #endregion Private Methods
     }
 }
