@@ -181,8 +181,15 @@ namespace THFHA_V1._0.apis
                     originalState = light.State;
 
                     // Save the original state to a file
+                    // Get the path to the local user data folder
+                    string appDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+                    string folderPath = Path.Combine(appDataFolder, "TeamsHelper");
+                    string filePath = Path.Combine(folderPath, "huesettings.json");
+
+                    // Create the folder if it doesn't exist
+                    Directory.CreateDirectory(folderPath);
                     var json = JsonConvert.SerializeObject(originalState);
-                    File.WriteAllText("originalState.json", json);
+                    File.WriteAllText(filePath, json);
                     Log.Information("Original state saved to file.");
                     staterecorded = true;
                 }
@@ -195,7 +202,10 @@ namespace THFHA_V1._0.apis
             {
                 try
                 {
-                    var json = File.ReadAllText("originalState.json");
+                    string appDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+                    string folderPath = Path.Combine(appDataFolder, "TeamsHelper");
+                    string filePath = Path.Combine(folderPath, "huesettings.json");
+                    var json = File.ReadAllText(filePath);
                     var state = JsonConvert.DeserializeObject<Q42.HueApi.State>(json);
                     Log.Information("Original state loaded from file.");
                     return state;
