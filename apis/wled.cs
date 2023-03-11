@@ -172,6 +172,7 @@ namespace THFHA_V1._0.apis
 
         public void OnFormClosing()
         {
+            RestoreState();
             // Handle the form closing event here
             var isMonitoring = false;
             Log.Debug("Stop monitoring requested");
@@ -181,16 +182,17 @@ namespace THFHA_V1._0.apis
             }
         }
 
-        public async Task RestoreState(string ip, dynamic originalState)
+        public async Task RestoreState()
         {
             try
             {
-                var json = JsonConvert.SerializeObject(originalState);
+                LoadState();
+                var json = JsonConvert.SerializeObject(_originalState);
                 Log.Information("Restoring state of WLED light {wledDev}: {state}", settings.WledDev.ToString(), json);
                 var data = new StringContent(json, Encoding.UTF8, "application/json");
 
                 using var client = new HttpClient();
-                var response = await client.PutAsync($"http://{ip}/json/state", data);
+                var response = await client.PutAsync($"http://{settings.SelectedWled.Ip}/json/state", data);
                 response.EnsureSuccessStatusCode();
                 Log.Information($"{response.StatusCode}");
                 _enabled = false;
@@ -340,7 +342,7 @@ namespace THFHA_V1._0.apis
                     // Stop monitoring here
                     var isMonitoring = false;
                     LoadState();
-                    RestoreState(settings.SelectedWled.Ip, _originalState);
+                    _=RestoreState();
                 }
                 catch (Exception ex)
                 {
