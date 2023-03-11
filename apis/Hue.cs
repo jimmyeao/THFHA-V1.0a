@@ -251,7 +251,8 @@ namespace THFHA_V1._0.apis
                     On = originalState.On,
                     Brightness = originalState.Brightness,
                     Hue = originalState.Hue,
-                    Saturation = originalState.Saturation
+                    Saturation = originalState.Saturation,
+                    ColorCoordinates = originalState.ColorCoordinates
                 };
                 try
                 {
