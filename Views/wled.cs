@@ -2,8 +2,12 @@
 {
     public class WLED
     {
-        public string? Name { get; set; }
+        #region Public Properties
+
         public string? Ip { get; set; }
+        public string? Name { get; set; }
         public int Port { get; set; }
+
+        #endregion Public Properties
     }
 }

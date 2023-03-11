@@ -1,6 +1,7 @@
 ﻿using Serilog;
 using System.Diagnostics;
 using THFHA_V1._0.Model;
+using THFHA_V1._0.TeamsAPI;
 using THFHA_V1._0.Views;
 
 namespace THFHA_V1._0
@@ -15,7 +16,14 @@ namespace THFHA_V1._0
 
         #region Private Fields
 
+        private readonly Dictionary<string, object> _meetingState;
+        private WebSocketClient _webSocketClient;
         private List<IModule> modules;
+        private ContextMenuStrip notifyContextMenuStrip = new();
+        private ToolStripMenuItem notifyMenuActivity = new();
+        private ToolStripMenuItem notifyMenuExit = new();
+        private ToolStripMenuItem notifyMenuShow = new();
+        private ToolStripMenuItem notifyMenuStatus = new();
         private Settings settings;
         private State state;
 
@@ -37,8 +45,8 @@ namespace THFHA_V1._0
             string _appDir = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
             string _logPath = _appDir + @"\Microsoft\Teams\";
             string _logFile = _logPath + "logs.txt";
-
-            state.StateChanged += OnStateChanged;
+            this.Resize += new EventHandler(Form1_Resize);
+            State.Instance.StateChanged += OnStateChanged;
             Log.Debug("State.StateChanged event subscribed");
 
             PopulateModulesList();
@@ -47,6 +55,12 @@ namespace THFHA_V1._0
                 Settings.SettingChanged += Settings_SettingChanged; // Subscribe to the SettingChanged event
 
                 StartLogWatcher();
+                if (settings.TeamsApi != "")
+                {
+                    _webSocketClient = new WebSocketClient(new Uri("ws://localhost:8124?token=" + settings.TeamsApi + "&protocol-version=1.0.0&manufacturer=Jimmyeao&device=THFHA&app=THFHA&app-version=1.0"), state);
+
+                    // _webSocketClient.MessageReceived += WebSocketClient_MessageReceived;
+                }
                 btn_start.Enabled = false; btn_stop.Enabled = true;
             }
             else
@@ -55,7 +69,16 @@ namespace THFHA_V1._0
                 foreach (IModule module in modules)
                 {
                     //module.OnFormClosing();
+
+                    //this does nothing. yet.
                 }
+            }
+            DisplayNotifyIcon();
+
+            if (settings.RunMinimised)
+            {
+                WindowState = FormWindowState.Minimized;
+                ShowInTaskbar = false;
             }
         }
 
@@ -119,7 +142,7 @@ namespace THFHA_V1._0
 
         public void UpdateActivityIcons(string activity)
         {
-            var icon = GetActivityIcon(state.Activity);
+            var icon = GetActivityIcon(State.Instance.Activity);
             UpdateActivityIcon(icon);
             //UpdateNotifyMenuActivity(icon);
         }
@@ -132,13 +155,13 @@ namespace THFHA_V1._0
                 {
                     switch (micstatus)
                     {
-                        case ("Mute On"):
+                        case ("On"):
                             pb_mute.BackgroundImage = Resource1.mute;
                             //toolTip3.SetToolTip(pb_mute, "Mute On");
                             pb_mute.Refresh();
                             break;
 
-                        case ("Mute Off"):
+                        case ("Off"):
                             pb_mute.BackgroundImage = Resource1.mic_icon;
                             //toolTip3.SetToolTip(pb_mute, "Mute Off");
                             pb_mute.Refresh();
@@ -150,13 +173,13 @@ namespace THFHA_V1._0
             {
                 switch (micstatus)
                 {
-                    case ("Mute ON"):
+                    case ("On"):
                         pb_mute.BackgroundImage = Resource1.mute;
                         //toolTip3.SetToolTip(pb_mute, "Mute On");
                         pb_mute.Refresh();
                         break;
 
-                    case ("Mute Off"):
+                    case ("Off"):
                         pb_mute.BackgroundImage = Resource1.mic_icon;
                         //toolTip3.SetToolTip(pb_mute, "Mute Off");
                         pb_mute.Refresh();
@@ -192,17 +215,24 @@ namespace THFHA_V1._0
 
         private void btn_start_Click(object sender, EventArgs e)
         {
+            // Initialize the state and settings objects Initialize the state and settings objects
+            State state = new State();
+
             Settings.SettingChanged += Settings_SettingChanged; // Subscribe to the SettingChanged event
 
             btn_start.Enabled = false; btn_stop.Enabled = true;
-
+            if (settings.TeamsApi != "")
+            {
+                _webSocketClient = new WebSocketClient(new Uri("ws://localhost:8124?token=" + settings.TeamsApi + "&protocol-version=1.0.0&manufacturer=Jimmyeao&device=THFHA&app=THFHA&app-version=1.0"), state);
+            }
             _ = StartLogWatcher();
         }
 
         private void btn_stop_Click(object sender, EventArgs e)
         {
             Settings.SettingChanged -= Settings_SettingChanged; // Subscribe to the SettingChanged event
-
+            _ = _webSocketClient.StopAsync();
+            btn_start.Enabled = true; btn_stop.Enabled = false;
             btn_start.Enabled = true; btn_stop.Enabled = false;
             _ = StopLogWatcher();
         }
@@ -245,6 +275,29 @@ namespace THFHA_V1._0
                 PopulateModulesList(); // Refresh the list to update the module status
                 settings.Save();
             }
+        }
+
+        private void DisplayNotifyIcon()
+        {
+            notifyIcon1.ContextMenuStrip = notifyContextMenuStrip;
+            notifyMenuShow.Text = "TMFHA";
+            notifyMenuShow.Image = Resource1.download;
+            notifyMenuShow.Click += new EventHandler(notifyIcon1_ShowClick);
+            notifyMenuStatus.Text = State.Instance.Status;
+            notifyMenuStatus.Image = Resource1.outofoffice;
+            notifyMenuActivity.Text = State.Instance.Activity;
+            notifyMenuActivity.Image = Resource1.outofoffice;
+            notifyMenuExit.Text = "Exit";
+            notifyMenuExit.Click += new EventHandler(notifyIcon1_ExitClick);
+
+            notifyContextMenuStrip.Items.AddRange(new ToolStripMenuItem[] { notifyMenuShow, notifyMenuStatus, notifyMenuActivity, notifyMenuExit });
+
+            notifyIcon1.Visible = true;
+            //Updateactivityicons(State.Instance.Activity);
+            //Updatestatusicons(State.Instance.Status);
+
+            //notifyIcon1.BalloonTipText = "Waiting...";
+            //notifyIcon1.ShowBalloonTip(1000);
         }
 
         private void enableModuleToolStripMenuItem_Click(object sender, EventArgs e)
@@ -294,6 +347,14 @@ namespace THFHA_V1._0
                 PopulateModulesList(); // Refresh the list to update the module status
                 settings.Save();
             }
+        }
+
+        private void Form1_Resize(object? sender, EventArgs e)
+        {
+            //if the form is minimized
+            //hide it from the task bar
+            //and show the system tray icon (represented by the NotifyIcon control)
+            if (this.WindowState == FormWindowState.Minimized) this.ShowInTaskbar = false;
         }
 
         private Bitmap GetActivityIcon(string activity)
@@ -407,12 +468,34 @@ namespace THFHA_V1._0
             }
         }
 
+        private void notifyIcon_Restore()
+        {
+            Show();
+            this.WindowState = FormWindowState.Normal;
+            this.ShowInTaskbar = true;
+        }
+
+        private void notifyIcon1_ExitClick(object? sender, EventArgs e)
+        {
+            Application.Exit();
+        }
+
+        private void notifyIcon1_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            notifyIcon_Restore();
+        }
+
+        private void notifyIcon1_ShowClick(object? sender, EventArgs e)
+        {
+            notifyIcon_Restore();
+        }
+
         private void OnStateChanged(object sender, EventArgs e)
         {
             // Get the updated state values
             Log.Debug("OnStateChange Trigerred!!!!!!!!!!!");
-            UpdateAll();
-            
+            BeginInvoke((MethodInvoker)delegate { UpdateAll(); });
+
             // var icon = UpdateStatusIcon(state.Status); UpdateStatusIcons(icon); _ =
             // UpdateMuteIcon(); _ = UpdateActivityIcon(state.Activity);
         }
@@ -485,16 +568,6 @@ namespace THFHA_V1._0
                     module.Start();
                 }
             }
-        }
-        private async Task UpdateAll()
-        {
-            UpdateLabel(lbl_status, state.Status);
-            UpdateLabel(lbl_activity, state.Activity);
-            UpdateLabel(lbl_camera, state.Camera);
-            UpdateLabel(lbl_mute, state.Microphone);
-            UpdateStatusIcons(state.Status);
-            UpdateActivityIcons(state.Activity);
-            UpdateMuteStatus(state.Microphone);
         }
 
         private async Task StopLogWatcher()
@@ -572,6 +645,63 @@ namespace THFHA_V1._0
             {
                 SetActivityIcon(icon);
             }
+            UpdateNotifyMenuActivity(icon);
+        }
+
+        private async Task UpdateAll()
+        {
+            if (lbl_status.Text != State.Instance.Status)
+            {
+                UpdateLabel(lbl_status, State.Instance.Status);
+            }
+
+            if (lbl_activity.Text != State.Instance.Activity)
+            {
+                UpdateLabel(lbl_activity, State.Instance.Activity);
+                UpdateActivityIcons(State.Instance.Activity);
+            }
+
+            if (lbl_camera.Text != State.Instance.Camera)
+            {
+                UpdateLabel(lbl_camera, State.Instance.Camera);
+            }
+
+            if (lbl_mute.Text != State.Instance.Microphone)
+            {
+                UpdateLabel(lbl_mute, State.Instance.Microphone);
+                UpdateMuteStatus(State.Instance.Microphone);
+            }
+
+            if (lbl_blurred.Text != ("Background: " + (string.IsNullOrEmpty(State.Instance.Blurred) ? "Not Configured" : State.Instance.Blurred)))
+            {
+                UpdateLabel(lbl_blurred, "Background: " + (string.IsNullOrEmpty(State.Instance.Blurred) ? "Not Configured" : State.Instance.Blurred));
+            }
+
+            if (lbl_recording.Text != ("Recording: " + (string.IsNullOrEmpty(State.Instance.Recording) ? "Not Configured" : State.Instance.Recording)))
+            {
+                UpdateLabel(lbl_recording, "Recording: " + (string.IsNullOrEmpty(State.Instance.Recording) ? "Not Configured" : State.Instance.Recording));
+            }
+
+            if (lbl_hand.Text != ("Hand: " + (string.IsNullOrEmpty(State.Instance.Handup) ? "Not Configured" : State.Instance.Handup)))
+            {
+                UpdateLabel(lbl_hand, "Hand: " + (string.IsNullOrEmpty(State.Instance.Handup) ? "Not Configured" : State.Instance.Handup));
+            }
+
+            if (lbl_meeting.Text != ("Activity: " + (string.IsNullOrEmpty(State.Instance.Activity) ? "Not Configured" : State.Instance.Activity)))
+            {
+                UpdateLabel(lbl_meeting, "Activity: " + (string.IsNullOrEmpty(State.Instance.Activity) ? "Not Configured" : State.Instance.Activity));
+            }
+
+            if (lbl_cam.Text != ("Camera: " + (string.IsNullOrEmpty(State.Instance.Camera) ? "Not Configured" : State.Instance.Camera)))
+            {
+                UpdateLabel(lbl_cam, "Camera: " + (string.IsNullOrEmpty(State.Instance.Camera) ? "Not Configured" : State.Instance.Camera));
+            }
+
+            if (lbl_muted.Text != ("Mute: " + (string.IsNullOrEmpty(State.Instance.Microphone) ? "Not Configured" : State.Instance.Microphone)))
+            {
+                UpdateLabel(lbl_muted, "Mute: " + (string.IsNullOrEmpty(State.Instance.Microphone) ? "Not Configured" : State.Instance.Microphone));
+            }
+            UpdateStatusIcons(State.Instance.Status);
         }
 
         private void UpdateLabel(Label label, string text)
@@ -582,14 +712,7 @@ namespace THFHA_V1._0
                 return;
             }
 
-            if (label.InvokeRequired)
-            {
-                label.Invoke((MethodInvoker)delegate { UpdateLabel(label, text); });
-            }
-            else
-            {
-                label.Text = text;
-            }
+            label.BeginInvoke((MethodInvoker)delegate { label.Text = text; });
         }
 
         private void updatemodules()
@@ -621,15 +744,29 @@ namespace THFHA_V1._0
             }
         }
 
+        private void UpdateNotifyMenuActivity(Bitmap icon)
+        {
+            if (icon == Resource1.notinacall)
+            {
+                notifyMenuActivity.Image = Resource1.notinacall;
+                notifyMenuActivity.Text = "Not In a Call";
+            }
+            else
+            {
+                notifyMenuActivity.Image = icon;
+                notifyMenuActivity.Text = State.Instance.Activity;
+            }
+        }
+
         private void UpdateNotifyMenuStatus(Bitmap icon)
         {
             if (icon == Resource1.outofoffice)
             {
-                // notifyMenuStatus.Image = Resource1.outofoffice; notifyMenuStatus.Text = "Offline";
+                notifyMenuStatus.Image = Resource1.outofoffice; notifyMenuStatus.Text = "Offline";
             }
             else
             {
-                // notifyMenuStatus.Image = icon; notifyMenuStatus.Text = state.Status;
+                notifyMenuStatus.Image = icon; notifyMenuStatus.Text = State.Instance.Status;
             }
         }
 

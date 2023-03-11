@@ -207,6 +207,21 @@ namespace THFHA_V1._0.apis
             {
                 await Create_Entity("sensor.thfha_microphone");
             }
+            exists = await EntityExists("sensor.thfha_blurred");
+            if (!exists)
+            {
+                await Create_Entity("sensor.thfha_blurred");
+            }
+            exists = await EntityExists("sensor.thfha_hand");
+            if (!exists)
+            {
+                await Create_Entity("sensor.thfha_hand");
+            }
+            exists = await EntityExists("sensor.thfha_recording");
+            if (!exists)
+            {
+                await Create_Entity("sensor.thfha_recording");
+            }
             //lets update the entities
             var statusicon = "";
             var activityicon = "";
@@ -260,7 +275,7 @@ namespace THFHA_V1._0.apis
                     break;
 
                 case "In a meeting":
-                    activityicon = "mdi:acc";
+                    activityicon = "mdi:phone-in-talk-outline";
                     break;
 
                 case "In A Conference Call":
@@ -292,7 +307,13 @@ namespace THFHA_V1._0.apis
 
             await UpdateEntity("sensor.thfha_camera", stateInstance.Camera, "mdi:camera-off");
 
-            if (stateInstance.Microphone == "Mute Off")
+            await UpdateEntity("sensor.thfha_hand", stateInstance.Handup, "mdi:hand-back-left-off");
+
+            await UpdateEntity("sensor.thfha_blurred", stateInstance.Blurred, "mdi:blur");
+
+            await UpdateEntity("sensor.thfha_recording", stateInstance.Recording, "mdi:record");
+
+            if (stateInstance.Microphone == "Off")
             {
                 await UpdateEntity("sensor.thfha_microphone", stateInstance.Microphone, "mdi:microphone");
             }
@@ -424,7 +445,7 @@ namespace THFHA_V1._0.apis
                         break;
 
                     case "In a meeting":
-                        activityicon = "mdi:acc";
+                        activityicon = "mdi:phone-in-talk-outline";
                         break;
 
                     case "In A Conference Call":
@@ -465,13 +486,37 @@ namespace THFHA_V1._0.apis
                     await UpdateEntity("sensor.thfha_camera", stateInstance.Camera, "mdi:camera-off");
                 }
 
-                if (stateInstance.Microphone == "Mute Off")
+                if (stateInstance.Microphone == "Off")
                 {
                     await UpdateEntity("sensor.thfha_microphone", stateInstance.Microphone, "mdi:microphone");
                 }
                 else
                 {
                     await UpdateEntity("sensor.thfha_microphone", stateInstance.Microphone, "mdi:microphone-off");
+                }
+                if (stateInstance.Blurred == "Blurred")
+                {
+                    await UpdateEntity("sensor.thfha_blurred", stateInstance.Blurred, "mdi:blur");
+                }
+                else
+                {
+                    await UpdateEntity("sensor.thfha_blurred", stateInstance.Blurred, "mdi:blur-off");
+                }
+                if (stateInstance.Handup == "Raised")
+                {
+                    await UpdateEntity("sensor.thfha_hand", stateInstance.Handup, "mdi:hand-back-left");
+                }
+                else
+                {
+                    await UpdateEntity("sensor.thfha_hand", stateInstance.Handup, "mdi:hand-back-left-off");
+                }
+                if (stateInstance.Recording == "On")
+                {
+                    await UpdateEntity("sensor.thfha_recording", stateInstance.Recording, "mdi:record-circle");
+                }
+                else
+                {
+                    await UpdateEntity("sensor.thfha_recording", stateInstance.Recording, "mdi:record");
                 }
 
                 oldstattus = stateInstance.Status;
