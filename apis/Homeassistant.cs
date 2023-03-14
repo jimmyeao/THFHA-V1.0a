@@ -344,11 +344,11 @@ namespace THFHA_V1._0.apis
                 isEnabled = false;
                 return;
             }
-            Log.Debug("Response to GET request: {response}", response);
+            //Log.Debug("Response to GET request: {response}", response);
 
             if (response.IsSuccessStatusCode)
             {
-                Log.Information("Updating {entity} in Home assistant to {state}", entityName, stateText);
+                //Log.Information("Updating {entity} in Home assistant to {state}", entityName, stateText);
 
                 var payload = $@"{{
                     ""state"": ""{stateText}"",
@@ -362,7 +362,7 @@ namespace THFHA_V1._0.apis
                 content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
 
                 response = await client.PostAsync($"states/{entityName}", content);
-                Log.Debug("Response to POST request: {response}", response);
+                //Log.Debug("Response to POST request: {response}", response);
             }
             else
             {
