@@ -101,7 +101,7 @@ namespace THFHA_V1._0.apis
                 using var client = new HttpClient();
                 //TODO change below to use the ip instead of the .local name.
                 var response = await client.PutAsync($"http://{settings.SelectedWled.Ip}/json/state", content);
-                Log.Information("Changing state of {WledDev} to {jsonPayload}", settings.WledDev.ToString(), jsonPayload);
+                Log.Information("Changing state of {WledDev} to {jsonPayload}", settings.SelectedWled.Name.ToString(), jsonPayload);
                 if (!response.IsSuccessStatusCode)
                 {
                     var responseContent = await response.Content.ReadAsStringAsync();
@@ -110,7 +110,7 @@ namespace THFHA_V1._0.apis
             }
             catch (HttpRequestException e)
             {
-                Log.Error("Error connecting to {WLEDDev}: {Message}", settings.WledDev.ToString(), e.Message.ToString());
+                Log.Error("Error connecting to {WLEDDev}: {Message}", settings.SelectedWled.Name.ToString(), e.Message.ToString());
             }
             catch (FormatException e)
             {
