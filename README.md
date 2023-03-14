@@ -6,7 +6,7 @@ This project started out as way to get Microsoft Teams status and activity updat
 
 Originally, all updates were parsed from the logs that Teams creates, today we only get status updates from the logs, all other activity comes from the new Teams local API (Thanks Microsoft!)
 
-I am hoping Microsoft add status updates to the local api as well, as constantly readying a log file is not very efficient.
+I am hoping Microsoft add status updates to the local api as well, as constantly reading a log file is not very efficient.
 
 The whole thing is written in C# and is pretty lightweight.
 
