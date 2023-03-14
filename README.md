@@ -1,5 +1,6 @@
 
 ![example workflow](https://github.com/jimmyeao/THFHA-V1.0a/actions/workflows/dotnet.yml/badge.svg)
+[![CodeQL](https://github.com/jimmyeao/THFHA-V1.0a/actions/workflows/codeql.yml/badge.svg)](https://github.com/jimmyeao/THFHA-V1.0a/actions/workflows/codeql.yml)
 # Teams Helper - BETA1!
 
 This project started out as way to get Microsoft Teams status and activity updates into home assistant, it has since grown to provide standalone connection to Philips Hue lights, WLED lights, out [own hatcher project](https://github.com/jimmyeao/Hatch_Companion) and MQTT.
