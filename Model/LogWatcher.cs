@@ -260,7 +260,6 @@ namespace THFHA_V1._0.Model
             }
         }
 
-
         #endregion Private Methods
     }
 }

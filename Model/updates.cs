@@ -1,31 +1,38 @@
-﻿using System;
-using System.Net.Http;
-using System.Threading.Tasks;
-using Newtonsoft.Json.Linq;
-using System.Reflection;
+﻿using Newtonsoft.Json.Linq;
 using Serilog;
-using System.Windows.Forms;
-
+using System.Reflection;
 
 namespace THFHA_V1._0.Model
 {
     public class UpdateChecker
     {
+        #region Private Fields
+
         private static readonly HttpClient httpClient = new HttpClient();
-        private readonly string currentVersion; // Replace with your current app version
+        private readonly string currentVersion;
+
+        #endregion Private Fields
+
+        #region Public Constructors
+
+        // Replace with your current app version
         public UpdateChecker()
         {
             // Get the current version from the assembly
             currentVersion = Assembly.GetExecutingAssembly().GetName().Version.ToString();
         }
+
+        #endregion Public Constructors
+
+        #region Public Methods
+
         public async Task CheckForUpdatesAsync()
         {
             string owner = "jimmyeao";
             string repo = "THFHA-V1.0a";
             string apiUrl = $"https://api.github.com/repos/{owner}/{repo}/releases/latest";
-            
-        
-        httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("AppName");
+
+            httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("AppName");
             HttpResponseMessage response = null;
 
             try
@@ -54,16 +61,20 @@ namespace THFHA_V1._0.Model
                     {
                         // Open the URL in the default browser
                         string url = json["html_url"].ToString();
-                       
+
                         System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(url) { UseShellExecute = true });
                     }
                 }
                 else
                 {
-                   Log.Information("Your app is up to date.");
+                    Log.Information("Your app is up to date.");
                 }
             }
         }
+
+        #endregion Public Methods
+
+        #region Private Methods
 
         private int CompareVersions(string version1, string version2)
         {
@@ -73,5 +84,6 @@ namespace THFHA_V1._0.Model
             return v1.CompareTo(v2);
         }
 
+        #endregion Private Methods
     }
 }

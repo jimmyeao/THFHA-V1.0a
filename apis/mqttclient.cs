@@ -1,47 +1,61 @@
-﻿using Serilog;
-using System;
-using System.Text;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using MQTTnet;
+﻿using MQTTnet;
 using MQTTnet.Client;
 using MQTTnet.Extensions.ManagedClient;
-using MQTTnet.Protocol;
-using THFHA_V1._0.Model;
-using THFHA_V1._0.Views;
+using Serilog;
 
 namespace THFHA_V1._0.MyMqttClient
 {
     public class MyMqttClient
     {
-        private IManagedMqttClient MqttClient;
+        #region Private Fields
+
         private MqttClientOptionsBuilder clientOptions;
         private ManagedMqttClientOptions managedClientOptions;
+        private IManagedMqttClient MqttClient;
 
-        private string MqttUrl { get; set; }
-        private string MqttUsername { get; set; }
-        private string MqttPassword { get; set; }
+        #endregion Private Fields
 
-        public event EventHandler MqttConnected;
-        public event EventHandler MqttDisconnected;
-        public static MyMqttClient Instance { get; private set; }
+        #region Public Constructors
 
         static MyMqttClient()
         {
             Instance = new MyMqttClient();
         }
 
+        #endregion Public Constructors
+
+        #region Private Constructors
+
         private MyMqttClient()
         {
             // Your existing constructor logic, if any
         }
 
-        public void SetConnectionParameters(string mqttUrl, string mqttUsername, string mqttPassword)
-        {
-            MqttUrl = "mqtt://"+mqttUrl;
-            MqttUsername = mqttUsername;
-            MqttPassword = mqttPassword;
-        }
+        #endregion Private Constructors
+
+        #region Public Events
+
+        public event EventHandler MqttConnected;
+
+        public event EventHandler MqttDisconnected;
+
+        #endregion Public Events
+
+        #region Public Properties
+
+        public static MyMqttClient Instance { get; private set; }
+
+        #endregion Public Properties
+
+        #region Private Properties
+
+        private string MqttPassword { get; set; }
+        private string MqttUrl { get; set; }
+        private string MqttUsername { get; set; }
+
+        #endregion Private Properties
+
+        #region Public Methods
 
         public async Task ConnectAsync()
         {
@@ -103,8 +117,6 @@ namespace THFHA_V1._0.MyMqttClient
                 }
             };
 
-
-
             await MqttClient.StartAsync(managedClientOptions);
 
             // Add your subscriptions here.
@@ -116,6 +128,7 @@ namespace THFHA_V1._0.MyMqttClient
             if (MqttClient is not null && MqttClient.IsConnected)
                 await MqttClient.StopAsync();
         }
+
         public async Task PublishAsync(string topic, string payload, bool retain = false)
         {
             if (MqttClient == null)
@@ -135,7 +148,13 @@ namespace THFHA_V1._0.MyMqttClient
             await MqttClient.EnqueueAsync(message);
         }
 
+        public void SetConnectionParameters(string mqttUrl, string mqttUsername, string mqttPassword)
+        {
+            MqttUrl = "mqtt://"+mqttUrl;
+            MqttUsername = mqttUsername;
+            MqttPassword = mqttPassword;
+        }
 
+        #endregion Public Methods
     }
-
 }

@@ -2,10 +2,8 @@
 using MQTTnet.Client;
 using Newtonsoft.Json;
 using Serilog;
-using System.Text;
 using THFHA_V1._0.Model;
 using THFHA_V1._0.Views;
-using THFHA_V1._0.MyMqttClient;
 
 namespace THFHA_V1._0.apis
 {
@@ -25,10 +23,8 @@ namespace THFHA_V1._0.apis
 
         #region Public Constructors
 
-
         public MqttModule()
         {
-           
             // This is the parameterless constructor that will be used by the ModuleManager class
         }
 
@@ -138,31 +134,27 @@ namespace THFHA_V1._0.apis
         {
         }
 
+        public void UpdateSettings(bool isEnabled)
+        {
+            IsEnabled = isEnabled;
+        }
+
         private async Task Start(State state)
         {
             try
             {
-
                 int retryCount = 0;
                 int maxRetryCount = 5;
                 TimeSpan delay = TimeSpan.FromSeconds(1);
                 MyMqttClient.MyMqttClient.Instance.SetConnectionParameters(settings.Mqttip, settings.Mqttusername, settings.Mqttpassword);
 
-
                 // Connect using the singleton instance
                 await MyMqttClient.MyMqttClient.Instance.ConnectAsync();
-               
             }
             catch (Exception ex)
             {
                 Log.Error("Error starting MQTT " + ex.Message);
             }
-        }
-
-
-        public void UpdateSettings(bool isEnabled)
-        {
-            IsEnabled = isEnabled;
         }
 
         #endregion Public Methods
@@ -433,24 +425,19 @@ namespace THFHA_V1._0.apis
                 int maxRetryCount = 5;
                 TimeSpan delay = TimeSpan.FromSeconds(1);
 
-               
-
-                
-                    try
-                    {
-
-                   // MyMqttClient.MyMqttClient.Instance.SetConnectionParameters(settings.Mqttip, settings.Mqttusername, settings.Mqttpassword);
+                try
+                {
+                    // MyMqttClient.MyMqttClient.Instance.SetConnectionParameters(settings.Mqttip, settings.Mqttusername, settings.Mqttpassword);
                     // Connect using the singleton instance
-                  //  await MyMqttClient.MyMqttClient.Instance.ConnectAsync();
+                    //  await MyMqttClient.MyMqttClient.Instance.ConnectAsync();
                     await MyMqttClient.MyMqttClient.Instance.PublishAsync(Topic, jsonPayload, retain: false);
-                       // await client.PublishBinaryAsync(Topic, Encoding.UTF8.GetBytes(jsonPayload));
-                    }
-                    catch
-                    {
-                        //something went wrong
-                        Log.Error("Error publishing MQTT config");
-                    }
-                
+                    // await client.PublishBinaryAsync(Topic, Encoding.UTF8.GetBytes(jsonPayload));
+                }
+                catch
+                {
+                    //something went wrong
+                    Log.Error("Error publishing MQTT config");
+                }
             }
         }
 
@@ -562,26 +549,20 @@ namespace THFHA_V1._0.apis
             int maxRetryCount = 5;
             TimeSpan delay = TimeSpan.FromSeconds(1);
 
-
-                try
-                {
-                    Log.Information("Publishing MQTT {jsonPayload}", jsonPayload);
-                  //  MyMqttClient.MyMqttClient.Instance.SetConnectionParameters(settings.Mqttip, settings.Mqttusername, settings.Mqttpassword);
-                    // Connect using the singleton instance
-                 //   await MyMqttClient.MyMqttClient.Instance.ConnectAsync();
-                    await MyMqttClient.MyMqttClient.Instance.PublishAsync(StateTopic, jsonPayload, retain: false);
-                }
-                catch
-                {
-                    //something went wrong
-                    Log.Information("Error publishing MQTT");
-                }
-            
-
+            try
+            {
+                Log.Information("Publishing MQTT {jsonPayload}", jsonPayload);
+                //  MyMqttClient.MyMqttClient.Instance.SetConnectionParameters(settings.Mqttip, settings.Mqttusername, settings.Mqttpassword);
+                // Connect using the singleton instance
+                //   await MyMqttClient.MyMqttClient.Instance.ConnectAsync();
+                await MyMqttClient.MyMqttClient.Instance.PublishAsync(StateTopic, jsonPayload, retain: false);
+            }
+            catch
+            {
+                //something went wrong
+                Log.Information("Error publishing MQTT");
+            }
         }
-      
-
-
 
         #endregion Private Methods
     }

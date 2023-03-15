@@ -74,7 +74,7 @@ namespace THFHA_V1._0
                 }
             }
             DisplayNotifyIcon();
-            _= updateChecker.CheckForUpdatesAsync();
+            //_= updateChecker.CheckForUpdatesAsync();
             if (settings.RunMinimised)
             {
                 WindowState = FormWindowState.Minimized;

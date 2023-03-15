@@ -262,7 +262,6 @@ namespace THFHA_V1._0.apis
             string folderPath = Path.Combine(appDataFolder, "TeamsHelper");
             string filePath = Path.Combine(folderPath, "wledstate.json");
 
-
             if (File.Exists(filePath))
             {
                 string json = File.ReadAllText(filePath);

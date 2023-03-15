@@ -120,7 +120,6 @@ namespace THFHA_V1._0.apis
             }
             var isMonitoring = false;
             Log.Debug("Stop monitoring requested");
-
         }
 
         public void Start()
@@ -206,7 +205,6 @@ namespace THFHA_V1._0.apis
             {
                 try
                 {
-
                     var json = File.ReadAllText(filePath);
                     var state = JsonConvert.DeserializeObject<Q42.HueApi.State>(json);
                     Log.Information("Original state loaded from file.");
