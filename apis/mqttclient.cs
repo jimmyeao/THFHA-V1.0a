@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Serilog;
+using System;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -47,14 +48,16 @@ namespace THFHA_V1._0.MyMqttClient
             if (!Uri.TryCreate(MqttUrl, UriKind.Absolute, out Uri? uri) || uri is null)
                 return;
 
+            int port = uri.Port > 0 ? uri.Port : 1883; // Use default MQTT port if not specified in the URL
+
             switch (uri.Scheme)
             {
                 case "mqtt":
-                    clientOptions = new MqttClientOptionsBuilder().WithTcpServer(uri.Host, uri.Port);
+                    clientOptions = new MqttClientOptionsBuilder().WithTcpServer(uri.Host, port);
                     break;
 
                 case "mqtts":
-                    clientOptions = new MqttClientOptionsBuilder().WithTcpServer(uri.Host, uri.Port).WithTls();
+                    clientOptions = new MqttClientOptionsBuilder().WithTcpServer(uri.Host, port).WithTls();
                     break;
 
                 case "ws":
@@ -80,8 +83,27 @@ namespace THFHA_V1._0.MyMqttClient
 
             MqttClient = new MqttFactory().CreateManagedMqttClient();
 
-            MqttClient.ConnectedAsync += (e) => { MqttConnected?.Invoke(MqttClient, EventArgs.Empty); return Task.CompletedTask; };
-            MqttClient.DisconnectedAsync += (e) => { MqttDisconnected?.Invoke(MqttClient, EventArgs.Empty); return Task.CompletedTask; };
+            MqttClient.ConnectedAsync += (e) => { MqttConnected?.Invoke(MqttClient, EventArgs.Empty); Log.Debug("MQTT Client connected."); return Task.CompletedTask; };
+            //MqttClient.DisconnectedAsync += (e) => { MqttDisconnected?.Invoke(MqttClient, EventArgs.Empty); Log.Debug("MQTT Client disconnected."); return Task.CompletedTask; };
+            MqttClient.DisconnectedAsync += async (e) =>
+            {
+                Log.Debug($"MQTT Client disconnected. Reason: {e.Reason}, Exception: {e.Exception?.Message}");
+                MqttDisconnected?.Invoke(MqttClient, EventArgs.Empty);
+
+                // Optionally, you can implement an automatic reconnect mechanism with a delay
+                await Task.Delay(TimeSpan.FromSeconds(5));
+                try
+                {
+                    await MqttClient.StartAsync(managedClientOptions);
+                    Log.Debug("Reconnecting to MQTT broker...");
+                }
+                catch (Exception ex)
+                {
+                    Log.Debug($"Error reconnecting to MQTT broker: {ex.Message}");
+                }
+            };
+
+
 
             await MqttClient.StartAsync(managedClientOptions);
 
@@ -101,6 +123,8 @@ namespace THFHA_V1._0.MyMqttClient
                 throw new InvalidOperationException("MqttClient is not initialized. Call ConnectAsync() before using PublishAsync.");
             }
 
+            Log.Debug($"Publishing to topic: {topic}, payload: {payload}");
+
             var message = new MqttApplicationMessageBuilder()
                 .WithTopic(topic)
                 .WithPayload(payload)
@@ -110,6 +134,7 @@ namespace THFHA_V1._0.MyMqttClient
 
             await MqttClient.EnqueueAsync(message);
         }
+
 
     }
 
