@@ -439,9 +439,9 @@ namespace THFHA_V1._0.apis
                     try
                     {
 
-                    MyMqttClient.MyMqttClient.Instance.SetConnectionParameters(settings.Mqttip, settings.Mqttusername, settings.Mqttpassword);
+                   // MyMqttClient.MyMqttClient.Instance.SetConnectionParameters(settings.Mqttip, settings.Mqttusername, settings.Mqttpassword);
                     // Connect using the singleton instance
-                    await MyMqttClient.MyMqttClient.Instance.ConnectAsync();
+                  //  await MyMqttClient.MyMqttClient.Instance.ConnectAsync();
                     await MyMqttClient.MyMqttClient.Instance.PublishAsync(Topic, jsonPayload, retain: false);
                        // await client.PublishBinaryAsync(Topic, Encoding.UTF8.GetBytes(jsonPayload));
                     }
@@ -566,9 +566,9 @@ namespace THFHA_V1._0.apis
                 try
                 {
                     Log.Information("Publishing MQTT {jsonPayload}", jsonPayload);
-                    MyMqttClient.MyMqttClient.Instance.SetConnectionParameters(settings.Mqttip, settings.Mqttusername, settings.Mqttpassword);
+                  //  MyMqttClient.MyMqttClient.Instance.SetConnectionParameters(settings.Mqttip, settings.Mqttusername, settings.Mqttpassword);
                     // Connect using the singleton instance
-                    await MyMqttClient.MyMqttClient.Instance.ConnectAsync();
+                 //   await MyMqttClient.MyMqttClient.Instance.ConnectAsync();
                     await MyMqttClient.MyMqttClient.Instance.PublishAsync(StateTopic, jsonPayload, retain: false);
                 }
                 catch
