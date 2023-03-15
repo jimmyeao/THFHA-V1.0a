@@ -5,6 +5,7 @@ using Serilog;
 using System.Text;
 using THFHA_V1._0.Model;
 using THFHA_V1._0.Views;
+using THFHA_V1._0.MyMqttClient;
 
 namespace THFHA_V1._0.apis
 {
@@ -24,18 +25,17 @@ namespace THFHA_V1._0.apis
 
         #region Public Constructors
 
+
         public MqttModule()
         {
-            settings = Settings.Instance;
-            factory = new MqttFactory(); // Initialize the factory object
-            settings = Settings.Instance;
+           
             // This is the parameterless constructor that will be used by the ModuleManager class
         }
 
         public MqttModule(State state) : this()
         {
             stateInstance = state;
-
+            settings = Settings.Instance;
             // Initialize your module here
         }
 
@@ -142,48 +142,16 @@ namespace THFHA_V1._0.apis
         {
             try
             {
+
                 int retryCount = 0;
                 int maxRetryCount = 5;
                 TimeSpan delay = TimeSpan.FromSeconds(1);
+                MyMqttClient.MyMqttClient.Instance.SetConnectionParameters(settings.Mqttip, settings.Mqttusername, settings.Mqttpassword);
 
-                while (true)
-                {
-                    // dispose the timer if it's already running create a new instance of the client
-                    client = factory.CreateMqttClient();
-                    var options = new MqttClientOptionsBuilder()
-                        .WithClientId(Guid.NewGuid().ToString())
-                        .WithTcpServer(settings.Mqttip)
-                        .WithCredentials(settings.Mqttusername, settings.Mqttpassword)
-                        .Build();
 
-                    //start the client
-                    var connectionsresponse = await client.ConnectAsync(options);
-
-                    if (connectionsresponse.ResultCode == MQTTnet.Client.MqttClientConnectResultCode.Success)
-                    {
-                        // check if it's started
-                        await CheckConnection();
-                        //send the config to broker
-                        _ = PublishMqttUpdate(state);
-                        _ = PublishMqttConfig(state);
-                        break; // exit the loop if connection is successful
-                    }
-                    else
-                    {
-                        // exponential backoff
-                        if (retryCount >= maxRetryCount)
-                        {
-                            // max retry count reached, stop retrying
-                            Log.Error("Error starting MQTT, max retry count reached");
-                            break;
-                        }
-
-                        retryCount++;
-                        Log.Error($"Error starting MQTT, retrying in {delay.TotalSeconds} seconds");
-                        await Task.Delay(delay);
-                        delay = delay + delay; // double the delay for next retry
-                    }
-                }
+                // Connect using the singleton instance
+                await MyMqttClient.MyMqttClient.Instance.ConnectAsync();
+               
             }
             catch (Exception ex)
             {
@@ -465,32 +433,24 @@ namespace THFHA_V1._0.apis
                 int maxRetryCount = 5;
                 TimeSpan delay = TimeSpan.FromSeconds(1);
 
-                while (!client.IsConnected)
-                {
-                    if (retryCount >= maxRetryCount)
-                    {
-                        Log.Error("Error publishing MQTT config, max retry count reached");
-                        break;
-                    }
-                    Log.Information("Ooops MQTT not connected, retrying in {0} seconds", delay.TotalSeconds);
-                    await Task.Delay(delay);
-                    await AttemptReconnect(); // This method should contain the logic to reconnect to the MQTT server
-                    retryCount++;
-                    delay = delay + delay; // Double the delay for the next retry
-                }
+               
 
-                if (client.IsConnected)
-                {
+                
                     try
                     {
-                        await client.PublishBinaryAsync(Topic, Encoding.UTF8.GetBytes(jsonPayload));
+
+                    MyMqttClient.MyMqttClient.Instance.SetConnectionParameters(settings.Mqttip, settings.Mqttusername, settings.Mqttpassword);
+                    // Connect using the singleton instance
+                    await MyMqttClient.MyMqttClient.Instance.ConnectAsync();
+                    await MyMqttClient.MyMqttClient.Instance.PublishAsync(Topic, jsonPayload, retain: false);
+                       // await client.PublishBinaryAsync(Topic, Encoding.UTF8.GetBytes(jsonPayload));
                     }
                     catch
                     {
                         //something went wrong
                         Log.Error("Error publishing MQTT config");
                     }
-                }
+                
             }
         }
 
@@ -602,85 +562,24 @@ namespace THFHA_V1._0.apis
             int maxRetryCount = 5;
             TimeSpan delay = TimeSpan.FromSeconds(1);
 
-            while (!client.IsConnected)
-            {
-                if (retryCount >= maxRetryCount)
-                {
-                    Log.Error("Error publishing MQTT update, max retry count reached");
-                    break;
-                }
-                Log.Information("OOOps MQTT not connected {jsonPayload}, retrying in {0} seconds", jsonPayload, delay.TotalSeconds);
-                await Task.Delay(delay);
-                await AttemptReconnect(); // This method should contain the logic to reconnect to the MQTT server
-                retryCount++;
-                delay = delay + delay; // Double the delay for the next retry
-            }
 
-            if (client.IsConnected)
-            {
                 try
                 {
                     Log.Information("Publishing MQTT {jsonPayload}", jsonPayload);
-                    await client.PublishBinaryAsync(StateTopic, Encoding.UTF8.GetBytes(jsonPayload));
+                    MyMqttClient.MyMqttClient.Instance.SetConnectionParameters(settings.Mqttip, settings.Mqttusername, settings.Mqttpassword);
+                    // Connect using the singleton instance
+                    await MyMqttClient.MyMqttClient.Instance.ConnectAsync();
+                    await MyMqttClient.MyMqttClient.Instance.PublishAsync(StateTopic, jsonPayload, retain: false);
                 }
                 catch
                 {
                     //something went wrong
                     Log.Information("Error publishing MQTT");
                 }
-            }
+            
 
         }
-        private async Task AttemptReconnect()
-        {
-            int retryCount = 0;
-            int maxRetryCount = 5;
-            TimeSpan delay = TimeSpan.FromSeconds(1);
-
-            while (!client.IsConnected)
-            {
-                if (retryCount >= maxRetryCount)
-                {
-                    Log.Error("Error connecting to MQTT server, max retry count reached");
-                    break;
-                }
-
-                Log.Information("MQTT connection lost, retrying in {0} seconds...", delay.TotalSeconds);
-                await Task.Delay(delay);
-
-                try
-                {
-                    var options = new MqttClientOptionsBuilder()
-                        .WithClientId(Guid.NewGuid().ToString())
-                        .WithTcpServer(settings.Mqttip)
-                        .WithCredentials(settings.Mqttusername, settings.Mqttpassword)
-                        .Build();
-
-                    // dispose the timer if it's already running create a new instance of the client
-                    client = factory.CreateMqttClient();
-
-                    //start the client
-                    var connectionsresponse = await client.ConnectAsync(options);
-
-                    // check if it's started
-                    await CheckConnection();
-
-                    if (connectionsresponse.ResultCode == MQTTnet.Client.MqttClientConnectResultCode.Success)
-                    {
-                        Log.Information("MQTT reconnected successfully");
-                        _ = PublishMqttUpdate(stateInstance);
-                        _ = PublishMqttConfig(stateInstance);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Log.Error("Error reconnecting to MQTT server: {0}", ex.Message);
-                }
-
-                retryCount++;
-                delay = delay + delay; // Double the delay for the next retry
-            }
-        }
+      
 
 
 
