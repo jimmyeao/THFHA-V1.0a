@@ -140,7 +140,7 @@ namespace THFHA_V1._0.apis
                 { return false; }
                 var client = new HttpClient();
                 client.BaseAddress = new Uri(settings.Haurl + "/api/");
-                client.DefaultRequestHeaders.Add("Authorization", settings.Hatoken);
+                client.DefaultRequestHeaders.Add("Authorization", "Bearer " + settings.Hatoken);
                 try
                 {
                     var response = await client.GetAsync($"states/{entity}");
