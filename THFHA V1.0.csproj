@@ -7,8 +7,8 @@
     <Nullable>enable</Nullable>
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
-    <AssemblyVersion>1.0.0.597</AssemblyVersion>
-    <FileVersion>1.0.0.597</FileVersion>
+    <AssemblyVersion>1.0.0.605</AssemblyVersion>
+    <FileVersion>1.0.0.605</FileVersion>
     <PackageIcon>trans.png</PackageIcon>
     <RepositoryUrl>https://github.com/jimmyeao/THFHA-V1.0a</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
@@ -38,6 +38,7 @@ Please visit our github page for more details and instructions.</Description>
   <ItemGroup>
     <PackageReference Include="Microsoft.Management.Infrastructure" Version="2.0.0" />
     <PackageReference Include="MQTTnet" Version="4.1.4.563" />
+    <PackageReference Include="MQTTnet.Extensions.ManagedClient" Version="4.1.4.563" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
     <PackageReference Include="Q42.HueApi" Version="3.21.0" />
     <PackageReference Include="Q42.HueApi.ColorConverters" Version="3.20.1" />
