@@ -361,3 +361,7 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/private_key.pem
+/private_key.pvk
+/public_key.pem
+/naming.snk
