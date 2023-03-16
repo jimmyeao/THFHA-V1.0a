@@ -41,7 +41,7 @@ namespace THFHA_V1._0
             // Initialize the IsEnabled property of each module based on the value stored in the
             // Settings singleton
             updatemodules();
-            UpdateChecker updateChecker = new UpdateChecker();
+            
             string _appDir = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
             string _logPath = _appDir + @"\Microsoft\Teams\";
             string _logFile = _logPath + "logs.txt";
@@ -74,7 +74,7 @@ namespace THFHA_V1._0
                 }
             }
             DisplayNotifyIcon();
-            //_= updateChecker.CheckForUpdatesAsync();
+            
             if (settings.RunMinimised)
             {
                 WindowState = FormWindowState.Minimized;

@@ -150,6 +150,8 @@ namespace THFHA_V1._0.apis
 
                 // Connect using the singleton instance
                 await MyMqttClient.MyMqttClient.Instance.ConnectAsync();
+                _ = PublishMqttUpdate(stateInstance);
+                _ = PublishMqttConfig(stateInstance);
             }
             catch (Exception ex)
             {
