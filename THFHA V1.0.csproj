@@ -7,8 +7,8 @@
 		<Nullable>enable</Nullable>
 		<UseWindowsForms>true</UseWindowsForms>
 		<ImplicitUsings>enable</ImplicitUsings>
-		<AssemblyVersion>1.1.1.637</AssemblyVersion>
-		<FileVersion>1.1.1.637</FileVersion>
+		<AssemblyVersion>1.1.1.645</AssemblyVersion>
+		<FileVersion>1.1.1.645</FileVersion>
 		<PackageIcon>trans.png</PackageIcon>
 		<RepositoryUrl>https://github.com/jimmyeao/THFHA-V1.0a</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
@@ -27,8 +27,10 @@ Please visit our github page for more details and instructions.
     <PublishSignManifests>true</PublishSignManifests>
     <ManifestCertificateThumbprint>f86b4a358cfa019cb52cb1b186fc3c8d433c9ba2</ManifestCertificateThumbprint>
     <ManifestKeyFile>..\comodocode.pfx</ManifestKeyFile>
-    <SignAssembly>False</SignAssembly>
-    <AssemblyOriginatorKeyFile>comodocode.pfx</AssemblyOriginatorKeyFile>
+    <SignAssembly>true</SignAssembly>
+    <KeyOriginatorFile>comodocode.pfx</KeyOriginatorFile>
+    <DelaySign>false</DelaySign>
+    <KeyContainerName>VS_KEY_0F5989BF8533A410</KeyContainerName>
     
 	</PropertyGroup>
 
