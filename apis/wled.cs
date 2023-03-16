@@ -262,7 +262,6 @@ namespace THFHA_V1._0.apis
             string folderPath = Path.Combine(appDataFolder, "TeamsHelper");
             string filePath = Path.Combine(folderPath, "wledstate.json");
 
-
             if (File.Exists(filePath))
             {
                 string json = File.ReadAllText(filePath);
@@ -342,7 +341,7 @@ namespace THFHA_V1._0.apis
                     // Stop monitoring here
                     var isMonitoring = false;
                     LoadState();
-                    _=RestoreState();
+                    _ = RestoreState();
                 }
                 catch (Exception ex)
                 {
