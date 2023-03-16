@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json.Linq;
 using Serilog;
 using System.Reflection;
+using Serilog;
 
 namespace THFHA_V1._0.Model
 {
@@ -31,7 +32,7 @@ namespace THFHA_V1._0.Model
             string owner = "jimmyeao";
             string repo = "THFHA-V1.0a";
             string apiUrl = $"https://api.github.com/repos/{owner}/{repo}/releases/latest";
-
+            Log.Information("Checking for updates");
             httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("AppName");
             HttpResponseMessage response = null;
 

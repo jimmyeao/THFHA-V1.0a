@@ -140,38 +140,13 @@ namespace THFHA_V1._0.Model
         //            // open the file
         //            using (FileStream fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
 
-        //            {
-        //                sr = new StreamReader(fs, Encoding.UTF8);
-        //                while (!sr.EndOfStream)
-        //                {
-        //                    string line = sr.ReadLine();
-        //                    //check if the line contains a dictionary key
-        //                    var match = matchDictionary.FirstOrDefault(x => line.Contains(x.Key));
-        //                    if (match.Key != null)
-        //                    {
-        //                        if (match.Value.StatusText == "Mute")
-        //                        {
-        //                            _mute = match.Value.ActivityText;
-        //                        }
-        //                        else
-        //                        {
-        //                            if (!string.IsNullOrEmpty(match.Value.ActivityText))
-        //                                _activity = match.Value.ActivityText;
-        //                            if (!string.IsNullOrEmpty(match.Value.StatusText))
-        //                                _status = match.Value.StatusText;
-        //                        }
-        //                    }
-        //                }
-        //            }
-        //        }
-        //        catch
-        //        {//fail!
-        //            Log.Error("Failed to read log file");
-        //        }
-        //        finally
-        //        {
-        //            sr?.Dispose();
-        //        }
+        // { sr = new StreamReader(fs, Encoding.UTF8); while (!sr.EndOfStream) { string line =
+        // sr.ReadLine(); //check if the line contains a dictionary key var match =
+        // matchDictionary.FirstOrDefault(x => line.Contains(x.Key)); if (match.Key != null) { if
+        // (match.Value.StatusText == "Mute") { _mute = match.Value.ActivityText; } else { if
+        // (!string.IsNullOrEmpty(match.Value.ActivityText)) _activity = match.Value.ActivityText;
+        // if (!string.IsNullOrEmpty(match.Value.StatusText)) _status = match.Value.StatusText; } }
+        // } } } catch {//fail! Log.Error("Failed to read log file"); } finally { sr?.Dispose(); }
 
         //        if (State.Instance.Status != _status)
         //        {

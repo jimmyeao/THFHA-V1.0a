@@ -119,8 +119,7 @@ namespace THFHA_V1._0.MyMqttClient
 
             await MqttClient.StartAsync(managedClientOptions);
 
-            // Add your subscriptions here.
-            // await MqttClient.SubscribeAsync($"your/subscription/topic");
+            // Add your subscriptions here. await MqttClient.SubscribeAsync($"your/subscription/topic");
         }
 
         public async Task DisconnectAsync()
@@ -150,7 +149,7 @@ namespace THFHA_V1._0.MyMqttClient
 
         public void SetConnectionParameters(string mqttUrl, string mqttUsername, string mqttPassword)
         {
-            MqttUrl = "mqtt://"+mqttUrl;
+            MqttUrl = "mqtt://" + mqttUrl;
             MqttUsername = mqttUsername;
             MqttPassword = mqttPassword;
         }
