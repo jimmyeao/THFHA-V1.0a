@@ -21,14 +21,14 @@ namespace THFHA_V1._0
             State state = State.Instance;
             ModuleManager<IModule> moduleManager = new ModuleManager<IModule>(state);
             List<IModule> modules = moduleManager.Modules;
-            SettingsForm settingsForm = new SettingsForm(modules);
+            _ = new SettingsForm(modules);
             // create the LogWatcher and pass the state to it
-            var logWatcher = new LogWatcher(state);
+            _ = new LogWatcher(state);
             // create the THFHA form and pass the modules and state to it
             var thfha = new THFHA(modules, state);
-            HatcherModule hatcherModule = new HatcherModule(state);
-            HomeassistantModule homeassistantModule = new HomeassistantModule(state);
-            HueModule hueModule = new HueModule(state);
+            _ = new HatcherModule(state);
+            _ = new HomeassistantModule(state);
+            _ = new HueModule(state);
             Application.Run(thfha);
             Log.CloseAndFlush();
         }

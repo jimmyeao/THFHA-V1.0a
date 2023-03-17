@@ -1,6 +1,9 @@
 ﻿using Serilog;
 using THFHA_V1._0.Model;
 using THFHA_V1._0.Views;
+using System.Dynamic;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+
 
 namespace THFHA_V1._0.apis
 {
@@ -56,8 +59,18 @@ namespace THFHA_V1._0.apis
                 else
                 {
                     Log.Debug("Hatcher Module has been enabled.");
-                    _ = ShowImage(stateInstance);
+                    var status = stateInstance.Status;
+                    _ = ShowImage(status);
                 }
+            }
+        }
+        public void Stop()
+        {
+            var isMonitoring = false;
+            Log.Debug("Stop hatcher monitoring requested");
+            if (IsEnabled)
+            {
+                OnStopMonitoringRequested();
             }
         }
 
@@ -81,11 +94,12 @@ namespace THFHA_V1._0.apis
             return new hatchersettings(); // Replace with your module's settings form
         }
 
-        public void OnFormClosing()
+        public async Task OnFormClosing()
         {
             // Handle the form closing event here
             var isMonitoring = false;
-            Log.Debug("Stop monitoring requested");
+            stateInstance.StateChanged -= OnStateChanged;
+            
             if (IsEnabled)
             {
                 OnStopMonitoringRequested();
@@ -93,7 +107,7 @@ namespace THFHA_V1._0.apis
         }
 
         // fuinctionality here
-        public async Task ShowImage(State state)
+        public async Task ShowImage(String state)
         {
             if (isEnabled && THFHA.logWatcher?.IsRunning == true)
             {
@@ -104,8 +118,8 @@ namespace THFHA_V1._0.apis
 
                 //_state.PropertyChanged += State_PropertyChanged;
 
-                string status = state.Status;
-                if (state.Activity == "On the phone" || state.Activity == "In a call")
+                string status = state;
+                if (status == "On the phone" || status == "In a call" || status == "In a meeting")
                 {
                     status = "On the Phone";
                 }
@@ -182,9 +196,21 @@ namespace THFHA_V1._0.apis
             }
         }
 
-        public void Start()
+        public async Task Start()
         {
-            ShowImage(stateInstance);
+            if (isEnabled && THFHA.logWatcher?.IsRunning == true)
+            {
+
+                //stateInstance = (State)sender;
+                var status = stateInstance.Status;
+                if (stateInstance.Activity == "On the phone" || stateInstance.Activity == "In a call" || stateInstance.Activity == "In a meeting")
+                {
+                    status = "On the Phone";
+                }
+                StateChanged?.Invoke(this, EventArgs.Empty);
+             _ = ShowImage(status);
+            }
+            
         }
 
         public void UpdateSettings(bool isEnabled)
@@ -198,12 +224,25 @@ namespace THFHA_V1._0.apis
 
         private void OnStateChanged(object sender, EventArgs e)
         {
-            if (IsEnabled)
+            //  if (IsEnabled)
+            //  {
+            //      stateInstance = (State)sender;
+            //      StateChanged?.Invoke(this, EventArgs.Empty);
+            //      _ = ShowImage(stateInstance);
+            //  }
+            if (isEnabled && THFHA.logWatcher?.IsRunning == true)
             {
-                stateInstance = (State)sender;
+
+                //stateInstance = (State)sender;
+                var status = stateInstance.Status;
+                if (stateInstance.Activity == "On the phone" || stateInstance.Activity == "In a call" || stateInstance.Activity == "In a meeting")
+                {
+                    status = "On the Phone";
+                }
                 StateChanged?.Invoke(this, EventArgs.Empty);
-                _ = ShowImage(stateInstance);
+                ShowImage(status);
             }
+            
         }
 
         private void OnStopMonitoringRequested()
@@ -213,7 +252,7 @@ namespace THFHA_V1._0.apis
                 // Stop monitoring here
                 var isMonitoring = false;
 
-                Log.Debug("Stop monitoring requested");
+                Log.Debug("Stop hatcher monitoring requested");
                 if (settings.Hatcherip == null)  //just in case we enabled the module with no ip address!
                 {
                     return;

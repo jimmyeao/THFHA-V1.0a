@@ -66,6 +66,7 @@ namespace THFHA_V1._0.apis
                 }
                 else
                 {
+                    Log.Debug("WledModule has been enabled.");
                     _originalState = GetCurrentState(settings.SelectedWled.Ip);
                     Start();
                 }
@@ -170,12 +171,13 @@ namespace THFHA_V1._0.apis
             return new wledsettings(); // Replace with your module's settings form
         }
 
-        public void OnFormClosing()
+        public async Task OnFormClosing()
         {
-            RestoreState();
+            stateInstance.StateChanged -= OnStateChanged;
+         //   RestoreState();
             // Handle the form closing event here
             var isMonitoring = false;
-            Log.Debug("Stop monitoring requested");
+            Log.Debug("Stop Wled monitoring requested");
             if (IsEnabled)
             {
                 OnStopMonitoringRequested();
@@ -207,14 +209,19 @@ namespace THFHA_V1._0.apis
             }
         }
 
-        public async void Start()
+        public async Task Start()
         {
             if (isEnabled && THFHA.logWatcher?.IsRunning == true)
             {
                 _originalState = GetCurrentState(settings.SelectedWled.Ip);
                 //stateInstance = (State)sender;
+                var status = stateInstance.Status;
+                if (stateInstance.Activity == "On the phone" || stateInstance.Activity == "In a call" || stateInstance.Activity == "In a meeting")
+                {
+                    status = "On the Phone";
+                }
                 StateChanged?.Invoke(this, EventArgs.Empty);
-                switch (stateInstance.Status)
+                switch (status)
                 {
                     case "Busy":
                         await ChangeColor("255,0,0");
@@ -289,7 +296,7 @@ namespace THFHA_V1._0.apis
                     StateChanged?.Invoke(this, EventArgs.Empty);
                     //if we are in a call we are always busy...
                     //so we need to check the activity as well
-                    if (stateInstance.Activity == "On the phone" || stateInstance.Activity == "In a call")
+                    if (stateInstance.Activity == "On the phone" || stateInstance.Activity == "In a call" || stateInstance.Activity == "In a meeting")
                     {
                         status = "On the Phone";
                     }
@@ -347,6 +354,15 @@ namespace THFHA_V1._0.apis
                 {
                     Log.Error("Something went wrong stopping WLED");
                 }
+            }
+        }
+        public void Stop()
+        {
+            var isMonitoring = false;
+            Log.Debug("Stop wled monitoring requested");
+            if (IsEnabled)
+            {
+                OnStopMonitoringRequested();
             }
         }
 
