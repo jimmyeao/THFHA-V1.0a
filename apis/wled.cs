@@ -176,7 +176,7 @@ namespace THFHA_V1._0.apis
             RestoreState();
             // Handle the form closing event here
             var isMonitoring = false;
-            Log.Debug("Stop monitoring requested");
+            Log.Debug("Stop Wled monitoring requested");
             if (IsEnabled)
             {
                 OnStopMonitoringRequested();

@@ -494,7 +494,13 @@ namespace THFHA_V1._0
         {
             // Get the updated state values
             Log.Debug("OnStateChange Trigerred!!!!!!!!!!!");
-            BeginInvoke((MethodInvoker)delegate { UpdateAll(); });
+            try
+            {
+                BeginInvoke((MethodInvoker)delegate { UpdateAll(); });
+            }catch (Exception ex)
+            {
+                //cant update the form when its closed!
+            }
 
             // var icon = UpdateStatusIcon(state.Status); UpdateStatusIcons(icon); _ =
             // UpdateMuteIcon(); _ = UpdateActivityIcon(state.Activity);
@@ -601,6 +607,8 @@ namespace THFHA_V1._0
 
         private void THFHA_FormClosing(object sender, FormClosingEventArgs e)
         {
+            State.Instance.StateChanged -= OnStateChanged;
+
             foreach (IModule module in modules)
             {
                 module.OnFormClosing();

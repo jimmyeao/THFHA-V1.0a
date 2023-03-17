@@ -122,7 +122,7 @@ namespace THFHA_V1._0.apis
                 OnStopMonitoringRequested();
             }
             var isMonitoring = false;
-            Log.Debug("Stop monitoring requested");
+            Log.Debug("Stop Hue monitoring requested");
         }
 
         public void Start()

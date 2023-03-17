@@ -162,14 +162,14 @@ namespace THFHA_V1._0.apis
             return new Homeassistantsettings(); // Replace with your module's settings form
         }
 
-        public void OnFormClosing()
+        public async void OnFormClosing()
         {
             // Handle the form closing event here
             var isMonitoring = false;
-            Log.Debug("Stop monitoring requested");
+            Log.Debug("Stop Homeassistant monitoring requested");
             if (IsEnabled)
             {
-                OnStopMonitoringRequested();
+                await OnStopMonitoringRequested();
             }
         }
 
@@ -528,9 +528,10 @@ namespace THFHA_V1._0.apis
             }
         }
 
-        private async void OnStopMonitoringRequested()
+        private async Task OnStopMonitoringRequested()
         {
             // Stop monitoring here
+            Log.Information("Stopping HomeAssistant");
             var activityicon = "mdi:account-off";
             var statusicon = "mdi:account-off";
             await UpdateEntity("sensor.thfha_status", "Not Running", statusicon);

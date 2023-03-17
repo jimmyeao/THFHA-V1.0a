@@ -89,7 +89,7 @@ namespace THFHA_V1._0.apis
         {
             // Handle the form closing event here
             var isMonitoring = false;
-            Log.Debug("Stop monitoring requested");
+            Log.Debug("Stop hatcher monitoring requested");
             if (IsEnabled)
             {
                 OnStopMonitoringRequested();
@@ -242,7 +242,7 @@ namespace THFHA_V1._0.apis
                 // Stop monitoring here
                 var isMonitoring = false;
 
-                Log.Debug("Stop monitoring requested");
+                Log.Debug("Stop hatcher monitoring requested");
                 if (settings.Hatcherip == null)  //just in case we enabled the module with no ip address!
                 {
                     return;
