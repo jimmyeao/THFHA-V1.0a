@@ -140,6 +140,7 @@ namespace THFHA_V1._0.apis
 
         public void Start()
         {
+            _ = Start(stateInstance);
         }
 
         public void UpdateSettings(bool isEnabled)
@@ -241,9 +242,17 @@ namespace THFHA_V1._0.apis
             }
         }
 
-        private void OnStopMonitoringRequested()
+        private async void OnStopMonitoringRequested()
         {
             // Stop monitoring here
+            
+            var activityicon = "mdi:account-off";
+            var statusicon = "mdi:account-off";
+            var status = stateInstance;
+            status.Status = "Not Running";
+            status.Activity = "Not Running";
+            await PublishMqttConfig(status);
+           // await PublishMqttUpdate(status);
             var isMonitoring = false;
 
             if (client != null)

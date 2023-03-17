@@ -2,6 +2,7 @@
 using System.Net.Http.Headers;
 using THFHA_V1._0.Model;
 using THFHA_V1._0.Views;
+using static THFHA_V1._0.apis.MqttModule;
 
 namespace THFHA_V1._0.apis
 {
@@ -527,10 +528,15 @@ namespace THFHA_V1._0.apis
             }
         }
 
-        private void OnStopMonitoringRequested()
+        private async void OnStopMonitoringRequested()
         {
             // Stop monitoring here
+            var activityicon = "mdi:account-off";
+            var statusicon = "mdi:account-off";
+            await UpdateEntity("sensor.thfha_status", "Not Running", statusicon);
+            await UpdateEntity("sensor.thfha_activity", "Not Running", activityicon);
             var isMonitoring = false;
+
         }
 
         #endregion Private Methods
