@@ -66,6 +66,7 @@ namespace THFHA_V1._0.apis
                 }
                 else
                 {
+                    Log.Debug("WledModule has been enabled.");
                     _originalState = GetCurrentState(settings.SelectedWled.Ip);
                     Start();
                 }
@@ -213,8 +214,13 @@ namespace THFHA_V1._0.apis
             {
                 _originalState = GetCurrentState(settings.SelectedWled.Ip);
                 //stateInstance = (State)sender;
+                var status = stateInstance.Status;
+                if (stateInstance.Activity == "On the phone" || stateInstance.Activity == "In a call" || stateInstance.Activity == "In a meeting")
+                {
+                    status = "On the Phone";
+                }
                 StateChanged?.Invoke(this, EventArgs.Empty);
-                switch (stateInstance.Status)
+                switch (status)
                 {
                     case "Busy":
                         await ChangeColor("255,0,0");
@@ -289,7 +295,7 @@ namespace THFHA_V1._0.apis
                     StateChanged?.Invoke(this, EventArgs.Empty);
                     //if we are in a call we are always busy...
                     //so we need to check the activity as well
-                    if (stateInstance.Activity == "On the phone" || stateInstance.Activity == "In a call")
+                    if (stateInstance.Activity == "On the phone" || stateInstance.Activity == "In a call" || stateInstance.Activity == "In a meeting")
                     {
                         status = "On the Phone";
                     }

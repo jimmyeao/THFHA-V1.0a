@@ -77,8 +77,10 @@ namespace THFHA_V1._0.apis
                     if (!settings.IsHueModuleSettingsValid)
                     {
                         return;
+
                     }
                     OnStopMonitoringRequested();
+
                 }
                 else
                 {
@@ -129,8 +131,11 @@ namespace THFHA_V1._0.apis
                 Log.Error("Hue ip or username is null");
                 return;
             }
-            _ = GetState();
-            _ = PublishHueUpdate(stateInstance);
+            if (isEnabled)
+            {
+                _ = GetState();
+                _ = PublishHueUpdate(stateInstance);
+            }
         }
 
         public void UpdateSettings(bool isEnabled)
@@ -144,7 +149,12 @@ namespace THFHA_V1._0.apis
 
         private RGBColor GetRGBColorForState(State state)
         {
-            return stateInstance.Status switch
+            var status = state.Status;
+            if (stateInstance.Activity == "On the phone" || stateInstance.Activity == "In a call" || stateInstance.Activity == "In a meeting")
+            {
+                status = "On the Phone";
+            }
+            return status switch
             {
                 "Busy" => new RGBColor("ff0000"),
                 "On the Phone" => new RGBColor("ff0000"),
@@ -230,7 +240,7 @@ namespace THFHA_V1._0.apis
 
         private void OnStopMonitoringRequested()
         {
-            if (!settings.IsHueModuleSettingsValid)
+            if (!settings.IsHueModuleSettingsValid || !isEnabled)
             {
                 return;
             }

@@ -12,10 +12,10 @@ namespace THFHA_V1._0.apis
         private readonly HttpClient _httpClient = new HttpClient();
         private bool isEnabled = false;
         private string name = "Homeassistant";
-        private string oldact = null;
-        private string oldcam = null;
-        private string oldmic = null;
-        private string oldstattus = null;
+        private string? oldact = null;
+        private string? oldcam = null;
+        private string? oldmic = null;
+        private string? oldstattus = null;
         private Settings settings;
         private State stateInstance;
 
