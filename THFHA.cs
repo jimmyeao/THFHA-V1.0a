@@ -149,9 +149,29 @@ namespace THFHA_V1._0
 
         public void UpdateMuteStatus(string micstatus)
         {
-            if (pb_mute.InvokeRequired)
+            if (pb_mute.IsHandleCreated)
             {
-                pb_mute.Invoke((MethodInvoker)delegate
+                if (pb_mute.InvokeRequired)
+                {
+                    pb_mute.Invoke((MethodInvoker)delegate
+                    {
+                        switch (micstatus)
+                        {
+                            case ("On"):
+                                pb_mute.BackgroundImage = Resource1.mute;
+                                //toolTip3.SetToolTip(pb_mute, "Mute On");
+                                pb_mute.Refresh();
+                                break;
+
+                            case ("Off"):
+                                pb_mute.BackgroundImage = Resource1.mic_icon;
+                                //toolTip3.SetToolTip(pb_mute, "Mute Off");
+                                pb_mute.Refresh();
+                                break;
+                        }
+                    });
+                }
+                else
                 {
                     switch (micstatus)
                     {
@@ -167,26 +187,15 @@ namespace THFHA_V1._0
                             pb_mute.Refresh();
                             break;
                     }
-                });
+                }
             }
             else
             {
-                switch (micstatus)
-                {
-                    case ("On"):
-                        pb_mute.BackgroundImage = Resource1.mute;
-                        //toolTip3.SetToolTip(pb_mute, "Mute On");
-                        pb_mute.Refresh();
-                        break;
-
-                    case ("Off"):
-                        pb_mute.BackgroundImage = Resource1.mic_icon;
-                        //toolTip3.SetToolTip(pb_mute, "Mute Off");
-                        pb_mute.Refresh();
-                        break;
-                }
+                // Delay the update until the handle is created
+                pb_mute.HandleCreated += (sender, args) => UpdateMuteStatus(micstatus);
             }
         }
+
 
         #endregion Public Methods
 
@@ -494,10 +503,15 @@ namespace THFHA_V1._0
         {
             // Get the updated state values
             Log.Debug("OnStateChange Trigerred!!!!!!!!!!!");
-            BeginInvoke((MethodInvoker)delegate { UpdateAll(); });
+            try
+            {
+                BeginInvoke((MethodInvoker)delegate { UpdateAll(); });
+            }catch (Exception ex)
+            {
+                //cant update the form when its closed!
+            }
 
-            // var icon = UpdateStatusIcon(state.Status); UpdateStatusIcons(icon); _ =
-            // UpdateMuteIcon(); _ = UpdateActivityIcon(state.Activity);
+
         }
 
         private void SetActivityIcon(Bitmap icon)
@@ -577,7 +591,7 @@ namespace THFHA_V1._0
                 await logWatcher.Stop();
                 foreach (IModule module in modules)
                 {
-                    module.OnFormClosing();
+                    module.Stop();
                 }
             }
 
@@ -601,11 +615,13 @@ namespace THFHA_V1._0
 
         private void THFHA_FormClosing(object sender, FormClosingEventArgs e)
         {
+            State.Instance.StateChanged -= OnStateChanged;
+
             foreach (IModule module in modules)
             {
                 module.OnFormClosing();
             }
-            ApplicationClosing?.Invoke(this, EventArgs.Empty);
+            //ApplicationClosing?.Invoke(this, EventArgs.Empty);
         }
 
         private void THFHA_MouseDown(object sender, MouseEventArgs e)
@@ -634,19 +650,23 @@ namespace THFHA_V1._0
 
         private void UpdateActivityIcon(Bitmap icon)
         {
-            if (pb_Activity.InvokeRequired)
+            if (pb_Activity != null && pb_Activity.IsHandleCreated)
             {
-                pb_Activity.Invoke((MethodInvoker)delegate
+                if (pb_Activity.InvokeRequired)
+                {
+                    pb_Activity.Invoke((MethodInvoker)delegate
+                    {
+                        SetActivityIcon(icon);
+                    });
+                }
+                else
                 {
                     SetActivityIcon(icon);
-                });
+                }
+                UpdateNotifyMenuActivity(icon);
             }
-            else
-            {
-                SetActivityIcon(icon);
-            }
-            UpdateNotifyMenuActivity(icon);
         }
+
 
         private async Task UpdateAll()
         {
@@ -760,30 +780,38 @@ namespace THFHA_V1._0
 
         private void UpdateNotifyMenuStatus(Bitmap icon)
         {
-            if (icon == Resource1.outofoffice)
+            if (notifyMenuStatus != null && !notifyMenuStatus.IsDisposed)
             {
-                notifyMenuStatus.Image = Resource1.outofoffice; notifyMenuStatus.Text = "Offline";
-            }
-            else
-            {
-                notifyMenuStatus.Image = icon; notifyMenuStatus.Text = State.Instance.Status;
+                if (icon == Resource1.outofoffice)
+                {
+                    notifyMenuStatus.Image = Resource1.outofoffice; notifyMenuStatus.Text = "Offline";
+                }
+                else
+                {
+                    notifyMenuStatus.Image = icon; notifyMenuStatus.Text = State.Instance.Status;
+                }
             }
         }
 
+
+
         private void UpdateStatusIcon(Bitmap icon)
         {
-            if (pb_Status.InvokeRequired)
+            if (pb_Status != null && pb_Status.IsHandleCreated)
             {
-                pb_Status.Invoke((MethodInvoker)delegate
+                if (pb_Status.InvokeRequired)
+                {
+                    pb_Status.Invoke((MethodInvoker)delegate
+                    {
+                        pb_Status.BackgroundImage = icon;
+                        //toolTip1.SetToolTip(pb_Status, state.Status);
+                    });
+                }
+                else
                 {
                     pb_Status.BackgroundImage = icon;
                     //toolTip1.SetToolTip(pb_Status, state.Status);
-                });
-            }
-            else
-            {
-                pb_Status.BackgroundImage = icon;
-                //toolTip1.SetToolTip(pb_Status, state.Status);
+                }
             }
         }
 

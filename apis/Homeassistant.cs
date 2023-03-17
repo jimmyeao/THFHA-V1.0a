@@ -1,7 +1,9 @@
-﻿using Serilog;
+﻿using Q42.HueApi.Models;
+using Serilog;
 using System.Net.Http.Headers;
 using THFHA_V1._0.Model;
 using THFHA_V1._0.Views;
+using static THFHA_V1._0.apis.MqttModule;
 
 namespace THFHA_V1._0.apis
 {
@@ -12,10 +14,10 @@ namespace THFHA_V1._0.apis
         private readonly HttpClient _httpClient = new HttpClient();
         private bool isEnabled = false;
         private string name = "Homeassistant";
-        private string oldact = null;
-        private string oldcam = null;
-        private string oldmic = null;
-        private string oldstattus = null;
+        private string? oldact = null;
+        private string? oldcam = null;
+        private string? oldmic = null;
+        private string? oldstattus = null;
         private Settings settings;
         private State stateInstance;
 
@@ -27,6 +29,7 @@ namespace THFHA_V1._0.apis
         {
             // This is the parameterless constructor that will be used by the ModuleManager class
             settings = Settings.Instance;
+            
         }
 
         public HomeassistantModule(State state) : this()
@@ -75,8 +78,17 @@ namespace THFHA_V1._0.apis
                     }
 
                     // Start monitoring if URL and token are valid
-                    Start();
+                    _ = Start();
                 }
+            }
+        }
+        public void Stop()
+        {
+            var isMonitoring = false; 
+            Log.Debug("Stop HomeAsisstant monitoring requested");
+            if (IsEnabled)
+            {
+                OnStopMonitoringRequested();
             }
         }
 
@@ -161,18 +173,65 @@ namespace THFHA_V1._0.apis
             return new Homeassistantsettings(); // Replace with your module's settings form
         }
 
-        public void OnFormClosing()
+        public async Task OnFormClosing()
         {
             // Handle the form closing event here
-            var isMonitoring = false;
-            Log.Debug("Stop monitoring requested");
+            stateInstance.StateChanged -= OnStateChanged;
+
+            Log.Debug("Stop Homeassistant monitoring requested");
             if (IsEnabled)
             {
-                OnStopMonitoringRequested();
+                //await OnStopMonitoringRequested();
+                using (var client = new HttpClient())
+                {
+                    client.BaseAddress = new Uri(settings.Haurl + "/api/");
+                    var token = "Bearer " + settings.Hatoken;
+                    client.DefaultRequestHeaders.Add("Authorization", token);
+                    System.Net.Http.HttpResponseMessage response;
+                    var payload = $@"{{
+                ""state"": ""Not Running"",
+                ""entity_id"": ""sensor.thfha_status"",
+                ""attributes"": {{
+                    ""icon"": ""mdi:account-off""
+                }}
+            }}";
+
+                    var content = new StringContent(payload);
+                    content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+                    Log.Debug("Attempting to set homeassistant status off");
+                    try
+                    {
+                        response = await client.PostAsync($"states/sensor.thfha_status", content);
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Error(ex.ToString());
+                    }
+                    payload = $@"{{
+                ""state"": ""Not Running"",
+                ""entity_id"": ""sensor.thfha_activity"",
+                ""attributes"": {{
+                    ""icon"": ""mdi:account-off""
+                }}
+            }}";
+
+                    content = new StringContent(payload);
+                    content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+                    Log.Debug("Attempting to set homeassistant activity off");
+                    try
+                    {
+                        response = await client.PostAsync($"states/sensor.thfha_activity", content);
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Error(ex.ToString());
+                    }
+                }
             }
         }
 
-        public async void Start()
+
+        public async Task Start()
         {
             if (string.IsNullOrWhiteSpace(settings.Haurl))
             {
@@ -336,6 +395,7 @@ namespace THFHA_V1._0.apis
             try
             {
                 response = await client.GetAsync($"states/{entityName}");
+                //Log.Debug("Response to GET request: {response}", response.ReasonPhrase);
             }
             catch (Exception ex)
             {
@@ -360,9 +420,16 @@ namespace THFHA_V1._0.apis
 
                 var content = new StringContent(payload);
                 content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-
-                response = await client.PostAsync($"states/{entityName}", content);
-                //Log.Debug("Response to POST request: {response}", response);
+                //Log.Debug("Attempting to set homeassistant "+content.ToString());
+                try
+                {
+                    response = await client.PostAsync($"states/{entityName}", content);
+                }catch (Exception ex)
+                {
+                    Log.Error(ex.ToString());
+                    client.Dispose();
+                }
+                //Log.Debug("Response to POST request: {response}", response.ReasonPhrase);
             }
             else
             {
@@ -527,10 +594,16 @@ namespace THFHA_V1._0.apis
             }
         }
 
-        private void OnStopMonitoringRequested()
+        private async Task OnStopMonitoringRequested()
         {
             // Stop monitoring here
+            
+            Log.Information("Setting Status to Not Running");
+            await UpdateEntity("sensor.thfha_status", "Not Running", "mdi:account-off");
+            Log.Information("Setting Activity to Not Running");
+            await UpdateEntity("sensor.thfha_activity", "Not Running", "mdi:account-off");
             var isMonitoring = false;
+
         }
 
         #endregion Private Methods

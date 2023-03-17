@@ -2,6 +2,7 @@
 using MQTTnet.Client;
 using Newtonsoft.Json;
 using Serilog;
+using System.Diagnostics;
 using THFHA_V1._0.Model;
 using THFHA_V1._0.Views;
 
@@ -75,6 +76,8 @@ namespace THFHA_V1._0.apis
 
         #region Public Properties
 
+        private static readonly List<string> SensorNames = new List<string> { "client", "status", "activity", "camera", "microphone", "blurred", "recording", "handup" };
+
         public bool IsEnabled
         {
             get { return isEnabled; }
@@ -110,6 +113,11 @@ namespace THFHA_V1._0.apis
             set { /* You can leave this empty since the State property is read-only */ }
         }
 
+        private static List<string> GetSensorNames()
+        {
+            return SensorNames;
+        }
+
         #endregion Public Properties
 
         #region Public Methods
@@ -119,19 +127,30 @@ namespace THFHA_V1._0.apis
             return new mqttsettings(); // Replace with your module's settings form
         }
 
-        public void OnFormClosing()
+        public async Task OnFormClosing()
         {
             // Handle the form closing event here
             var isMonitoring = false;
-            Log.Debug("Stop monitoring requested");
+            stateInstance.StateChanged -= OnStateChanged;
+            Log.Debug("Stop mqtt monitoring requested");
+            if (IsEnabled)
+            {
+               await OnStopMonitoringRequested();
+            }
+        }
+        public void Stop()
+        {
+            var isMonitoring = false;
+            Log.Debug("Stop mqtt monitoring requested");
             if (IsEnabled)
             {
                 OnStopMonitoringRequested();
             }
         }
 
-        public void Start()
+        public async Task Start()
         {
+            _ = Start(stateInstance);
         }
 
         public void UpdateSettings(bool isEnabled)
@@ -198,6 +217,24 @@ namespace THFHA_V1._0.apis
         {
         }
 
+        private string GetIcon(string iconName, string state, string onValue, string offValue)
+        {
+            string icon;
+            if (state == onValue)
+            {
+                icon = iconName;
+            }
+            else if (state == offValue)
+            {
+                icon = $"{iconName}-off";
+            }
+            else
+            {
+                icon = "mdi:eye";
+            }
+            return icon;
+        }
+
         private void OnStateChanged(object sender, EventArgs e)
         {
             if (IsEnabled && THFHA.logWatcher?.IsRunning == true)
@@ -215,9 +252,17 @@ namespace THFHA_V1._0.apis
             }
         }
 
-        private void OnStopMonitoringRequested()
+        private async Task OnStopMonitoringRequested()
         {
             // Stop monitoring here
+            Log.Information("Stopping MQTT");
+            var activityicon = "mdi:account-off";
+            var statusicon = "mdi:account-off";
+            var status = stateInstance;
+            status.Status = "Not Running";
+            status.Activity = "Not Running";
+            //await PublishMqttConfig(status);
+            await PublishMqttUpdate(status);
             var isMonitoring = false;
 
             if (client != null)
@@ -229,215 +274,57 @@ namespace THFHA_V1._0.apis
 
         private async Task PublishMqttConfig(State state)
         {
-            if (settings.Mqtttopic == "")
+            // Use a constant for the list of sensors
+
+            if (string.IsNullOrEmpty(settings.Mqtttopic))
             {
+                // Use the null-coalescing operator instead of an if statement
                 settings.Mqtttopic = "Default";
             }
 
-            //teamslient, teams status, teams activity, teams camera
-
-            List<String> Sensors = new List<string>() { "client", "status", "activity", "camera", "microphone", "blurred", "recording", "handup" };
-
-            foreach (var sensor in Sensors)
+            foreach (var sensor in SensorNames)
             {
-                var statusicon = "";
-                var activityicon = "";
-                var camicon = "";
-                var micicon = "";
-                var blurredicon = "";
-                var recordicon = "";
-                var handicon = "";
+                string sensorName = $"{settings.Mqtttopic} {sensor}".Replace(" ", "_");
+                string configSensorId = sensorName.ToLower().Replace(" ", "_");
+                string uniqueId = configSensorId;
+                string stateTopicId = $"{settings.Mqtttopic.ToLower().Replace(" ", "_")}_teams_monitor";
+                string stateTopic = $"homeassistant/sensor/{stateTopicId}/state";
+                string topic = $"homeassistant/sensor/{configSensorId}/config";
+                string valueTemplate = $"{{{{ value_json.{sensor.ToLower()}.value }}}}";
+                string icon;
 
-                switch (state.Status)
+                // Use a switch expression instead of a switch statement
+                icon = sensor switch
                 {
-                    case "Busy":
-                        statusicon = "mdi:account-cancel";
-                        break;
-
-                    case "On the phone":
-                        statusicon = "mdi:phone-in-talk-outline";
-                        break;
-
-                    case "Do not disturb":
-                        statusicon = "mdi:minus-circle-outline";
-                        break;
-
-                    case "Away":
-                        statusicon = "mdi:timer-sand";
-                        break;
-
-                    case "Be right back":
-                        statusicon = "mdi:timer-sand";
-                        break;
-
-                    case "Available":
-                        statusicon = "mdi:account";
-                        break;
-
-                    case "Offline":
-                        statusicon = "mdi:account-off";
-                        break;
-
-                    default:
-                        statusicon = "mdi:account-off";
-                        break;
-                }
-                switch (state.Activity)
-                {
-                    case "In a call":
-                        activityicon = "mdi:phone-in-talk-outline";
-                        break;
-
-                    case "On the phone":
-                        activityicon = "mdi:phone-in-talk-outline";
-                        break;
-
-                    case "Offline":
-                        activityicon = "mdi:account-off";
-                        break;
-
-                    case "In a meeting":
-                        activityicon = "mdi:phone-in-talk-outline";
-                        break;
-
-                    case "In A Conference Call":
-                        activityicon = "mdi:phone-in-talk-outline";
-                        break;
-
-                    case "Out of Office":
-                        activityicon = "mdi:account-off";
-                        break;
-
-                    case "Not in a Call":
-                        activityicon = "mdi:account";
-                        break;
-
-                    case "Presenting":
-                        activityicon = "mdi:presentation-play";
-                        break;
-
-                    default:
-                        activityicon = "mdi:account-off";
-                        break;
-                }
-                if (state.Camera == "On")
-                {
-                    camicon = "mdi:camera";
-                }
-                else
-                {
-                    camicon = "mdi:camera-off";
-                }
-                if (state.Microphone == "Mute On")
-                {
-                    micicon = "mdi:microphone-off";
-                }
-                else
-                {
-                    micicon = "mdi:microphone";
-                }
-                if (state.Blurred == "Blurred")
-                {
-                    blurredicon = "mdi:blur";
-                }
-                else
-                {
-                    blurredicon = "mdi:blur-off";
-                }
-                if (state.Recording == "On")
-                {
-                    recordicon = "mdi:record-rec";
-                }
-                else
-                {
-                    recordicon = "mdi:record";
-                }
-                if (state.Handup == "Raised")
-                {
-                    handicon = "hand-back-left";
-                }
-                else
-                {
-                    handicon = "mdi:hand-back-left-off";
-                }
-                string Sensor = sensor;
-                string SensorName = (settings.Mqtttopic + " " + Sensor).Replace(" ", "_");
-                string ConfigSensorID = SensorName.ToLower().Replace(" ", "_");
-                string UniqueID = ConfigSensorID;
-                if (settings.Mqtttopic == null)
-                {
-                    settings.Mqtttopic = System.Environment.MachineName;
-                }
-                string StateTopicID = settings.Mqtttopic.ToLower().Replace(" ", "_") + "_teams_monitor";
-                string StateTopic = "homeassistant/sensor/" + StateTopicID + "/state";
-                string Topic = "homeassistant/sensor/" + ConfigSensorID + "/config";
-                //string ValueTemplate = "{{ value_json." + Sensor.ToLower() + "}}";
-                string ValueTemplate = "{{ value_json." + Sensor.ToLower() + ".value}}";
-                string Icon = "mdi:eye"; // Replace this with the desired icon name
-                switch (sensor)
-                {
-                    case "client":
-                        Icon = "mdi:television-classic";
-                        break;
-
-                    case "status":
-                        Icon = statusicon;
-                        break;
-
-                    case "activity":
-                        Icon = activityicon;
-                        break;
-
-                    case "camera":
-                        Icon = camicon;
-                        break;
-
-                    case "microphone":
-                        Icon = micicon;
-                        break;
-
-                    case "blurred":
-                        Icon = blurredicon;
-                        break;
-
-                    case "recording":
-                        Icon = recordicon;
-                        break;
-
-                    case "handup":
-                        Icon = handicon;
-                        break;
-
-                    default:
-                        Icon = "mdi:eye";
-                        break;
-                }
+                    "client" => "mdi:television-classic",
+                    "status" => GetStatusIcon(state.Status),
+                    "activity" => GetActivityIcon(state.Activity),
+                    "camera" => state.Camera == "On" ? "mdi:camera" : "mdi:camera-off",
+                    "microphone" => state.Microphone == "Mute On" ? "mdi:microphone-off" : "mdi:microphone",
+                    "blurred" => state.Blurred == "Blurred" ? "mdi:blur" : "mdi:blur-off",
+                    "recording" => state.Recording == "On" ? "mdi:record-rec" : "mdi:record",
+                    "handup" => state.Handup == "Raised" ? "hand-back-left" : "mdi:hand-back-left-off",
+                    _ => "mdi:eye"
+                };
+                
 
                 var payload = new
                 {
-                    name = SensorName,
-                    unique_id = UniqueID,
-                    state_topic = StateTopic,
-                    value_template = ValueTemplate,
-                    icon = Icon
+                    name = sensorName,
+                    unique_id = uniqueId,
+                    state_topic = stateTopic,
+                    value_template = valueTemplate,
+                    icon = icon
                 };
+
                 string jsonPayload = JsonConvert.SerializeObject(payload);
-                // are we connected?
-                int retryCount = 0;
-                int maxRetryCount = 5;
-                TimeSpan delay = TimeSpan.FromSeconds(1);
 
                 try
                 {
-                    // MyMqttClient.MyMqttClient.Instance.SetConnectionParameters(settings.Mqttip,
-                    // settings.Mqttusername, settings.Mqttpassword); Connect using the singleton
-                    // instance await MyMqttClient.MyMqttClient.Instance.ConnectAsync();
-                    await MyMqttClient.MyMqttClient.Instance.PublishAsync(Topic, jsonPayload, retain: false);
-                    // await client.PublishBinaryAsync(Topic, Encoding.UTF8.GetBytes(jsonPayload));
+                    await MyMqttClient.MyMqttClient.Instance.PublishAsync(settings.Mqtttopic, jsonPayload, retain: false);
                 }
                 catch
                 {
-                    //something went wrong
                     Log.Error("Error publishing MQTT config");
                 }
             }
@@ -445,82 +332,38 @@ namespace THFHA_V1._0.apis
 
         private async Task PublishMqttUpdate(State state)
         {
-            //PublishMqttConfig();
             if (settings.Mqtttopic == "")
             {
                 settings.Mqtttopic = "Default";
             }
-            var statusicon = "";
-            var activityicon = "";
-            var camicon = "";
-            var micicon = "";
-            var blurredicon = "";
-            var recordicon = "";
-            var handicon = "";
 
             var statusIcon = GetStatusIcon(state.Status);
             var activityIcon = GetActivityIcon(state.Activity);
+            var camIcon = state.Camera == "On" ? "mdi:camera" : "mdi:camera-off";
+            var micIcon = state.Microphone == "Mute Off" ? "mdi:microphone" : "mdi:microphone-off";
+            var blurredIcon = state.Blurred == "Blurred" ? "mdi:blur" : "mdi:blur-off";
+            var recordIcon = state.Recording == "On" ? "mdi:record-rec" : "mdi:record";
+            var handIcon = state.Handup == "Raised" ? "hand-back-left" : "mdi:hand-back-left-off";
 
-            if (state.Camera == "On")
-            {
-                camicon = "mdi:camera";
-            }
-            else
-            {
-                camicon = "mdi:camera-off";
-            }
-            if (state.Microphone == "Mute Off")
-            {
-                micicon = "mdi:microphone";
-            }
-            else
-            {
-                micicon = "mdi:microphone-off";
-            }
-            if (state.Blurred == "Blurred")
-            {
-                blurredicon = "mdi:blur";
-            }
-            else
-            {
-                blurredicon = "mdi:blur-off";
-            }
-            if (state.Recording == "On")
-            {
-                recordicon = "mdi:record-rec";
-            }
-            else
-            {
-                recordicon = "mdi:record";
-            }
-            if (state.Handup == "Raised")
-            {
-                handicon = "hand-back-left";
-            }
-            else
-            {
-                handicon = "mdi:hand-back-left-off";
-            }
-            string StateTopicID = settings.Mqtttopic.ToLower().Replace(" ", "_") + "_teams_monitor";
-            string StateTopic = "homeassistant/sensor/" + StateTopicID + "/state";
+            string stateTopicID = settings.Mqtttopic.ToLower().Replace(" ", "_") + "_teams_monitor";
+            string stateTopic = "homeassistant/sensor/" + stateTopicID + "/state";
 
             var payload = new
             {
                 client = new
                 {
-                    //value = state.Running,   need to fix this
                     value = "Running",
                     icon = new { value = "mdi:television-classic" }
                 },
                 status = new
                 {
                     value = state.Status,
-                    icon = new { value = statusicon }
+                    icon = new { value = statusIcon }
                 },
                 activity = new
                 {
                     value = state.Activity,
-                    icon = new { value = activityicon }
+                    icon = new { value = activityIcon }
                 },
                 camera = new
                 {
@@ -546,23 +389,26 @@ namespace THFHA_V1._0.apis
 
             string jsonPayload = JsonConvert.SerializeObject(payload);
 
-            // are we connected?
+            // Retry connection if it fails
             int retryCount = 0;
             int maxRetryCount = 5;
             TimeSpan delay = TimeSpan.FromSeconds(1);
 
-            try
+            while (retryCount < maxRetryCount)
             {
-                Log.Information("Publishing MQTT {jsonPayload}", jsonPayload);
-                // MyMqttClient.MyMqttClient.Instance.SetConnectionParameters(settings.Mqttip,
-                // settings.Mqttusername, settings.Mqttpassword); Connect using the singleton
-                // instance await MyMqttClient.MyMqttClient.Instance.ConnectAsync();
-                await MyMqttClient.MyMqttClient.Instance.PublishAsync(StateTopic, jsonPayload, retain: false);
-            }
-            catch
-            {
-                //something went wrong
-                Log.Information("Error publishing MQTT");
+                try
+                {
+                    Log.Information("Publishing MQTT {jsonPayload}", jsonPayload);
+                    await MyMqttClient.MyMqttClient.Instance.PublishAsync(stateTopic, jsonPayload, retain: false);
+                    break; // Exit loop if successful
+                }
+                catch (Exception ex)
+                {
+                    Log.Error("Error publishing MQTT: {ex}", ex.Message);
+                    await Task.Delay(delay);
+                    delay = TimeSpan.FromSeconds(delay.TotalSeconds * 2); // Exponential backoff
+                    retryCount++;
+                }
             }
         }
 

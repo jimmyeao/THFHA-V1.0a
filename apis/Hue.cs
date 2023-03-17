@@ -77,8 +77,11 @@ namespace THFHA_V1._0.apis
                     if (!settings.IsHueModuleSettingsValid)
                     {
                         return;
+
                     }
+                    _ = GetState();
                     OnStopMonitoringRequested();
+
                 }
                 else
                 {
@@ -101,6 +104,15 @@ namespace THFHA_V1._0.apis
             get { return stateInstance.ToString(); }
             set { /* You can leave this empty since the State property is read-only */ }
         }
+        public void Stop()
+        {
+            var isMonitoring = false;
+            Log.Debug("Stop Hue monitoring requested");
+            if (IsEnabled)
+            {
+                OnStopMonitoringRequested();
+            }
+        }
 
         #endregion Public Properties
 
@@ -111,26 +123,30 @@ namespace THFHA_V1._0.apis
             return new huesettings(); // Replace with your module's settings form
         }
 
-        public void OnFormClosing()
+        public async Task OnFormClosing()
         {
             // Handle the form closing event here
+            stateInstance.StateChanged -= OnStateChanged;
             if (IsEnabled)
             {
                 OnStopMonitoringRequested();
             }
             var isMonitoring = false;
-            Log.Debug("Stop monitoring requested");
+            Log.Debug("Stop Hue monitoring requested");
         }
 
-        public void Start()
+        public async Task Start()
         {
             if (settings.Hueip == null || settings.Hueusername == null || settings.IsHueModuleSettingsValid == false)
             {
                 Log.Error("Hue ip or username is null");
                 return;
             }
-            _ = GetState();
-            _ = PublishHueUpdate(stateInstance);
+            if (isEnabled)
+            {
+                _ = GetState();
+                _ = PublishHueUpdate(stateInstance);
+            }
         }
 
         public void UpdateSettings(bool isEnabled)
@@ -144,7 +160,12 @@ namespace THFHA_V1._0.apis
 
         private RGBColor GetRGBColorForState(State state)
         {
-            return stateInstance.Status switch
+            var status = state.Status;
+            if (stateInstance.Activity == "On the phone" || stateInstance.Activity == "In a call" || stateInstance.Activity == "In a meeting")
+            {
+                status = "On the Phone";
+            }
+            return status switch
             {
                 "Busy" => new RGBColor("ff0000"),
                 "On the Phone" => new RGBColor("ff0000"),
@@ -230,7 +251,7 @@ namespace THFHA_V1._0.apis
 
         private void OnStopMonitoringRequested()
         {
-            if (!settings.IsHueModuleSettingsValid)
+            if (!settings.IsHueModuleSettingsValid )
             {
                 return;
             }

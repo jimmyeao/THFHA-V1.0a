@@ -130,40 +130,7 @@ namespace THFHA_V1._0.Model
 
         #region Private Methods
 
-        //private async Task ReadLogFileAsync(CancellationToken cancellationToken)
-        //{
-        //    StreamReader sr = null;
-        //    while (!cancellationToken.IsCancellationRequested)
-        //    {
-        //        try
-        //        {
-        //            // open the file
-        //            using (FileStream fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-
-        // { sr = new StreamReader(fs, Encoding.UTF8); while (!sr.EndOfStream) { string line =
-        // sr.ReadLine(); //check if the line contains a dictionary key var match =
-        // matchDictionary.FirstOrDefault(x => line.Contains(x.Key)); if (match.Key != null) { if
-        // (match.Value.StatusText == "Mute") { _mute = match.Value.ActivityText; } else { if
-        // (!string.IsNullOrEmpty(match.Value.ActivityText)) _activity = match.Value.ActivityText;
-        // if (!string.IsNullOrEmpty(match.Value.StatusText)) _status = match.Value.StatusText; } }
-        // } } } catch {//fail! Log.Error("Failed to read log file"); } finally { sr?.Dispose(); }
-
-        //        if (State.Instance.Status != _status)
-        //        {
-        //            State.Instance.Status = _status;
-        //            StateChanged?.Invoke(this, EventArgs.Empty);
-        //        }
-        //        if (cancellationToken.IsCancellationRequested)
-        //        {
-        //            // Dispose of the StreamReader and exit the method
-        //            sr.Dispose();
-        //            return;
-        //        }
-        //        //if (state.Microphone != _mute) { state.Microphone = _mute; }
-        //        await Task.Delay(1500, cancellationToken); // Example delay
-        //    }
-        //}
-        private async Task ReadLogFileAsync(CancellationToken cancellationToken)
+           private async Task ReadLogFileAsync(CancellationToken cancellationToken)
         {
             string tempStatus = "";
             string tempActivity = "";
@@ -191,8 +158,8 @@ namespace THFHA_V1._0.Model
                                 }
                                 else
                                 {
-                                    if (!string.IsNullOrEmpty(match.Value.ActivityText))
-                                        tempActivity = match.Value.ActivityText;
+                                    //if (!string.IsNullOrEmpty(match.Value.ActivityText))
+                                    //    tempActivity = match.Value.ActivityText;
                                     if (!string.IsNullOrEmpty(match.Value.StatusText))
                                         tempStatus = match.Value.StatusText;
                                 }
@@ -214,16 +181,16 @@ namespace THFHA_V1._0.Model
                     State.Instance.Status = tempStatus;
                     StateChanged?.Invoke(this, EventArgs.Empty);
                 }
-                if (tempActivity != "" && tempActivity != State.Instance.Activity)
-                {
-                    State.Instance.Activity = tempActivity;
-                    StateChanged?.Invoke(this, EventArgs.Empty);
-                }
-                if (tempMute != "" && tempMute != State.Instance.Microphone)
-                {
-                    State.Instance.Microphone = tempMute;
-                    StateChanged?.Invoke(this, EventArgs.Empty);
-                }
+                //if (tempActivity != "" && tempActivity != State.Instance.Activity)
+                //{
+                //    State.Instance.Activity = tempActivity;
+                //    StateChanged?.Invoke(this, EventArgs.Empty);
+                //}
+                //if (tempMute != "" && tempMute != State.Instance.Microphone)
+                //{
+                //    State.Instance.Microphone = tempMute;
+                //    StateChanged?.Invoke(this, EventArgs.Empty);
+                //}
 
                 if (cancellationToken.IsCancellationRequested)
                 {

@@ -24,10 +24,10 @@ namespace THFHA_V1._0.Model
 
         Form GetSettingsForm();
 
-        void OnFormClosing();
+        Task OnFormClosing();
 
-        void Start();
-
+        Task Start();
+        void Stop();
         void UpdateSettings(bool isEnabled);
 
         #endregion Public Methods
