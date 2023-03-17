@@ -135,7 +135,7 @@ namespace THFHA_V1._0.apis
             Log.Debug("Stop Hue monitoring requested");
         }
 
-        public void Start()
+        public async Task Start()
         {
             if (settings.Hueip == null || settings.Hueusername == null || settings.IsHueModuleSettingsValid == false)
             {

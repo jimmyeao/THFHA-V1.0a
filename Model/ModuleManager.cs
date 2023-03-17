@@ -26,7 +26,7 @@ namespace THFHA_V1._0.Model
 
         Task OnFormClosing();
 
-        void Start();
+        Task Start();
         void Stop();
         void UpdateSettings(bool isEnabled);
 

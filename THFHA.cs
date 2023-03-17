@@ -149,9 +149,29 @@ namespace THFHA_V1._0
 
         public void UpdateMuteStatus(string micstatus)
         {
-            if (pb_mute.InvokeRequired)
+            if (pb_mute.IsHandleCreated)
             {
-                pb_mute.Invoke((MethodInvoker)delegate
+                if (pb_mute.InvokeRequired)
+                {
+                    pb_mute.Invoke((MethodInvoker)delegate
+                    {
+                        switch (micstatus)
+                        {
+                            case ("On"):
+                                pb_mute.BackgroundImage = Resource1.mute;
+                                //toolTip3.SetToolTip(pb_mute, "Mute On");
+                                pb_mute.Refresh();
+                                break;
+
+                            case ("Off"):
+                                pb_mute.BackgroundImage = Resource1.mic_icon;
+                                //toolTip3.SetToolTip(pb_mute, "Mute Off");
+                                pb_mute.Refresh();
+                                break;
+                        }
+                    });
+                }
+                else
                 {
                     switch (micstatus)
                     {
@@ -167,26 +187,15 @@ namespace THFHA_V1._0
                             pb_mute.Refresh();
                             break;
                     }
-                });
+                }
             }
             else
             {
-                switch (micstatus)
-                {
-                    case ("On"):
-                        pb_mute.BackgroundImage = Resource1.mute;
-                        //toolTip3.SetToolTip(pb_mute, "Mute On");
-                        pb_mute.Refresh();
-                        break;
-
-                    case ("Off"):
-                        pb_mute.BackgroundImage = Resource1.mic_icon;
-                        //toolTip3.SetToolTip(pb_mute, "Mute Off");
-                        pb_mute.Refresh();
-                        break;
-                }
+                // Delay the update until the handle is created
+                pb_mute.HandleCreated += (sender, args) => UpdateMuteStatus(micstatus);
             }
         }
+
 
         #endregion Public Methods
 
@@ -502,8 +511,7 @@ namespace THFHA_V1._0
                 //cant update the form when its closed!
             }
 
-            // var icon = UpdateStatusIcon(state.Status); UpdateStatusIcons(icon); _ =
-            // UpdateMuteIcon(); _ = UpdateActivityIcon(state.Activity);
+
         }
 
         private void SetActivityIcon(Bitmap icon)
@@ -613,7 +621,7 @@ namespace THFHA_V1._0
             {
                 module.OnFormClosing();
             }
-            ApplicationClosing?.Invoke(this, EventArgs.Empty);
+            //ApplicationClosing?.Invoke(this, EventArgs.Empty);
         }
 
         private void THFHA_MouseDown(object sender, MouseEventArgs e)

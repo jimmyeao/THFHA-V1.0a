@@ -78,7 +78,7 @@ namespace THFHA_V1._0.apis
                     }
 
                     // Start monitoring if URL and token are valid
-                    Start();
+                    _ = Start();
                 }
             }
         }
@@ -231,7 +231,7 @@ namespace THFHA_V1._0.apis
         }
 
 
-        public async void Start()
+        public async Task Start()
         {
             if (string.IsNullOrWhiteSpace(settings.Haurl))
             {

@@ -196,7 +196,7 @@ namespace THFHA_V1._0.apis
             }
         }
 
-        public void Start()
+        public async Task Start()
         {
             if (isEnabled && THFHA.logWatcher?.IsRunning == true)
             {
