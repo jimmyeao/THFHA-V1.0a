@@ -79,6 +79,7 @@ namespace THFHA_V1._0.apis
                         return;
 
                     }
+                    _ = GetState();
                     OnStopMonitoringRequested();
 
                 }
@@ -240,7 +241,7 @@ namespace THFHA_V1._0.apis
 
         private void OnStopMonitoringRequested()
         {
-            if (!settings.IsHueModuleSettingsValid || !isEnabled)
+            if (!settings.IsHueModuleSettingsValid )
             {
                 return;
             }
