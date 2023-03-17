@@ -171,9 +171,10 @@ namespace THFHA_V1._0.apis
             return new wledsettings(); // Replace with your module's settings form
         }
 
-        public void OnFormClosing()
+        public async Task OnFormClosing()
         {
-            RestoreState();
+            stateInstance.StateChanged -= OnStateChanged;
+         //   RestoreState();
             // Handle the form closing event here
             var isMonitoring = false;
             Log.Debug("Stop Wled monitoring requested");
@@ -353,6 +354,15 @@ namespace THFHA_V1._0.apis
                 {
                     Log.Error("Something went wrong stopping WLED");
                 }
+            }
+        }
+        public void Stop()
+        {
+            var isMonitoring = false;
+            Log.Debug("Stop wled monitoring requested");
+            if (IsEnabled)
+            {
+                OnStopMonitoringRequested();
             }
         }
 

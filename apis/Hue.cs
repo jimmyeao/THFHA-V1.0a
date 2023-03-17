@@ -104,6 +104,15 @@ namespace THFHA_V1._0.apis
             get { return stateInstance.ToString(); }
             set { /* You can leave this empty since the State property is read-only */ }
         }
+        public void Stop()
+        {
+            var isMonitoring = false;
+            Log.Debug("Stop Hue monitoring requested");
+            if (IsEnabled)
+            {
+                OnStopMonitoringRequested();
+            }
+        }
 
         #endregion Public Properties
 
@@ -114,9 +123,10 @@ namespace THFHA_V1._0.apis
             return new huesettings(); // Replace with your module's settings form
         }
 
-        public void OnFormClosing()
+        public async Task OnFormClosing()
         {
             // Handle the form closing event here
+            stateInstance.StateChanged -= OnStateChanged;
             if (IsEnabled)
             {
                 OnStopMonitoringRequested();

@@ -64,6 +64,15 @@ namespace THFHA_V1._0.apis
                 }
             }
         }
+        public void Stop()
+        {
+            var isMonitoring = false;
+            Log.Debug("Stop hatcher monitoring requested");
+            if (IsEnabled)
+            {
+                OnStopMonitoringRequested();
+            }
+        }
 
         public string Name
         {
@@ -85,11 +94,12 @@ namespace THFHA_V1._0.apis
             return new hatchersettings(); // Replace with your module's settings form
         }
 
-        public void OnFormClosing()
+        public async Task OnFormClosing()
         {
             // Handle the form closing event here
             var isMonitoring = false;
-            Log.Debug("Stop hatcher monitoring requested");
+            stateInstance.StateChanged -= OnStateChanged;
+            
             if (IsEnabled)
             {
                 OnStopMonitoringRequested();

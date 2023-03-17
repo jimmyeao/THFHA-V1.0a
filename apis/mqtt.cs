@@ -127,14 +127,24 @@ namespace THFHA_V1._0.apis
             return new mqttsettings(); // Replace with your module's settings form
         }
 
-        public async void OnFormClosing()
+        public async Task OnFormClosing()
         {
             // Handle the form closing event here
             var isMonitoring = false;
+            stateInstance.StateChanged -= OnStateChanged;
             Log.Debug("Stop mqtt monitoring requested");
             if (IsEnabled)
             {
                await OnStopMonitoringRequested();
+            }
+        }
+        public void Stop()
+        {
+            var isMonitoring = false;
+            Log.Debug("Stop mqtt monitoring requested");
+            if (IsEnabled)
+            {
+                OnStopMonitoringRequested();
             }
         }
 

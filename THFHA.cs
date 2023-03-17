@@ -583,7 +583,7 @@ namespace THFHA_V1._0
                 await logWatcher.Stop();
                 foreach (IModule module in modules)
                 {
-                    module.OnFormClosing();
+                    module.Stop();
                 }
             }
 
@@ -642,19 +642,23 @@ namespace THFHA_V1._0
 
         private void UpdateActivityIcon(Bitmap icon)
         {
-            if (pb_Activity.InvokeRequired)
+            if (pb_Activity != null && pb_Activity.IsHandleCreated)
             {
-                pb_Activity.Invoke((MethodInvoker)delegate
+                if (pb_Activity.InvokeRequired)
+                {
+                    pb_Activity.Invoke((MethodInvoker)delegate
+                    {
+                        SetActivityIcon(icon);
+                    });
+                }
+                else
                 {
                     SetActivityIcon(icon);
-                });
+                }
+                UpdateNotifyMenuActivity(icon);
             }
-            else
-            {
-                SetActivityIcon(icon);
-            }
-            UpdateNotifyMenuActivity(icon);
         }
+
 
         private async Task UpdateAll()
         {
@@ -768,30 +772,38 @@ namespace THFHA_V1._0
 
         private void UpdateNotifyMenuStatus(Bitmap icon)
         {
-            if (icon == Resource1.outofoffice)
+            if (notifyMenuStatus != null && !notifyMenuStatus.IsDisposed)
             {
-                notifyMenuStatus.Image = Resource1.outofoffice; notifyMenuStatus.Text = "Offline";
-            }
-            else
-            {
-                notifyMenuStatus.Image = icon; notifyMenuStatus.Text = State.Instance.Status;
+                if (icon == Resource1.outofoffice)
+                {
+                    notifyMenuStatus.Image = Resource1.outofoffice; notifyMenuStatus.Text = "Offline";
+                }
+                else
+                {
+                    notifyMenuStatus.Image = icon; notifyMenuStatus.Text = State.Instance.Status;
+                }
             }
         }
 
+
+
         private void UpdateStatusIcon(Bitmap icon)
         {
-            if (pb_Status.InvokeRequired)
+            if (pb_Status != null && pb_Status.IsHandleCreated)
             {
-                pb_Status.Invoke((MethodInvoker)delegate
+                if (pb_Status.InvokeRequired)
+                {
+                    pb_Status.Invoke((MethodInvoker)delegate
+                    {
+                        pb_Status.BackgroundImage = icon;
+                        //toolTip1.SetToolTip(pb_Status, state.Status);
+                    });
+                }
+                else
                 {
                     pb_Status.BackgroundImage = icon;
                     //toolTip1.SetToolTip(pb_Status, state.Status);
-                });
-            }
-            else
-            {
-                pb_Status.BackgroundImage = icon;
-                //toolTip1.SetToolTip(pb_Status, state.Status);
+                }
             }
         }
 
