@@ -321,14 +321,15 @@ namespace THFHA_V1._0.apis
 
                 try
                 {
-                    await MyMqttClient.MyMqttClient.Instance.PublishAsync(settings.Mqtttopic, jsonPayload, retain: false);
+                    Log.Information("Publishing MQTT config {payload}",payload);
+                    await MyMqttClient.MyMqttClient.Instance.PublishAsync(topic, jsonPayload, retain: false);
                 }
                 catch
                 {
                     Log.Error("Error publishing MQTT config");
                 }
             }
-        }
+        }//bugged
 
         private async Task PublishMqttUpdate(State state)
         {
@@ -398,7 +399,7 @@ namespace THFHA_V1._0.apis
             {
                 try
                 {
-                    Log.Information("Publishing MQTT {jsonPayload}", jsonPayload);
+                    Log.Information("Publishing MQTT Update.{jsonPayload}", jsonPayload);
                     await MyMqttClient.MyMqttClient.Instance.PublishAsync(stateTopic, jsonPayload, retain: false);
                     break; // Exit loop if successful
                 }
