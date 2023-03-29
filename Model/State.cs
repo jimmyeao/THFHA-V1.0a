@@ -73,7 +73,7 @@ namespace THFHA_V1._0.Model
                 if (_blurred != value)
                 {
                     _blurred = value;
-                    Log.Debug("State.Microphone changed to: " + value);
+                    Log.Debug("State.Blurred changed to: " + value);
                     StateChanged?.Invoke(this, EventArgs.Empty);
                 }
             }
@@ -101,7 +101,7 @@ namespace THFHA_V1._0.Model
                 if (_handup != value)
                 {
                     _handup = value;
-                    Log.Debug("State.Microphone changed to: " + value);
+                    Log.Debug("State.HandUp changed to: " + value);
                     StateChanged?.Invoke(this, EventArgs.Empty);
                 }
             }
@@ -135,7 +135,7 @@ namespace THFHA_V1._0.Model
                 if (_recording != value)
                 {
                     _recording = value;
-                    Log.Debug("State.Microphone changed to: " + value);
+                    Log.Debug("State.Recording changed to: " + value);
                     StateChanged?.Invoke(this, EventArgs.Empty);
                 }
             }
