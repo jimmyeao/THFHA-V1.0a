@@ -7,8 +7,8 @@
 		<Nullable>enable</Nullable>
 		<UseWindowsForms>true</UseWindowsForms>
 		<ImplicitUsings>enable</ImplicitUsings>
-		<AssemblyVersion>1.1.1.743</AssemblyVersion>
-		<FileVersion>1.1.1.743</FileVersion>
+		<AssemblyVersion>1.1.1.746</AssemblyVersion>
+		<FileVersion>1.1.1.746</FileVersion>
 		<PackageIcon>trans.png</PackageIcon>
 		<RepositoryUrl>https://github.com/jimmyeao/THFHA-V1.0a</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>

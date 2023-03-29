@@ -116,32 +116,35 @@ namespace THFHA_V1._0.apis
 
         public async Task Create_Entity(string entity)
         {
-            if (!IsValidUrl(settings.Haurl))
-            { return; }
-            var client = new HttpClient();
-            client.BaseAddress = new Uri(settings.Haurl + "/api/");
+            if (isEnabled)
+            {
+                if (!IsValidUrl(settings.Haurl))
+                { return; }
+                var client = new HttpClient();
+                client.BaseAddress = new Uri(settings.Haurl + "/api/");
 
-            var token = "Bearer " + settings.Hatoken;
-            client.DefaultRequestHeaders.Add("Authorization", token);
+                var token = "Bearer " + settings.Hatoken;
+                client.DefaultRequestHeaders.Add("Authorization", token);
 
-            var content = new StringContent($@"{{
+                var content = new StringContent($@"{{
                 ""entity_id"": ""{entity}"",
                 ""state"": ""Unknown""
             }}");
 
-            content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+                content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
 
-            try
-            {
-                var response = await client.PostAsync($"states/{entity}", content);
-                response.EnsureSuccessStatusCode();
-            }
-            catch (Exception ex)
-            {
-                Log.Error("Error creating {entity} in Home assistant: {ex}", entity, ex.Message);
-            }
+                try
+                {
+                    var response = await client.PostAsync($"states/{entity}", content);
+                    response.EnsureSuccessStatusCode();
+                }
+                catch (Exception ex)
+                {
+                    Log.Error("Error creating {entity} in Home assistant: {ex}", entity, ex.Message);
+                }
 
-            client.Dispose();
+                client.Dispose();
+            }
         }
 
         public async Task<bool> EntityExists(string entity)
@@ -233,184 +236,188 @@ namespace THFHA_V1._0.apis
 
         public async Task Start()
         {
-            if (string.IsNullOrWhiteSpace(settings.Haurl))
+            if (isEnabled)
             {
-                Log.Error("HomeAssistant URL is missing.");
-                return;
+                if (string.IsNullOrWhiteSpace(settings.Haurl))
+                {
+                    Log.Error("HomeAssistant URL is missing.");
+                    return;
+                }
+
+                if (string.IsNullOrWhiteSpace(settings.Haurl))
+                {
+                    Log.Error("HomeAssistant token is missing.");
+                    return;
+                }
+
+                bool exists = false;
+                exists = await EntityExists("sensor.thfha_status");
+                if (!exists)
+                {
+                    await Create_Entity("sensor.thfha_status");
+                }
+                exists = await EntityExists("sensor.thfha_activity");
+                if (!exists)
+                {
+                    await Create_Entity("sensor.thfha_activity");
+                }
+                exists = await EntityExists("sensor.thfha_camera");
+                if (!exists)
+                {
+                    await Create_Entity("sensor.thfha_camera");
+                }
+                exists = await EntityExists("sensor.thfha_microphone");
+                if (!exists)
+                {
+                    await Create_Entity("sensor.thfha_microphone");
+                }
+                exists = await EntityExists("sensor.thfha_blurred");
+                if (!exists)
+                {
+                    await Create_Entity("sensor.thfha_blurred");
+                }
+                exists = await EntityExists("sensor.thfha_hand");
+                if (!exists)
+                {
+                    await Create_Entity("sensor.thfha_hand");
+                }
+                exists = await EntityExists("sensor.thfha_recording");
+                if (!exists)
+                {
+                    await Create_Entity("sensor.thfha_recording");
+                }
+                //lets update the entities
+                var statusicon = "";
+                var activityicon = "";
+
+                switch (stateInstance.Status)
+                {
+                    case "Busy":
+                        statusicon = "mdi:account-cancel";
+                        break;
+
+                    case "On the phone":
+                        statusicon = "mdi:phone-in-talk-outline";
+                        break;
+
+                    case "Do not disturb":
+                        statusicon = "mdi:minus-circle-outline";
+                        break;
+
+                    case "Away":
+                        statusicon = "mdi:timer-sand";
+                        break;
+
+                    case "Be right back":
+                        statusicon = "mdi:timer-sand";
+                        break;
+
+                    case "Available":
+                        statusicon = "mdi:account";
+                        break;
+
+                    case "Offline":
+                        statusicon = "mdi:account-off";
+                        break;
+
+                    default:
+                        statusicon = "mdi:account-off";
+                        break;
+                }
+                switch (stateInstance.Activity)
+                {
+                    case "In a call":
+                        activityicon = "mdi:phone-in-talk-outline";
+                        break;
+
+                    case "On the phone":
+                        activityicon = "mdi:phone-in-talk-outline";
+                        break;
+
+                    case "Offline":
+                        activityicon = "mdi:account-off";
+                        break;
+
+                    case "In a meeting":
+                        activityicon = "mdi:phone-in-talk-outline";
+                        break;
+
+                    case "In A Conference Call":
+                        activityicon = "mdi:phone-in-talk-outline";
+                        break;
+
+                    case "Out of Office":
+                        activityicon = "mdi:account-off";
+                        break;
+
+                    case "Not in a Call":
+                        activityicon = "mdi:account";
+                        break;
+
+                    case "Presenting":
+                        activityicon = "mdi:presentation-play";
+                        break;
+
+                    default:
+                        activityicon = "mdi:account-off";
+                        break;
+                }
+
+                await UpdateEntity("sensor.thfha_status", stateInstance.Status, statusicon);
+
+                await UpdateEntity("sensor.thfha_activity", stateInstance.Activity, activityicon);
+
+                await UpdateEntity("sensor.thfha_camera", stateInstance.Camera, "mdi:camera");
+
+                await UpdateEntity("sensor.thfha_camera", stateInstance.Camera, "mdi:camera-off");
+
+                await UpdateEntity("sensor.thfha_hand", stateInstance.Handup, "mdi:hand-back-left-off");
+
+                await UpdateEntity("sensor.thfha_blurred", stateInstance.Blurred, "mdi:blur");
+
+                await UpdateEntity("sensor.thfha_recording", stateInstance.Recording, "mdi:record");
+
+                if (stateInstance.Microphone == "Off")
+                {
+                    await UpdateEntity("sensor.thfha_microphone", stateInstance.Microphone, "mdi:microphone");
+                }
+                else
+                {
+                    await UpdateEntity("sensor.thfha_microphone", stateInstance.Microphone, "mdi:microphone-off");
+                }
             }
-
-            if (string.IsNullOrWhiteSpace(settings.Haurl))
-            {
-                Log.Error("HomeAssistant token is missing.");
-                return;
-            }
-
-            bool exists = false;
-            exists = await EntityExists("sensor.thfha_status");
-            if (!exists)
-            {
-                await Create_Entity("sensor.thfha_status");
-            }
-            exists = await EntityExists("sensor.thfha_activity");
-            if (!exists)
-            {
-                await Create_Entity("sensor.thfha_activity");
-            }
-            exists = await EntityExists("sensor.thfha_camera");
-            if (!exists)
-            {
-                await Create_Entity("sensor.thfha_camera");
-            }
-            exists = await EntityExists("sensor.thfha_microphone");
-            if (!exists)
-            {
-                await Create_Entity("sensor.thfha_microphone");
-            }
-            exists = await EntityExists("sensor.thfha_blurred");
-            if (!exists)
-            {
-                await Create_Entity("sensor.thfha_blurred");
-            }
-            exists = await EntityExists("sensor.thfha_hand");
-            if (!exists)
-            {
-                await Create_Entity("sensor.thfha_hand");
-            }
-            exists = await EntityExists("sensor.thfha_recording");
-            if (!exists)
-            {
-                await Create_Entity("sensor.thfha_recording");
-            }
-            //lets update the entities
-            var statusicon = "";
-            var activityicon = "";
-
-            switch (stateInstance.Status)
-            {
-                case "Busy":
-                    statusicon = "mdi:account-cancel";
-                    break;
-
-                case "On the phone":
-                    statusicon = "mdi:phone-in-talk-outline";
-                    break;
-
-                case "Do not disturb":
-                    statusicon = "mdi:minus-circle-outline";
-                    break;
-
-                case "Away":
-                    statusicon = "mdi:timer-sand";
-                    break;
-
-                case "Be right back":
-                    statusicon = "mdi:timer-sand";
-                    break;
-
-                case "Available":
-                    statusicon = "mdi:account";
-                    break;
-
-                case "Offline":
-                    statusicon = "mdi:account-off";
-                    break;
-
-                default:
-                    statusicon = "mdi:account-off";
-                    break;
-            }
-            switch (stateInstance.Activity)
-            {
-                case "In a call":
-                    activityicon = "mdi:phone-in-talk-outline";
-                    break;
-
-                case "On the phone":
-                    activityicon = "mdi:phone-in-talk-outline";
-                    break;
-
-                case "Offline":
-                    activityicon = "mdi:account-off";
-                    break;
-
-                case "In a meeting":
-                    activityicon = "mdi:phone-in-talk-outline";
-                    break;
-
-                case "In A Conference Call":
-                    activityicon = "mdi:phone-in-talk-outline";
-                    break;
-
-                case "Out of Office":
-                    activityicon = "mdi:account-off";
-                    break;
-
-                case "Not in a Call":
-                    activityicon = "mdi:account";
-                    break;
-
-                case "Presenting":
-                    activityicon = "mdi:presentation-play";
-                    break;
-
-                default:
-                    activityicon = "mdi:account-off";
-                    break;
-            }
-
-            await UpdateEntity("sensor.thfha_status", stateInstance.Status, statusicon);
-
-            await UpdateEntity("sensor.thfha_activity", stateInstance.Activity, activityicon);
-
-            await UpdateEntity("sensor.thfha_camera", stateInstance.Camera, "mdi:camera");
-
-            await UpdateEntity("sensor.thfha_camera", stateInstance.Camera, "mdi:camera-off");
-
-            await UpdateEntity("sensor.thfha_hand", stateInstance.Handup, "mdi:hand-back-left-off");
-
-            await UpdateEntity("sensor.thfha_blurred", stateInstance.Blurred, "mdi:blur");
-
-            await UpdateEntity("sensor.thfha_recording", stateInstance.Recording, "mdi:record");
-
-            if (stateInstance.Microphone == "Off")
-            {
-                await UpdateEntity("sensor.thfha_microphone", stateInstance.Microphone, "mdi:microphone");
-            }
-            else
-            {
-                await UpdateEntity("sensor.thfha_microphone", stateInstance.Microphone, "mdi:microphone-off");
-            }
-
             return;
         }
 
         public async Task UpdateEntity(string entityName, string stateText, string icon)
         {
-            var client = new HttpClient();
-            client.BaseAddress = new Uri(settings.Haurl + "/api/");
-            var token = "Bearer " + settings.Hatoken;
-            client.DefaultRequestHeaders.Add("Authorization", token);
-            System.Net.Http.HttpResponseMessage response;
-
-            try
+            if (isEnabled)
             {
-                response = await client.GetAsync($"states/{entityName}");
-                //Log.Debug("Response to GET request: {response}", response.ReasonPhrase);
-            }
-            catch (Exception ex)
-            {
-                Log.Error("Error updating {entity} in Home assistant: {ex}", entityName, ex.Message);
-                client.Dispose();
-                isEnabled = false;
-                return;
-            }
-            //Log.Debug("Response to GET request: {response}", response);
+                var client = new HttpClient();
+                client.BaseAddress = new Uri(settings.Haurl + "/api/");
+                var token = "Bearer " + settings.Hatoken;
+                client.DefaultRequestHeaders.Add("Authorization", token);
+                System.Net.Http.HttpResponseMessage response;
 
-            if (response.IsSuccessStatusCode)
-            {
-                //Log.Information("Updating {entity} in Home assistant to {state}", entityName, stateText);
+                try
+                {
+                    response = await client.GetAsync($"states/{entityName}");
+                    //Log.Debug("Response to GET request: {response}", response.ReasonPhrase);
+                }
+                catch (Exception ex)
+                {
+                    Log.Error("Error updating {entity} in Home assistant: {ex}", entityName, ex.Message);
+                    client.Dispose();
+                    isEnabled = false;
+                    return;
+                }
+                //Log.Debug("Response to GET request: {response}", response);
 
-                var payload = $@"{{
+                if (response.IsSuccessStatusCode)
+                {
+                    //Log.Information("Updating {entity} in Home assistant to {state}", entityName, stateText);
+
+                    var payload = $@"{{
                     ""state"": ""{stateText}"",
                     ""entity_id"": ""{entityName}"",
                     ""attributes"": {{
@@ -418,32 +425,34 @@ namespace THFHA_V1._0.apis
                     }}
                 }}";
 
-                var content = new StringContent(payload);
-                content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-                //Log.Debug("Attempting to set homeassistant "+content.ToString());
-                try
-                {
-                    response = await client.PostAsync($"states/{entityName}", content);
-                }catch (Exception ex)
-                {
-                    Log.Error(ex.ToString());
-                    client.Dispose();
+                    var content = new StringContent(payload);
+                    content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+                    //Log.Debug("Attempting to set homeassistant "+content.ToString());
+                    try
+                    {
+                        response = await client.PostAsync($"states/{entityName}", content);
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Error(ex.ToString());
+                        client.Dispose();
+                    }
+                    //Log.Debug("Response to POST request: {response}", response.ReasonPhrase);
                 }
-                //Log.Debug("Response to POST request: {response}", response.ReasonPhrase);
-            }
-            else
-            {
-                Log.Error("Error updating {entity} in Home assistant: {status}", entityName, response.StatusCode);
-                client.Dispose();
-                isEnabled = false;
-                settings.UseHA = false;
-                settings.Save();
-                OnStopMonitoringRequested();
-                return;
-            }
+                else
+                {
+                    Log.Error("Error updating {entity} in Home assistant: {status}", entityName, response.StatusCode);
+                    client.Dispose();
+                    isEnabled = false;
+                    settings.UseHA = false;
+                    settings.Save();
+                    OnStopMonitoringRequested();
+                    return;
+                }
 
-            response.EnsureSuccessStatusCode();
-            client.Dispose();
+                response.EnsureSuccessStatusCode();
+                client.Dispose();
+            }
         }
 
         public void UpdateSettings(bool isEnabled)
